@@ -1,0 +1,8 @@
+com\shenzhen\recurit\service\test\impl\TestUserServiceImpl.class
+com\shenzhen\recurit\vo\UserVo.class
+com\shenzhen\recurit\controller\test\TestRedisController.class
+com\shenzhen\recurit\application\ProduceApplication.class
+com\shenzhen\recurit\dao\test\TestUserMapper.class
+com\shenzhen\recurit\service\test\TestUserService.class
+com\shenzhen\recurit\utils\RedisTempleUtils.class
+com\shenzhen\recurit\controller\test\TestUserController.class
