@@ -3,7 +3,7 @@ package com.shenzhen.recurit.dao.test;
 import com.shenzhen.recurit.vo.UserVo;
 import org.apache.ibatis.annotations.Mapper;
 
-@Mapper
+//@Mapper
 public interface TestUserMapper {
 
     /**
