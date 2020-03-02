@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzhen.recurit.dao.DictionaryMapper">
+
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.vo.DictionaryVO">
+            <id column="id" property="id"/>
+            <result column="dict_num" property="dictNum"/>
+            <result column="category" property="category"/>
+            <result column="dict_name" property="dictName"/>
+            <result column="content" property="content"/>
+            <result column="super_num" property="superNum"/>
+            <result column="create_date" property="createDate"/>
+            <result column="update_date" property="updateDate"/>
+        </resultMap>
+
+        <sql id="baseResult">
+            dict_num,category,dict_name,content,super_num,create_date,update_date
+        </sql>
+
+        <select id="getLatestTime" resultType="java.util.Date">
+            select update_date from tab_dictionary  ORDER BY update_date desc limit 1
+        </select>
+
+        <select id="getListAll" resultMap="baseResultMap" >
+            select id,<include refid="baseResult"/> from tab_dictionary  where update_date &lt; #{endTime} and update_date &gt;= #{startTime}
+        </select>
+
+
+</mapper>
