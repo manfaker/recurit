@@ -1,6 +1,6 @@
 package com.shenzhen.recurit.service.test;
 
-import com.shenzhen.recurit.vo.UserVo;
+import com.shenzhen.recurit.vo.test.TestUserVO;
 
 public interface TestUserService {
     /**
@@ -8,5 +8,5 @@ public interface TestUserService {
      * @param name
      * @return
      */
-    UserVo getUserByName(String name);
+    TestUserVO getUserByName(String name);
 }

@@ -6,7 +6,7 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.Base64;
 
-public class Base64Utils {
+public class EncryptBase64Utils {
 
     public static void main(String[] args) {
         //测试加密解密

@@ -1,6 +1,6 @@
 package com.shenzhen.recurit.enums;
 
-public enum ReqturnEnum {
+public enum ReturnEnum {
 
         DEFAULT_300(300,"失败返回300"),
         DEFAULT_301(301,"失败返回301"),
@@ -12,7 +12,7 @@ public enum ReqturnEnum {
         DEFAULT_501(501,"失败返回501"),
         DEFAULT_502(502,"失败返回502"),
         DEFAULT_503(503,"失败返回503"),
-        SUCCESS(200,"失败成功");
+        SUCCESS(200,"返回成功");
 
 
 
@@ -20,7 +20,7 @@ public enum ReqturnEnum {
         private Integer code;
         private String value;
 
-        private ReqturnEnum(Integer code, String value){
+        private ReturnEnum(Integer code, String value){
             this.code=code;
             this.value=value;
         }

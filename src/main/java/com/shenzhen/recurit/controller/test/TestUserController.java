@@ -1,7 +1,7 @@
 package com.shenzhen.recurit.controller.test;
 
 import com.shenzhen.recurit.service.test.TestUserService;
-import com.shenzhen.recurit.vo.UserVo;
+import com.shenzhen.recurit.vo.test.TestUserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +20,7 @@ public class TestUserController {
     @ResponseBody
     public String getUserByName(String name){
        // String name = "晓霜";
-        UserVo userVo = userService.getUserByName(name);
-        return userVo.getDemo();
+        TestUserVO testUserVO = userService.getUserByName(name);
+        return testUserVO.getDemo();
     }
 }

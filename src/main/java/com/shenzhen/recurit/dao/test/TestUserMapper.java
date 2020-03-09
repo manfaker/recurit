@@ -1,7 +1,6 @@
 package com.shenzhen.recurit.dao.test;
 
-import com.shenzhen.recurit.vo.UserVo;
-import org.apache.ibatis.annotations.Mapper;
+import com.shenzhen.recurit.vo.test.TestUserVO;
 
 //@Mapper
 public interface TestUserMapper {
@@ -11,5 +10,5 @@ public interface TestUserMapper {
      * @param name
      * @return
      */
-    UserVo getUserByName(String name);
+    TestUserVO getUserByName(String name);
 }

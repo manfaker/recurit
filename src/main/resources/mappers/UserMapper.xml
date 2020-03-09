@@ -1,28 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.shenzhen.recurit.dao.DictionaryMapper">
+<mapper namespace="com.shenzhen.recurit.dao.UserMapper">
 
-        <resultMap id="baseResultMap" type="com.shenzhen.recurit.vo.DictionaryVO">
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.vo.UserVO">
             <id column="id" property="id"/>
-            <result column="dict_num" property="dictNum"/>
-            <result column="category" property="category"/>
-            <result column="dict_name" property="dictName"/>
-            <result column="content" property="content"/>
-            <result column="super_num" property="superNum"/>
+            <result column="user_name_zh" property="userNameZh"/>
+            <result column="user_name_en" property="userNameEn"/>
+            <result column="real_name" property="realName"/>
+            <result column="phone" property="phone"/>
+            <result column="fixed_phone" property="fixedPhone"/>
+            <result column="email" property="email"/>
+            <result column="password" property="password"/>
+            <result column="contactser" property="contactser"/>
+            <result column="role_num" property="roleNum"/>
+            <result column="sex_num" property="sexNum"/>
+            <result column="age" property="age"/>
+            <result column="birth" property="birth"/>
             <result column="create_date" property="createDate"/>
             <result column="update_date" property="updateDate"/>
         </resultMap>
 
         <sql id="baseResult">
-            dict_num,category,dict_name,content,super_num,create_date,update_date
+            user_name_zh,user_name_en,real_name,phone,fixed_phone,email,password,contactser,
+                role_num,sex_num,age,birth,create_date,update_date
         </sql>
 
-        <select id="getLatestTime" resultType="java.util.Date">
-            select update_date from tab_dictionary  ORDER BY update_date desc limit 1
+        <select id="getUserByEmail" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_user where email = #{email} limit 1
         </select>
 
-        <select id="getListAll" resultMap="baseResultMap" >
-            select id,<include refid="baseResult"/> from tab_dictionary  where update_date &lt; #{endTime} and update_date &gt;= #{startTime}
+        <select id="getUserByPhone" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_user where phone = #{phone} limit 1
+        </select>
+
+        <select id="getUserByName" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_user where user_name_zh = #{userName} limit 1
+        </select>
+
+        <insert id="addUser" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+            insert into tab_user(<include refid="baseResult"/>)
+                values(#{userNameZh},#{userNameEn},#{realName},#{phone},#{fixedPhone},#{email},#{password},#{contactser},
+                        #{roleNum},#{sexNum},#{age},#{birth},#{createDate},#{updateDate})
+        </insert>
+
+        <select id="getUserByNameAndPass" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_user where user_name_zh = #{userName} and password = #{password} limit 1
         </select>
 
 

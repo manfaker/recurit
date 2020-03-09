@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzhen.recurit.dao.PositionMapper">
+
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.vo.PositionVO">
+            <id column="id" property="id"/>
+            <result column="position_name" property="positionName"/>
+            <result column="salary" property="salary"/>
+            <result column="academic_degree" property="academicDegree"/>
+            <result column="experience" property="experience"/>
+            <result column="company_id" property="companyId"/>
+            <result column="level" property="level"/>
+            <result column="yeal_sal" property="yealSal"/>
+            <result column="status" property="status"/>
+            <result column="creater" property="creater"/>
+            <result column="updater" property="updater"/>
+            <result column="create_date" property="createDate"/>
+            <result column="update_date" property="updateDate"/>
+        </resultMap>
+
+        <sql id="baseResult">
+            position_name,salary,academic_degree,experience,company_id,level,yeal_sal,
+            status,creater,updater,create_date,update_date
+        </sql>
+
+        <select id="getAllPosition" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_position where status = 1
+        </select>
+
+        <select id="getAllPositionByCondition" resultMap="baseResultMap" >
+            select id,<include refid="baseResult"/> from tab_position
+                <where>
+                    <if test="position_name != null and position_name != ''">
+                        position_name = #{positionName} and
+                    </if>
+                    <if test="salary != null and salary != 0">
+                        salary = #{salary} and
+                    </if>
+                    <if test="academic_degree != null and academic_degree != ''">
+                        academic_degree = #{academicDegree} and
+                    </if>
+                    <if test="experience != null and experience != 0">
+                        experience = #{experience} and
+                    </if>
+                    <if test="company_id != null and company_id != ''">
+                        companyId = #{company_id} and
+                    </if>
+                    <if test="level != null and level != 0">
+                        level = #{level} and
+                    </if>
+                    <if test="yeal_sal != null and yeal_sal != 0">
+                        yealSal = #{yeal_sal} and
+                    </if>
+                    <if test="status != null and status != 0">
+                        status = 1
+                    </if>
+                </where>
+        </select>
+
+        <insert id="savePosition" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+            insert into tab_position(<include refid="baseResult"/>)
+                values(#{positionName},#{salary},#{academicDegree},#{experience},
+                #{companyId},#{level},#{yealSal},#{status},#{creater},#{updater},
+                #{createDate},#{updateDate})
+        </insert>
+
+        <select id="getByCompanyId" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_position where companyId = #{company_id} and status =1
+        </select>
+
+        <update id="updatePosition">
+            select id,<include refid="baseResult"/> from tab_dictionary where category = #{category} and status = 1
+        </update>
+
+
+</mapper>

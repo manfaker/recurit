@@ -35,6 +35,7 @@ public class RedisTempleUtils {
             stringRedisTemplate.opsForValue().set(key,val);
             return true;
         }catch (Exception e){
+            e.printStackTrace();
             return false;
         }
     }

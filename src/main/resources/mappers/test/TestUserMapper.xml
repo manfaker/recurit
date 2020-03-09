@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.shenzhen.recurit.dao.test.TestUserMapper">
 
-        <select id="getUserByName" resultType="com.shenzhen.recurit.vo.UserVo">
+        <select id="getUserByName" resultType="com.shenzhen.recurit.vo.test.TestUserVO">
             select * from tab_test_user where name = #{name}
         </select>
 </mapper>

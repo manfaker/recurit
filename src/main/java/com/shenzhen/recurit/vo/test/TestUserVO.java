@@ -1,6 +1,6 @@
-package com.shenzhen.recurit.vo;
+package com.shenzhen.recurit.vo.test;
 
-public class UserVo {
+public class TestUserVO {
 
     private String name;
     private int age;

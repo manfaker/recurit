@@ -2,7 +2,7 @@ package com.shenzhen.recurit.service.test.impl;
 
 import com.shenzhen.recurit.dao.test.TestUserMapper;
 import com.shenzhen.recurit.service.test.TestUserService;
-import com.shenzhen.recurit.vo.UserVo;
+import com.shenzhen.recurit.vo.test.TestUserVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -11,11 +11,11 @@ import javax.annotation.Resource;
 public class TestUserServiceImpl implements TestUserService {
 
     @Resource
-    private TestUserMapper userMapper;
+    private TestUserMapper testUserMapper;
 
     @Override
-    public UserVo getUserByName(String name) {
-        return userMapper.getUserByName(name);
+    public TestUserVO getUserByName(String name) {
+        return testUserMapper.getUserByName(name);
        // return null;
     }
 }

@@ -1,6 +1,6 @@
 package com.shenzhen.recurit.controller.test;
 
-import com.shenzhen.recurit.enums.ReqturnEnum;
+import com.shenzhen.recurit.enums.ReturnEnum;
 import com.shenzhen.recurit.utils.EmailUtils;
 import com.shenzhen.recurit.utils.RedisTempleUtils;
 import com.shenzhen.recurit.vo.ResultVO;
@@ -27,7 +27,7 @@ public class EmailTestController {
     public String sendEmail() {
         String accepter = "1269926929@qq.com";
         ResultVO resultVO = EmailUtils.sendEmail(accepter);
-        if(ReqturnEnum.SUCCESS.getCode()==resultVO.getCode()){
+        if(ReturnEnum.SUCCESS.getCode()==resultVO.getCode()){
             redisTempleUtils.setValue(accepter,resultVO.getData().toString(),30000, TimeUnit.SECONDS);
         }
         return "邮件发送成功";

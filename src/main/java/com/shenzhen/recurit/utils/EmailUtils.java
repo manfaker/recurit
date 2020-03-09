@@ -1,7 +1,7 @@
 package com.shenzhen.recurit.utils;
 
 import com.shenzhen.recurit.constant.InformationConstant;
-import com.shenzhen.recurit.enums.ReqturnEnum;
+import com.shenzhen.recurit.enums.ReturnEnum;
 import com.shenzhen.recurit.vo.ResultVO;
 
 import javax.mail.*;
@@ -14,8 +14,8 @@ public class EmailUtils {
     public static ResultVO sendEmail(String accept){
         // 创建Properties 类用于记录邮箱的一些属性
         Properties props = new Properties();
-        final String userName = Base64Utils.decryptBASE64(InformationConstant.spring_mail_username);
-        final String password = Base64Utils.decryptBASE64(InformationConstant.spring_mail_password);
+        final String userName = EncryptBase64Utils.decryptBASE64(InformationConstant.spring_mail_username);
+        final String password = EncryptBase64Utils.decryptBASE64(InformationConstant.spring_mail_password);
         // 表示SMTP发送邮件，必须进行身份验证
         props.put("mail.smtp.auth", InformationConstant.spring_mail_smtp_auth);
         //此处填写SMTP服务器
@@ -56,6 +56,6 @@ public class EmailUtils {
         }catch (MessagingException messagingException){
             messagingException.printStackTrace();
         }
-        return ResultVO.success(ReqturnEnum.SUCCESS.getValue(),code);
+        return ResultVO.success(ReturnEnum.SUCCESS.getValue(),code);
     }
 }
