@@ -20,56 +20,83 @@
 
         <sql id="baseResult">
             position_name,salary,academic_degree,experience,company_id,level,yeal_sal,
-            status,creater,updater,create_date,update_date
+            creater,updater,create_date,update_date
         </sql>
 
         <select id="getAllPosition" resultMap="baseResultMap">
-            select id,<include refid="baseResult"/> from tab_position where status = 1
+            select id,status,<include refid="baseResult"/> from tab_position where status = 1
         </select>
 
         <select id="getAllPositionByCondition" resultMap="baseResultMap" >
             select id,<include refid="baseResult"/> from tab_position
                 <where>
-                    <if test="position_name != null and position_name != ''">
+                    <if test="positionName != null and positionName != ''">
                         position_name = #{positionName} and
                     </if>
                     <if test="salary != null and salary != 0">
                         salary = #{salary} and
                     </if>
-                    <if test="academic_degree != null and academic_degree != ''">
+                    <if test="academicDegree != null and academicDegree != ''">
                         academic_degree = #{academicDegree} and
                     </if>
                     <if test="experience != null and experience != 0">
                         experience = #{experience} and
                     </if>
-                    <if test="company_id != null and company_id != ''">
-                        companyId = #{company_id} and
+                    <if test="companyId != null and companyId != ''">
+                        company_id = #{companyId} and
                     </if>
                     <if test="level != null and level != 0">
                         level = #{level} and
                     </if>
-                    <if test="yeal_sal != null and yeal_sal != 0">
-                        yealSal = #{yeal_sal} and
+                    <if test="yealSal != null and yealSal != 0">
+                        yeal_sal = #{yealSal} and
                     </if>
-                    <if test="status != null and status != 0">
                         status = 1
-                    </if>
                 </where>
         </select>
 
         <insert id="savePosition" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
             insert into tab_position(<include refid="baseResult"/>)
                 values(#{positionName},#{salary},#{academicDegree},#{experience},
-                #{companyId},#{level},#{yealSal},#{status},#{creater},#{updater},
+                #{companyId},#{level},#{yealSal},#{creater},#{updater},
                 #{createDate},#{updateDate})
         </insert>
 
         <select id="getByCompanyId" resultMap="baseResultMap">
-            select id,<include refid="baseResult"/> from tab_position where companyId = #{company_id} and status =1
+            select id,status,<include refid="baseResult"/> from tab_position where company_id = #{companyId} and status =1
         </select>
 
         <update id="updatePosition">
-            select id,<include refid="baseResult"/> from tab_dictionary where category = #{category} and status = 1
+            update tab_position
+                <set>
+                    <if test="positionName != null and positionName != ''">
+                        position_name = #{positionName} ,
+                    </if>
+                    <if test="salary != null and salary != 0">
+                        salary = #{salary} ,
+                    </if>
+                    <if test="academicDegree != null and academicDegree != ''">
+                        academic_degree = #{academicDegree} ,
+                    </if>
+                    <if test="experience != null and experience != 0">
+                        experience = #{experience} ,
+                    </if>
+                    <if test="companyId != null and companyId != ''">
+                        company_id = #{companyId} ,
+                    </if>
+                    <if test="level != null and level != 0">
+                        level = #{level} ,
+                    </if>
+                    <if test="yealSal != null and yealSal != 0">
+                        yeal_sal = #{yealSal} ,
+                    </if>
+                    <if test="status != null and status != 0">
+                        status = #{status} ,
+                    </if>
+                    updater = #{updater},
+                    update_date=#{updateDate}
+                </set>
+                where id = #{id}
         </update>
 
 

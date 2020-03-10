@@ -14,5 +14,6 @@ public class PositionVO extends BaseVO{
     private int level;
     private int yealSal;
     private int smallint;
+    private int status;
 
 }

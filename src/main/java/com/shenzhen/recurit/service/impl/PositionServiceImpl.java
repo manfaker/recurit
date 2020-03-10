@@ -6,6 +6,7 @@ import com.shenzhen.recurit.vo.PositionVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -26,6 +27,8 @@ public class PositionServiceImpl implements PositionService {
 
     @Override
     public void savePosition(PositionVO position) {
+        position.setUpdateDate(new Date());
+        position.setCreateDate(new Date());
         positionMapper.savePosition(position);
     }
 
@@ -35,7 +38,9 @@ public class PositionServiceImpl implements PositionService {
     }
 
     @Override
-    public int updatePosition(PositionVO position) {
+    public int updatePosition(PositionVO position){
+        position.setUpdateDate(new Date());
+        position.setCreateDate(new Date());
         return positionMapper.updatePosition(position);
     }
 }

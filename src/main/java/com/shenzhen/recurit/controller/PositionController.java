@@ -26,7 +26,7 @@ public class PositionController {
         return ResultVO.success(listPosition);
     }
 
-    @RequestMapping(value="getAllPosition",method = RequestMethod.POST)
+    @RequestMapping(value="getAllPositionByCondition",method = RequestMethod.POST)
     public Object getAllPositionByCondition(@RequestBody String jsonData){
         PositionVO positionVO = JSONObject.parseObject(jsonData, PositionVO.class);
         List<PositionVO> listPosition = positionService.getAllPositionByCondition(positionVO);
@@ -46,7 +46,7 @@ public class PositionController {
         return ResultVO.success(listPosition);
     }
 
-    @RequestMapping(value="updatePosition",method = RequestMethod.PUT)
+        @RequestMapping(value="updatePosition",method = RequestMethod.PUT)
     public Object updatePosition(@RequestBody String jsonData){
         PositionVO positionVO = JSONObject.parseObject(jsonData, PositionVO.class);
         int result = positionService.updatePosition(positionVO);
