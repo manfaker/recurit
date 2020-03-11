@@ -2,6 +2,7 @@ package com.shenzhen.recurit.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.shenzhen.recurit.constant.InformationConstant;
 import com.shenzhen.recurit.constant.OrdinaryConstant;
 import com.shenzhen.recurit.dao.UserMapper;
 import com.shenzhen.recurit.service.UserService;
@@ -56,13 +57,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public Object addByNumber(String jsonData) {
         JSONObject jsonObject = JSONObject.parseObject(jsonData);
-        String number = jsonObject.getString("number");
-        String code = jsonObject.getString("code");
+        String number = jsonObject.getString(InformationConstant.NUMBER);
+        String code = jsonObject.getString(InformationConstant.CODE);
         if(EmptyUtils.isEmpty(number)){
-            return ResultVO.error("手机号码或者邮箱不能为空，请重新输入验证码！");
+            return ResultVO.error("手机号码或者邮箱不能为空，请重新输入登录号码！");
         }
         if(EmptyUtils.isEmpty(code)){
-            return ResultVO.error();
+            return ResultVO.error("验证码错误，请重新输入验证码");
         }
         UserVO userVO=new UserVO();;
         if(code.equals(redisTempleUtils.getValue(number,String.class))){
@@ -129,10 +130,11 @@ public class UserServiceImpl implements UserService {
     public Object loginUser(String jsonData) {
         JSONObject jsonObject = JSONObject.parseObject(jsonData);
         UserVO userVO;
+        String category = OrdinaryConstant.IS_BLACK;
         String entryName = OrdinaryConstant.IS_BLACK;
-        if(jsonObject.containsKey("userName")&&jsonObject.containsKey("password")){
-            String userName = jsonObject.getString("userName");
-            String password = jsonObject.getString("password");
+        if(jsonObject.containsKey(InformationConstant.USERNAME)&&jsonObject.containsKey(InformationConstant.PASSWORD)){
+            String userName = jsonObject.getString(InformationConstant.USERNAME);
+            String password = jsonObject.getString(InformationConstant.PASSWORD);
             if(EmptyUtils.isEmpty(userName)){
                 return ResultVO.error("用户名不能为空！");
             }
@@ -143,7 +145,8 @@ public class UserServiceImpl implements UserService {
             if(EmptyUtils.isEmpty(userVO)||EmptyUtils.isEmpty(userVO.getUserNameZh())){
                 return ResultVO.error("用户名或者密码错误！");
             }
-            entryName = saveUserToRedis(userVO);
+            category = InformationConstant.USERNAME;
+
         }else{
             if(jsonObject.containsKey("number")&&jsonObject.containsKey("code")){
                 String number = jsonObject.getString("number");
@@ -151,32 +154,44 @@ public class UserServiceImpl implements UserService {
                 if(EmptyUtils.isEmpty(number)){
                     return ResultVO.error("手机号码不能为空！");
                 }
+                if(number.contains(OrdinaryConstant.SYMBOL_1)){
+                    userVO = userMapper.getUserByEmail(number);
+                    category=InformationConstant.EMAIL;
+                }else{
+                    userVO = userMapper.getUserByPhone(number);
+                    category=InformationConstant.PHONE;
+                }
+                if(EmptyUtils.isEmpty(userVO)||EmptyUtils.isEmpty(userVO.getUserNameZh())){
+                    return ResultVO.error("用户不存在，请先注册！");
+                }
                 if(EmptyUtils.isEmpty(code)){
                     return ResultVO.error("验证码不能为空！");
                 }
                 if(!code.equals(redisTempleUtils.getValue(number,String.class))){
                     return ResultVO.error("验证码不正确！");
                 }
-                if(number.contains(OrdinaryConstant.SYMBOL_1)){
-                    userVO = userMapper.getUserByEmail(number);
-                }else{
-                    userVO = userMapper.getUserByPhone(number);
-                }
-                if(EmptyUtils.isEmpty(userVO)||EmptyUtils.isEmpty(userVO.getUserNameZh())){
-                    return ResultVO.error("用户不存在，请先注册！");
-                }
-                entryName = saveUserToRedis(userVO);
+            }else{
+                userVO = null;
             }
         }
+        entryName = saveUserToRedis(userVO,category);
         return ResultVO.success("成功",entryName);
     }
 
-    private String saveUserToRedis(UserVO userVO){
+    private String saveUserToRedis(UserVO userVO,String category){
         String entryName=OrdinaryConstant.IS_BLACK;
-        if(EmptyUtils.isNotEmpty(userVO)&&EmptyUtils.isNotEmpty(userVO.getUserNameZh())){
-            entryName = Md5EncryptUtils.encryptMd5(userVO.getUserNameZh());
-            String userInfo = JSON.toJSONString(userVO);
-            redisTempleUtils.setValue(entryName,userInfo,30,TimeUnit.MINUTES);
+        if(EmptyUtils.isNotEmpty(userVO)){
+                String userInfo = JSON.toJSONString(userVO);
+                if(category.equals(InformationConstant.USERNAME)&&EmptyUtils.isNotEmpty(userVO.getUserNameZh())){
+                    entryName = Md5EncryptUtils.encryptMd5(userVO.getUserNameZh());
+                }else if (category.equals(InformationConstant.EMAIL)&&EmptyUtils.isNotEmpty(userVO.getEmail())){
+                    entryName = Md5EncryptUtils.encryptMd5(userVO.getEmail());
+                }else if (category.equals(InformationConstant.PHONE)&&EmptyUtils.isNotEmpty(userVO.getPhone())){
+                    entryName=Md5EncryptUtils.encryptMd5(userVO.getEmail());
+                }
+                if(EmptyUtils.isNotEmpty(entryName)){
+                    redisTempleUtils.setValue(entryName,userInfo,60*60*24*15,TimeUnit.MINUTES);
+                }
         }
         return entryName;
     }

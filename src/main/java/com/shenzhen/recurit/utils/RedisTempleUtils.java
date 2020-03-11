@@ -15,7 +15,7 @@ public class RedisTempleUtils {
 
     private static Logger logger = LoggerFactory.getLogger(RedisTempleUtils.class);
     @Resource
-    StringRedisTemplate stringRedisTemplate;
+    private StringRedisTemplate stringRedisTemplate;
 
 
     /**
@@ -78,8 +78,7 @@ public class RedisTempleUtils {
 
     /**
      *
-     * @param Every T values
-     * @param T 任意类型
+     * @param  value 任意类型
      * @return String
      */
     private <T> String beanToString(T value) {

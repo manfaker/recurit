@@ -20,7 +20,7 @@ public interface UserService {
 
     /**
      * 添加用户
-     * @param UserVO
+     * @param userVO
      * @return
      */
     Object addUser(UserVO userVO);

@@ -7,6 +7,7 @@ public interface OrdinaryConstant {
     String SYMBOL_1 = "@";
     String SYMBOL_2 = "-";
     String SYMBOL_3 = "_";
+    String SYMBOL_4 = ",";
     //日期格式
     String YYYYMMDD = "yyyyMMdd";
     String YYYY_MM_DD = "yyyy-MM-dd";

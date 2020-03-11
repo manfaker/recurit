@@ -26,6 +26,8 @@ public interface InformationConstant {
     String spring_mail_password = "cHJvcXJ2cnB4bWxmYmZhaQ==";//不是密码，是授权码
     String spring_mail_port = "587";
     String spring_mail_smtp_auth = "true";
+    String NUMBER = "number";
+    String CODE = "code";
 
     //header 请求头
     String AUTH_USER = "auth-user";
@@ -33,6 +35,22 @@ public interface InformationConstant {
     //缓存同步时间
     long INITIAL_TIME=946691076849l;
     String KEY_DICTIONARY_TIME = "dictionary_time";
+
+    //角色信息
+    String EMAIL = "email";
+    String PHONE = "phone";
+    String USERNAME= "userName";
+    String PASSWORD = "password";
+    String ADMIN = "admin";           //超级管理员
+    String ENTERPRISE = "enterprise"; //企业用户
+    String JOBSEEKER = "jobseeker";   //普通用户
+
+    //请求头，获取IP地址
+    String X_FORWARDED_FOR ="x-forwarded-for";
+    String UNKNOWN = "unknown";
+    String PROXY_CLIENT_IP="Proxy-Client-IP";
+    String WL_PROXY_CLIENT_IP="WL-Proxy-Client-IP";
+
 
 
 
