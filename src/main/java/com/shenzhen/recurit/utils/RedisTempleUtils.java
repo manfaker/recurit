@@ -122,5 +122,16 @@ public class RedisTempleUtils {
             return false;
         }
     }
-
+    /**
+     * 删除缓存
+     * @param key    键
+     */
+    public boolean deleteValue(String key){
+        try{
+            stringRedisTemplate.delete(key);
+            return true;
+        }catch (Exception e) {
+            return false;
+        }
+    }
 }

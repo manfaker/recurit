@@ -38,4 +38,8 @@ public class UserController {
     public Object loginUser(@RequestBody String jsonData){
         return userService.loginUser(jsonData);
     }
+    @RequestMapping(value = "exitUser",method = RequestMethod.POST)
+    public Object exitUser(@RequestBody String jsonData){
+        return userService.logoutUser(jsonData);
+    }
 }

@@ -52,5 +52,11 @@ public interface UserService {
      * @return
      */
     Object loginUser(String jsonData);
+    /**
+     *退出用户
+     * @param jsonData
+     * @return
+     */
+    Object logoutUser(String jsonData);
 
 }

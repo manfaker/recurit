@@ -127,6 +127,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Object logoutUser(String jsonData) {
+        JSONObject jsonObject = JSONObject.parseObject(jsonData);
+        UserVO userVO;
+        Boolean isDelete = false;
+        if(jsonObject.containsKey(InformationConstant.USERNAME)){
+            String userName = jsonObject.getString(InformationConstant.USERNAME);
+            userVO = userMapper.getUserByName(userName);
+            if(!redisTempleUtils.getValue(Md5EncryptUtils.encryptMd5(userVO.getUserNameZh()),String.class).isEmpty()){
+                isDelete = redisTempleUtils.deleteValue(Md5EncryptUtils.encryptMd5(userVO.getUserNameZh()));
+            }
+            if(!redisTempleUtils.getValue(Md5EncryptUtils.encryptMd5(userVO.getEmail()),String.class).isEmpty()){
+                isDelete = redisTempleUtils.deleteValue(Md5EncryptUtils.encryptMd5(userVO.getEmail()));
+            }
+            if(!redisTempleUtils.getValue(Md5EncryptUtils.encryptMd5(userVO.getPhone()),String.class).isEmpty()){
+                isDelete = redisTempleUtils.deleteValue(Md5EncryptUtils.encryptMd5(userVO.getPhone()));
+            }
+            if(isDelete){
+                return ResultVO.success("退出成功");
+            }
+        }
+        return ResultVO.error("退出失败，请重试");    }
+    @Override
     public Object loginUser(String jsonData) {
         JSONObject jsonObject = JSONObject.parseObject(jsonData);
         UserVO userVO;
