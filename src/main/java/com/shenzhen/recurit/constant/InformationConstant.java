@@ -28,6 +28,7 @@ public interface InformationConstant {
     String spring_mail_smtp_auth = "true";
     String NUMBER = "number";
     String CODE = "code";
+    String ROLE_NUM = "roleNum";
 
     //header 请求头
     String AUTH_USER = "auth-user";

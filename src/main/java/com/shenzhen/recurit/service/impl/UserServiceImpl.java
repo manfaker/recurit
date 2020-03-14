@@ -76,6 +76,9 @@ public class UserServiceImpl implements UserService {
             return loginUser(jsonData);
         }
         UserVO userVO=new UserVO();
+        if(jsonObject.containsKey(InformationConstant.ROLE_NUM)){
+            userVO.setRoleNum(jsonObject.getString(InformationConstant.ROLE_NUM));
+        }
         int index = NumberEnum.ZERO.getValue();
         while(index<NumberEnum.TEN.getValue()){
             String userName = RandomUtils.randomStr(NumberEnum.SIXTEEN.getValue());
@@ -97,7 +100,8 @@ public class UserServiceImpl implements UserService {
             }
             ResultVO resultVO = addUser(userVO);
             if(resultVO.getCode()==200){
-                String entryName = saveUserToRedis(userVO, category);
+                UserVO user = userMapper.getUserById(userVO.getId());
+                String entryName = saveUserToRedis(user, category);
                 return ResultVO.success("注册成功，已转登录",entryName);
             }else{
                 return resultVO;
