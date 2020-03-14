@@ -61,11 +61,11 @@ public class ResultVO implements Serializable {
 
 
         /**
-         * 默认返回301sss
+         * 默认返回302sss
          * @return Result
          */
         public static ResultVO error( ){
-            return new ResultVO(false, ReturnEnum.DEFAULT_301.getCode(), ReturnEnum.DEFAULT_302.getValue(),null);
+            return new ResultVO(false, ReturnEnum.DEFAULT_302.getCode(), ReturnEnum.DEFAULT_302.getValue(),null);
         }
 
         /**
@@ -73,7 +73,7 @@ public class ResultVO implements Serializable {
          * @return Result
          */
         public static ResultVO error(String msg){
-            return new ResultVO(false, ReturnEnum.DEFAULT_301.getCode(),msg,null);
+            return new ResultVO(false, ReturnEnum.DEFAULT_302.getCode(),msg,null);
         }
 
         /**

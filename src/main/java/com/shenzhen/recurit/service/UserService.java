@@ -59,4 +59,7 @@ public interface UserService {
      */
     Object logoutUser(String jsonData);
 
+    UserVO getUserInfoCookie(String userCode);
+
+    UserVO updateUser(UserVO user);
 }

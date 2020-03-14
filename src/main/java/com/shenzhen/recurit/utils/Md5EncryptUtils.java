@@ -23,6 +23,7 @@ public class Md5EncryptUtils {
         String hesString = OrdinaryConstant.IS_BLACK;
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+            str=str+"recurit";
             messageDigest.update(str.getBytes());
             byte[] digest = messageDigest.digest();
             hesString=byteToString(digest);

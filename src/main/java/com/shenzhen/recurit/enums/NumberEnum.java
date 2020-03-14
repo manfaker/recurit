@@ -3,10 +3,17 @@ package com.shenzhen.recurit.enums;
 public enum NumberEnum {
 
     ZERO(0),
-    ONE(0),
-    TWO(0),
-    THREE(0),
-    FOUR(0);
+    ONE(1),
+    TWO(2),
+    THREE(3),
+    FOUR(4),
+    FIVE(5),
+    SIX(6),
+    TEN(10),
+    SIXTEEN(16),
+    NINETY_SEVEN(97),
+    SIXTY_FIVE(65),
+    TWENTY_SIX(26);
 
     private int value;
     private NumberEnum(int value){

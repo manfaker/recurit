@@ -4,8 +4,7 @@
 
         <resultMap id="baseResultMap" type="com.shenzhen.recurit.vo.UserVO">
             <id column="id" property="id"/>
-            <result column="user_name_zh" property="userNameZh"/>
-            <result column="user_name_en" property="userNameEn"/>
+            <result column="user_name" property="userName"/>
             <result column="real_name" property="realName"/>
             <result column="phone" property="phone"/>
             <result column="fixed_phone" property="fixedPhone"/>
@@ -13,7 +12,9 @@
             <result column="password" property="password"/>
             <result column="contactser" property="contactser"/>
             <result column="role_num" property="roleNum"/>
-            <result column="sex_num" property="sexNum"/>
+            <result column="role_content" property="roleContent"/>
+            <result column="role_name" property="roleName"/>
+            <result column="sex" property="sex"/>
             <result column="age" property="age"/>
             <result column="birth" property="birth"/>
             <result column="create_date" property="createDate"/>
@@ -21,31 +22,85 @@
         </resultMap>
 
         <sql id="baseResult">
-            user_name_zh,user_name_en,real_name,phone,fixed_phone,email,password,contactser,
-                role_num,sex_num,age,birth,create_date,update_date
+            user_name,real_name,phone,fixed_phone,email,password,contactser,
+                role_num,sex,age,birth,create_date,update_date
+        </sql>
+        <sql id="preBaseResult">
+            t.user_name,t.real_name,t.phone,t.fixed_phone,t.email,t.password,t.contactser,
+                t.role_num,t.sex,t.age,t.birth,t.create_date,t.update_date
         </sql>
 
         <select id="getUserByEmail" resultMap="baseResultMap">
-            select id,<include refid="baseResult"/> from tab_user where email = #{email} limit 1
+            select d.dict_name role_name,d.content role_content,t.id,<include refid="preBaseResult"/> from tab_user t
+                left join tab_dictionary d on t.role_num=d.dict_num where t.email = #{email} limit 1
         </select>
 
         <select id="getUserByPhone" resultMap="baseResultMap">
-            select id,<include refid="baseResult"/> from tab_user where phone = #{phone} limit 1
+            select d.dict_name role_name,d.content role_content,t.id,<include refid="preBaseResult"/> from tab_user t
+            left join tab_dictionary d on t.role_num=d.dict_num where t.phone = #{phone} limit 1
         </select>
 
         <select id="getUserByName" resultMap="baseResultMap">
-            select id,<include refid="baseResult"/> from tab_user where user_name_zh = #{userName} limit 1
+            select d.dict_name role_name,d.content role_content,t.id,<include refid="preBaseResult"/> from tab_user t
+            left join tab_dictionary d on t.role_num=d.dict_num where t.user_name = #{userName} limit 1
         </select>
 
         <insert id="addUser" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
             insert into tab_user(<include refid="baseResult"/>)
-                values(#{userNameZh},#{userNameEn},#{realName},#{phone},#{fixedPhone},#{email},#{password},#{contactser},
-                        #{roleNum},#{sexNum},#{age},#{birth},#{createDate},#{updateDate})
+                values(#{userName},#{realName},#{phone},#{fixedPhone},#{email},#{password},#{contactser},
+                        #{roleNum},#{sex},#{age},#{birth},#{createDate},#{updateDate})
         </insert>
 
         <select id="getUserByNameAndPass" resultMap="baseResultMap">
-            select id,<include refid="baseResult"/> from tab_user where user_name_zh = #{userName} and password = #{password} limit 1
+            select d.dict_name role_name,d.content role_content,t.id,<include refid="preBaseResult"/> from tab_user t
+            left join tab_dictionary d on t.role_num=d.dict_num where t.user_name = #{userName} and t.password = #{password} limit 1
         </select>
+
+        <select id="getUserById"  resultMap="baseResultMap">
+            select d.dict_name role_name,d.content role_content,t.id,<include refid="preBaseResult"/> from tab_user t
+            left join tab_dictionary d on t.role_num=d.dict_num where t.id = #{id}
+        </select>
+
+    <update id="updateUser">
+        update tab_user
+        <set>
+            <if test="userName != null and userName != '' ">
+                user_name = #{userName},
+            </if>
+            <if test="realName != null and realName != '' ">
+                real_name = #{realName},
+            </if>
+            <if test="phone != null and phone != '' ">
+                phone = #{phone},
+            </if>
+            <if test="fixedPhone != null and fixedPhone != '' ">
+                fixed_phone = #{fixedPhone},
+            </if>
+            <if test="email != null and email != '' ">
+                email = #{email},
+            </if>
+            <if test="password != null and password != '' ">
+                password = #{password},
+            </if>
+            <if test="contactser != null and contactser != '' ">
+                contactser = #{contactser},
+            </if>
+            <if test="roleNum != null and roleNum != '' ">
+                role_num = #{roleNum},
+            </if>
+            <if test="age != null and age != 0 ">
+                age = #{age},
+            </if>
+            <if test="sex != null and sex != '' ">
+                sex = #{sex},
+            </if>
+            <if test="birth != null">
+                birth = #{birth},
+            </if>
+                update_date = #{updateDate}
+        </set>
+            where id = #{id}
+    </update>
 
 
 </mapper>

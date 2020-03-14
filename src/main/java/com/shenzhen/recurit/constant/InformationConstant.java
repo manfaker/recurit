@@ -37,8 +37,10 @@ public interface InformationConstant {
     String KEY_DICTIONARY_TIME = "dictionary_time";
 
     //角色信息
+    String RECURIT ="recurit";
     String EMAIL = "email";
     String PHONE = "phone";
+    String USERCODE = "userCode";
     String USERNAME= "userName";
     String PASSWORD = "password";
     String ADMIN = "admin";           //超级管理员

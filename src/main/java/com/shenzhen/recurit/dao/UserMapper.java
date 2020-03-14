@@ -37,4 +37,18 @@ public interface UserMapper {
      * @return
      */
     UserVO getUserByNameAndPass(@Param("userName") String userName,@Param("password") String password);
+
+    /**
+     * 修改用户信息
+     * @param user
+     * @return
+     */
+    int updateUser(UserVO user);
+
+    /**
+     * 根据id查找用户信息
+     * @param id
+     * @return
+     */
+    UserVO getUserById(int id);
 }

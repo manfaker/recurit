@@ -128,6 +128,9 @@ public class RedisTempleUtils {
      */
     public boolean deleteValue(String key){
         try{
+            if(EmptyUtils.isEmpty(key)){
+                return false;
+            }
             stringRedisTemplate.delete(key);
             return true;
         }catch (Exception e) {
