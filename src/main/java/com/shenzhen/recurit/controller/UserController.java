@@ -49,6 +49,12 @@ public class UserController {
         return userService.addUser(userVO);
     }
 
+    @RequestMapping(value = "updatePassword",method = RequestMethod.POST)
+    public Object updatePassword(@RequestBody String jsonData){
+        return userService.updatePassword(jsonData);
+    }
+
+
 
 
     @RequestMapping(value = "loginUser",method = RequestMethod.POST)

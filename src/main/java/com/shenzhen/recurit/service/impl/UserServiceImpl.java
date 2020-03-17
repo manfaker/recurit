@@ -90,19 +90,19 @@ public class UserServiceImpl implements UserService {
             index++;
         }
         if(code.equals(redisTempleUtils.getValue(number,String.class))){
-            String category = OrdinaryConstant.IS_BLACK;
+//            String category = OrdinaryConstant.IS_BLACK;
             if(number.contains(OrdinaryConstant.SYMBOL_1)){
                 userVO.setEmail(number);
-                category=InformationConstant.EMAIL;
+//                category=InformationConstant.EMAIL;
             }else{
                 userVO.setPhone(number);
-                category=InformationConstant.PHONE;
+//                category=InformationConstant.PHONE;
             }
             ResultVO resultVO = addUser(userVO);
             if(resultVO.getCode()==200){
                 UserVO user = userMapper.getUserById(userVO.getId());
-                String entryName = saveUserToRedis(user, category);
-                return ResultVO.success("注册成功，已转登录",entryName);
+//                String entryName = saveUserToRedis(user, category);
+                return ResultVO.success("注册成功，已转登录页面"/*,entryName*/);
             }else{
                 return resultVO;
             }
@@ -137,11 +137,12 @@ public class UserServiceImpl implements UserService {
         if(EmptyUtils.isNotEmpty(email)){
             UserVO user = getUserByEmail(email);
             if(EmptyUtils.isNotEmpty(user)){
-                return ResultVO.error("手机号码已存在，请重新输入！");
+                return ResultVO.error("邮箱已存在，请重新输入！");
             }
         }
         userVO.setCreateDate(new Date());
         userVO.setUpdateDate(new Date());
+        userVO.setPassword(EncryptBase64Utils.encryptBASE64(userVO.getPassword()));
         userMapper.addUser(userVO);
         return ResultVO.success(userVO);
     }
@@ -190,6 +191,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserVO getUserInfoCookie(String userCode) {
         return redisTempleUtils.getValue(userCode,UserVO.class);
+    }
+
+
+    @Override
+    public ResultVO updatePassword(String jsonData) {
+        /*TODO*/
+        return ResultVO.success("修改成功");
     }
 
     @Override

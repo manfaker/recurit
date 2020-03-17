@@ -1,5 +1,6 @@
 package com.shenzhen.recurit.service;
 
+import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.UserVO;
 
 public interface UserService {
@@ -62,4 +63,10 @@ public interface UserService {
     UserVO getUserInfoCookie(String userCode);
 
     UserVO updateUser(UserVO user);
+
+    /**
+     * 修改密码
+     * @param  jsonData
+     */
+    ResultVO updatePassword(String jsonData);
 }
