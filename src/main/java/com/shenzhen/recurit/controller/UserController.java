@@ -72,6 +72,16 @@ public class UserController {
         return ResultVO.success(userService.getUserInfoCookie(userCode));
     }
 
+    @RequestMapping(value = "getUserInfoByNameOrNumber",method = RequestMethod.POST)
+    public Object getUserInfoByNameOrNumber(@RequestBody String  jsonData){
+        UserVO user = userService.getUserInfoByNameOrNumber(jsonData);
+        if(EmptyUtils.isNotEmpty(user)){
+            return ResultVO.error("用户已存在");
+        }else{
+            return ResultVO.success("验证通过");
+        }
+    }
+
     @RequestMapping(value = "updateUser",method = RequestMethod.PUT)
     public Object updateUser(@RequestBody String jsonData){
         UserVO user = JSONObject.parseObject(jsonData,UserVO.class);

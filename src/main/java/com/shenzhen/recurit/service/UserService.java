@@ -69,4 +69,6 @@ public interface UserService {
      * @param  jsonData
      */
     ResultVO updatePassword(String jsonData);
+
+    UserVO getUserInfoByNameOrNumber(String jsonData);
 }

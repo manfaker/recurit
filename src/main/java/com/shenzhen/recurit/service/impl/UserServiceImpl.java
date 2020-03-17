@@ -6,6 +6,7 @@ import com.shenzhen.recurit.constant.InformationConstant;
 import com.shenzhen.recurit.constant.OrdinaryConstant;
 import com.shenzhen.recurit.dao.UserMapper;
 import com.shenzhen.recurit.enums.NumberEnum;
+import com.shenzhen.recurit.enums.SymbolEnum;
 import com.shenzhen.recurit.service.UserService;
 import com.shenzhen.recurit.utils.*;
 import com.shenzhen.recurit.vo.ResultVO;
@@ -66,15 +67,6 @@ public class UserServiceImpl implements UserService {
         if(EmptyUtils.isEmpty(code)){
             return ResultVO.error("验证码不能为空！请输入验证码");
         }
-        UserVO currUser = null;
-        if(number.contains(OrdinaryConstant.SYMBOL_1)){
-            currUser = userMapper.getUserByEmail(number);
-        }else{
-            currUser = userMapper.getUserByPhone(number);
-        }
-        if(EmptyUtils.isNotEmpty(currUser)){
-            return loginUser(jsonData);
-        }
         UserVO userVO=new UserVO();
         if(jsonObject.containsKey(InformationConstant.ROLE_NUM)){
             userVO.setRoleNum(jsonObject.getString(InformationConstant.ROLE_NUM));
@@ -90,23 +82,17 @@ public class UserServiceImpl implements UserService {
             index++;
         }
         if(code.equals(redisTempleUtils.getValue(number,String.class))){
-//            String category = OrdinaryConstant.IS_BLACK;
             if(number.contains(OrdinaryConstant.SYMBOL_1)){
                 userVO.setEmail(number);
-//                category=InformationConstant.EMAIL;
             }else{
                 userVO.setPhone(number);
-//                category=InformationConstant.PHONE;
             }
             ResultVO resultVO = addUser(userVO);
             if(resultVO.getCode()==200){
-                UserVO user = userMapper.getUserById(userVO.getId());
-//                String entryName = saveUserToRedis(user, category);
-                return ResultVO.success("注册成功，已转登录页面"/*,entryName*/);
+                return ResultVO.success("注册成功");
             }else{
                 return resultVO;
             }
-
         }
         return ResultVO.error("验证码已过期，请重新发送验证码！");
     }
@@ -196,8 +182,33 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResultVO updatePassword(String jsonData) {
-        /*TODO*/ 
+        //TODO
+        //旧密码换新密码
+
+        //忘记密码
+            //1 通过手机或者邮箱查找用户信息
+            //2 通过手机或者邮箱查找code，并比较code
         return ResultVO.success("修改成功");
+    }
+
+    @Override
+    public UserVO getUserInfoByNameOrNumber(String jsonData) {
+        UserVO user;
+        JSONObject jsonObject = JSON.parseObject(jsonData);
+        if(jsonObject.containsKey(InformationConstant.USERNAME)){
+            String userName = jsonObject.getString(InformationConstant.USERNAME);
+            user = userMapper.getUserByName(userName);
+        }else if(jsonObject.containsKey(InformationConstant.NUMBER)){
+            String number = jsonObject.getString(InformationConstant.NUMBER);
+            if(number.contains(OrdinaryConstant.SYMBOL_1)){
+                user = userMapper.getUserByEmail(number);
+            }else{
+                user = userMapper.getUserByPhone(number);
+            }
+        }else{
+            user = null;
+        }
+        return user;
     }
 
     @Override
