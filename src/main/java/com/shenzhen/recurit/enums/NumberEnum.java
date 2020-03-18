@@ -11,6 +11,7 @@ public enum NumberEnum {
     SIX(6),
     TEN(10),
     SIXTEEN(16),
+    THIRTY_TWO(32),
     NINETY_SEVEN(97),
     SIXTY_FIVE(65),
     TWENTY_SIX(26);

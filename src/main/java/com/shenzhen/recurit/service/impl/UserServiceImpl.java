@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Object addByNumber(String jsonData) {
-        JSONObject jsonObject = JSONObject.parseObject(jsonData);
+        JSONObject jsonObject = JSON.parseObject(jsonData);
         String number = jsonObject.getString(InformationConstant.NUMBER);
         String code = jsonObject.getString(InformationConstant.CODE);
         if(EmptyUtils.isEmpty(number)){
@@ -67,20 +67,11 @@ public class UserServiceImpl implements UserService {
         if(EmptyUtils.isEmpty(code)){
             return ResultVO.error("验证码不能为空！请输入验证码");
         }
-        UserVO userVO=new UserVO();
-        if(jsonObject.containsKey(InformationConstant.ROLE_NUM)){
-            userVO.setRoleNum(jsonObject.getString(InformationConstant.ROLE_NUM));
+        UserVO userVO=JSONObject.parseObject(jsonData,UserVO.class);
+        if(EmptyUtils.isEmpty(userVO)){
+            userVO = new UserVO();
         }
-        int index = NumberEnum.ZERO.getValue();
-        while(index<NumberEnum.TEN.getValue()){
-            String userName = RandomUtils.randomStr(NumberEnum.SIXTEEN.getValue());
-            UserVO user = getUserByName(userName);
-            if(EmptyUtils.isEmpty(user)){
-                userVO.setUserName(userName);
-                break;
-            }
-            index++;
-        }
+        addUserName(userVO);
         if(code.equals(redisTempleUtils.getValue(number,String.class))){
             if(number.contains(OrdinaryConstant.SYMBOL_1)){
                 userVO.setEmail(number);
@@ -95,6 +86,46 @@ public class UserServiceImpl implements UserService {
             }
         }
         return ResultVO.error("验证码已过期，请重新发送验证码！");
+    }
+
+    /**
+     * 没有登录名自动生成登录名
+     * @param userVO
+     */
+    private void addUserName(UserVO userVO){
+        if(EmptyUtils.isEmpty(userVO)){
+            userVO = new UserVO();
+        }
+        if(EmptyUtils.isEmpty(userVO.getUserName())){
+            int index = NumberEnum.ZERO.getValue();
+            while(index<NumberEnum.TEN.getValue()){
+                String userName = RandomUtils.randomStr(NumberEnum.SIXTEEN.getValue());
+                UserVO user = getUserByName(userName);
+                if(EmptyUtils.isEmpty(user)){
+                    userVO.setUserName(userName);
+                    break;
+                }
+                index++;
+            }
+        }
+    }
+
+    public static boolean isMobileNO(String mobiles){
+        Pattern p = Pattern.compile("^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$");
+        Matcher m = p.matcher(mobiles);
+        return m.matches();
+    }
+
+    public static boolean isEmailNO(String email){
+        Pattern p = Pattern.compile("^([a-z0-9A-Z]+[-|\\\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\\\.)+[a-zA-Z]{2,}$");
+        Matcher m = p.matcher(email);
+        return m.matches();
+    }
+
+    public static boolean isUserNameNO(String userName){
+        Pattern p = Pattern.compile("^[a-zA-Z0-9_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]{2,18}$");
+        Matcher m = p.matcher(userName);
+        return m.matches();
     }
 
 
@@ -114,6 +145,9 @@ public class UserServiceImpl implements UserService {
         }
         String phone = userVO.getPhone();
         if(EmptyUtils.isNotEmpty(phone)){
+            if(!isMobileNO(phone)){
+                return ResultVO.error("手机号码不存在，请重新输入！");
+            }
             UserVO user = getUserByPhone(phone);
             if(EmptyUtils.isNotEmpty(user)){
                 return ResultVO.error("手机号码已存在，请重新输入！");
@@ -121,6 +155,12 @@ public class UserServiceImpl implements UserService {
         }
         String email = userVO.getEmail();
         if(EmptyUtils.isNotEmpty(email)){
+            if(email.length()>NumberEnum.THIRTY_TWO.getValue()){
+                return ResultVO.error("邮箱长度不能超过32个字符！");
+            }
+            if(!isEmailNO(email)){
+                return ResultVO.error("邮箱格式有误，请重新输入");
+            }
             UserVO user = getUserByEmail(email);
             if(EmptyUtils.isNotEmpty(user)){
                 return ResultVO.error("邮箱已存在，请重新输入！");
