@@ -22,6 +22,10 @@ public class UserVO extends BaseVO{
     private String sex;  //性别
     private int age; //年龄
     private Date birth; //生日
+    private String nickName; //昵称
+    private String entryCode;//动态识别码
+    private int status;//动态识别码
+
 
 
 }

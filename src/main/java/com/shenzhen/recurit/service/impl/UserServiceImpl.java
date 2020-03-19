@@ -117,7 +117,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public static boolean isEmailNO(String email){
-        Pattern p = Pattern.compile("^([a-z0-9A-Z]+[-|\\\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\\\.)+[a-zA-Z]{2,}$");
+        Pattern p = Pattern.compile("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$");
         Matcher m = p.matcher(email);
         return m.matches();
     }
@@ -222,13 +222,70 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResultVO updatePassword(String jsonData) {
-        //TODO
-        //旧密码换新密码
-
-        //忘记密码
+        UserVO user;
+        JSONObject jsonObject = JSON.parseObject(jsonData);
+        String newPassword = jsonObject.getString(InformationConstant.NEW_PASSWORD);
+        if(EmptyUtils.isEmpty(newPassword)){
+            return ResultVO.error("新密码不能为空");
+        }
+        if(jsonObject.containsKey(InformationConstant.USERNAME)&&jsonObject.containsKey(InformationConstant.PASSWORD)){
+            String userName = jsonObject.getString(InformationConstant.USERNAME);
+            String password = jsonObject.getString(InformationConstant.PASSWORD);
+            if(EmptyUtils.isEmpty(userName)){
+                return ResultVO.error("用户名不能为空");
+            }
+            if(EmptyUtils.isEmpty(password)){
+                return ResultVO.error("旧密码不能为空");
+            }
+            user = userMapper.getUserByNameAndPass(userName, EncryptBase64Utils.encryptBASE64(password));
+            if(EmptyUtils.isEmpty(user)){
+                return ResultVO.error("用户名或者密码有误，请重新填写！");
+            }
+        }else{
+            String number = jsonObject.getString(InformationConstant.NUMBER);
+            String code = jsonObject.getString(InformationConstant.CODE);
+            if(EmptyUtils.isEmpty(number)){
+                return ResultVO.error("登录号码不能为空！");
+            }
+            //忘记密码
             //1 通过手机或者邮箱查找用户信息
             //2 通过手机或者邮箱查找code，并比较code
-        return ResultVO.success("修改成功");
+            if(number.contains(OrdinaryConstant.SYMBOL_1)){
+                if(number.length()>NumberEnum.THIRTY_TWO.getValue()){
+                    return ResultVO.error("邮箱长度不能超过32个字符！");
+                }
+                if(!isEmailNO(number)){
+                    return ResultVO.error("邮箱格式有误，请重新输入");
+                }
+                user = userMapper.getUserByEmail(number);
+                if(EmptyUtils.isEmpty(user)){
+                    return ResultVO.error("邮箱不存在，请先注册！");
+                }
+            }else{
+                if(!isMobileNO(number)){
+                    return ResultVO.error("手机号码填写有误，请重新输入！");
+                }
+                user = userMapper.getUserByPhone(number);
+                if(EmptyUtils.isEmpty(user)){
+                    return ResultVO.error("该手机号码不存在，请先注册！");
+                }
+            }
+            if(!code.equals(redisTempleUtils.getValue(number,String.class))){
+                return ResultVO.error("验证码有误！");
+            }
+        }
+        UserVO userVO = new UserVO();
+        userVO.setId(user.getId());
+        userVO.setPassword(EncryptBase64Utils.encryptBASE64(newPassword));
+        //旧密码换新密码
+        userVO.setUpdateDate(new Date());
+        int result = userMapper.updateUser(user);
+        if(result>NumberEnum.ZERO.getValue()){
+            return ResultVO.success(userVO);
+        }else{
+            return ResultVO.error("修改失败");
+        }
+
     }
 
     @Override
@@ -249,6 +306,20 @@ public class UserServiceImpl implements UserService {
             user = null;
         }
         return user;
+    }
+
+    @Override
+    public ResultVO deleteUser(int userId) {
+        UserVO userVO = new UserVO();
+        UserVO currUser = userMapper.getUserById(userId);
+        if(EmptyUtils.isEmpty(currUser)){
+            return ResultVO.error("当前用户不存在，请勿重复删除");
+        }
+        userVO.setId(userId);
+        userVO.setStatus(NumberEnum.TWO.getValue());
+        userVO.setUpdateDate(new Date());
+        UserVO user = updateUser(userVO);
+        return ResultVO.success("删除成功");
     }
 
     @Override
@@ -309,11 +380,12 @@ public class UserServiceImpl implements UserService {
                     return ResultVO.error("验证码不正确！");
                 }
             }else{
-                userVO = null;
+                userVO = new UserVO();
             }
         }
         entryName = saveUserToRedis(userVO,category);
-        return ResultVO.success("登录成功",entryName);
+        userVO.setEntryCode(entryName);
+        return ResultVO.success("登录成功",userVO);
     }
 
     private String saveUserToRedis(UserVO userVO,String category){

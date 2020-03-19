@@ -44,6 +44,7 @@ public interface InformationConstant {
     String USERCODE = "userCode";
     String USERNAME= "userName";
     String PASSWORD = "password";
+    String NEW_PASSWORD = "newPassword";
     String ADMIN = "admin";           //超级管理员
     String ENTERPRISE = "enterprise"; //企业用户
     String JOBSEEKER = "jobseeker";   //普通用户

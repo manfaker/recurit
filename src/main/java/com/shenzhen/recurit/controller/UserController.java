@@ -3,6 +3,7 @@ package com.shenzhen.recurit.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.shenzhen.recurit.constant.InformationConstant;
+import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.enums.ReturnEnum;
 import com.shenzhen.recurit.service.UserService;
 import com.shenzhen.recurit.utils.EmptyUtils;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 @RestController
 @RequestMapping(value = "user")
@@ -49,7 +51,7 @@ public class UserController {
         return userService.addUser(userVO);
     }
 
-    @RequestMapping(value = "updatePassword",method = RequestMethod.POST)
+    @RequestMapping(value = "updatePassword",method = RequestMethod.PUT)
     public Object updatePassword(@RequestBody String jsonData){
         return userService.updatePassword(jsonData);
     }
@@ -60,6 +62,11 @@ public class UserController {
     @RequestMapping(value = "loginUser",method = RequestMethod.POST)
     public Object loginUser(@RequestBody String jsonData){
         return userService.loginUser(jsonData);
+    }
+
+    @RequestMapping(value = "deleteUser",method = RequestMethod.DELETE)
+    public Object deleteUser(int userId){
+        return userService.deleteUser(userId);
     }
 
     @RequestMapping(value = "exitUser",method = RequestMethod.POST)

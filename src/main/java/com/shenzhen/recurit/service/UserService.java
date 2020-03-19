@@ -71,4 +71,11 @@ public interface UserService {
     ResultVO updatePassword(String jsonData);
 
     UserVO getUserInfoByNameOrNumber(String jsonData);
+
+    /**
+     * 删除用户
+     * @param userId 用户id
+     * @return
+     */
+    ResultVO deleteUser(int userId);
 }
