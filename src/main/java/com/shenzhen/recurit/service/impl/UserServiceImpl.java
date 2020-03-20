@@ -351,9 +351,13 @@ public class UserServiceImpl implements UserService {
             if(EmptyUtils.isEmpty(password)){
                 return ResultVO.error("密码不能为空！");
             }
+            UserVO currUser = userMapper.getUserByName(userName);
+            if(EmptyUtils.isEmpty(currUser)){
+                return ResultVO.error("用户不存在，请先注册");
+            }
             userVO = userMapper.getUserByNameAndPass(userName,EncryptBase64Utils.encryptBASE64(password));
             if(EmptyUtils.isEmpty(userVO)||EmptyUtils.isEmpty(userVO.getUserName())){
-                return ResultVO.error("用户名或者密码错误！");
+                return ResultVO.error("密码错误！");
             }
             category = InformationConstant.USERNAME;
         }else{
