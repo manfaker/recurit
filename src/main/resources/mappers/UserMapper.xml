@@ -55,7 +55,8 @@
 
         <select id="getUserByNameAndPass" resultMap="baseResultMap">
             select d.dict_name role_name,d.content role_content,t.id,<include refid="preBaseResult"/> from tab_user t
-            left join tab_dictionary d on t.role_num=d.dict_num where t.user_name = #{userName} and t.password = #{password} limit 1
+            left join tab_dictionary d on t.role_num=d.dict_num where t.user_name = #{userName} and t.password = #{password}
+             and t.status = 1 limit 1
         </select>
 
         <select id="getUserById"  resultMap="baseResultMap">

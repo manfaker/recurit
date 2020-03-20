@@ -370,11 +370,11 @@ public class UserServiceImpl implements UserService {
                     userVO = userMapper.getUserByPhone(number);
                     category=InformationConstant.PHONE;
                 }
-                if(EmptyUtils.isEmpty(userVO)||EmptyUtils.isEmpty(userVO.getUserName())){
-                    return ResultVO.error("用户不存在，请先注册！");
-                }
                 if(EmptyUtils.isEmpty(code)){
                     return ResultVO.error("验证码不能为空！");
+                }
+                if(EmptyUtils.isEmpty(userVO)){
+                    return ResultVO.error("用户不存在，请先注册！");
                 }
                 if(!code.equals(redisTempleUtils.getValue(number,String.class))){
                     return ResultVO.error("验证码不正确！");
