@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzhen.recurit.dao.LabelMapper">
+
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.pojo.LabelPojo">
+            <id column="id" property="id"/>
+            <result column="label_name" property="labelName"/>
+            <result column="category" property="category"/>
+            <result column="relation_id" property="relationId"/>
+            <result column="create_date" property="createDate"/>
+            <result column="update_date" property="updateDate"/>
+            <result column="creater" property="creater"/>
+            <result column="updater" property="updater"/>
+        </resultMap>
+
+        <sql id="baseResult">
+            label_name,category,relation_id,create_date,update_date,creater,updater
+        </sql>
+
+        <insert id="saveBatchLabel" keyColumn="id" useGeneratedKeys="true" keyProperty="id">
+            insert into tab_label(<include refid="baseResult"/>)
+                values
+            <foreach collection="listLabel" item="label" separator=",">
+                (#{label.labelName},#{label.category},#{label.relationId},#{label.createDate},#{label.updateDate},#{label.creater},#{label.updater})
+            </foreach>
+        </insert>
+
+
+</mapper>

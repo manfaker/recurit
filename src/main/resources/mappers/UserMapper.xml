@@ -103,7 +103,7 @@
             <if test="nickName != null and nickName != ''">
                 nick_name = #{nickName},
             </if>
-            <if test="status != null and nickName != 0">
+            <if test="status != null and status != 0">
                 status = #{status},
             </if>
                 update_date = #{updateDate}
