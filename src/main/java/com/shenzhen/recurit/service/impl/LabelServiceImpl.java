@@ -1,14 +1,15 @@
 package com.shenzhen.recurit.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.shenzhen.recurit.constant.OrdinaryConstant;
 import com.shenzhen.recurit.dao.LabelMapper;
 import com.shenzhen.recurit.enums.NumberEnum;
-import com.shenzhen.recurit.enums.SymbolEnum;
 import com.shenzhen.recurit.service.LabelService;
+import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.utils.RedisTempleUtils;
 import com.shenzhen.recurit.vo.LabelVO;
-import com.shenzhen.recurit.vo.ResultVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -32,8 +33,13 @@ public class LabelServiceImpl implements LabelService {
             }
         }
         if(flag){
-            String key = listLabel.get(NumberEnum.ZERO.getValue()).getCategory()+ OrdinaryConstant.SYMBOL_2+listLabel.get(NumberEnum.ZERO.getValue()).getRelationId();
-            redisTempleUtils.setValue(key, JSON.toJSONString(listLabel));
+            JSONObject jsonObject = new JSONObject();
+            String redisKey = listLabel.get(NumberEnum.ZERO.getValue()).getCategory()+listLabel.get(NumberEnum.ZERO.getValue()).getRelationId();
+            for(LabelVO label : listLabel){
+                String key  = label.getId()+OrdinaryConstant.IS_BLACK;
+                jsonObject.put(key,JSON.toJSONString(label));
+            }
+            redisTempleUtils.setValue(redisKey, jsonObject);
             return listLabel;
         }
         return null;
@@ -41,7 +47,20 @@ public class LabelServiceImpl implements LabelService {
 
     @Override
     public LabelVO saveLabel(LabelVO labelVO) {
-        return null;
+        labelMapper.saveLabel(labelVO);
+        String redisKey = labelVO.getCategory()+ OrdinaryConstant.SYMBOL_2+labelVO.getRelationId();
+        if(EmptyUtils.isNotEmpty(labelVO)&&labelVO.getId()>NumberEnum.ZERO.getValue()){
+            String value = redisTempleUtils.getValue(redisKey, String.class);
+            JSONObject jsonObject;
+            if(EmptyUtils.isNotEmpty(value)){
+                jsonObject = JSON.parseObject(value, JSONObject.class);
+            }else{
+                jsonObject = new JSONObject();
+            }
+            jsonObject.put(labelVO.getId()+OrdinaryConstant.IS_BLACK,JSON.toJSONString(labelVO));
+            redisTempleUtils.setValue(redisKey,jsonObject);
+        }
+        return labelVO;
     }
 
     @Override

@@ -15,6 +15,7 @@ import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -166,11 +167,30 @@ public class UserServiceImpl implements UserService {
                 return ResultVO.error("邮箱已存在，请重新输入！");
             }
         }
+        if(EmptyUtils.isNotEmpty(userVO.getBirth())){
+            userVO.setAge(getCalculationAge(userVO.getBirth()));
+        }
         userVO.setCreateDate(new Date());
         userVO.setUpdateDate(new Date());
         userVO.setPassword(EncryptBase64Utils.encryptBASE64(userVO.getPassword()));
         userMapper.addUser(userVO);
         return ResultVO.success(userVO);
+    }
+
+    private int getCalculationAge(Date birth){
+        int age = NumberEnum.ZERO.getValue();
+        Calendar birthCalendar = Calendar.getInstance();
+        birthCalendar.setTime(birth);
+        Calendar newCalendar = Calendar.getInstance();
+        age = newCalendar.get(Calendar.YEAR)-birthCalendar.get(Calendar.YEAR);
+        if(newCalendar.get(Calendar.MONTH)>birthCalendar.get(Calendar.MONTH)){
+            age++;
+        }else if (newCalendar.get(Calendar.MONTH)==birthCalendar.get(Calendar.MONTH)
+                    &&newCalendar.get(Calendar.DAY_OF_MONTH)>birthCalendar.get(Calendar.DAY_OF_MONTH)){
+            age++;
+        }else{
+        }
+        return age;
     }
 
     @Override
@@ -324,6 +344,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserVO updateUser(UserVO user) {
+        if(EmptyUtils.isNotEmpty(user.getBirth())){
+            user.setAge(getCalculationAge(user.getBirth()));
+        }
         user.setUpdateDate(new Date());
         int result = userMapper.updateUser(user);
         UserVO userVO;

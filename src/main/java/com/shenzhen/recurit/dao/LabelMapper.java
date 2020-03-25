@@ -11,5 +11,11 @@ public interface LabelMapper {
      * @param listLabel
      * @return
      */
-    List<LabelPojo> saveBatchLabel(@Param("listLabel") List<LabelVO> listLabel);
+    List<LabelVO> saveBatchLabel(@Param("listLabel") List<LabelVO> listLabel);
+
+    /**
+     * 单个新增
+     * @param labelVO
+     */
+    void saveLabel(LabelVO labelVO);
 }

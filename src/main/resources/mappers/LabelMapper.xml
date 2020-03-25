@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.shenzhen.recurit.dao.LabelMapper">
 
-        <resultMap id="baseResultMap" type="com.shenzhen.recurit.pojo.LabelPojo">
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.vo.LabelVO">
             <id column="id" property="id"/>
             <result column="label_name" property="labelName"/>
             <result column="category" property="category"/>
@@ -23,6 +23,11 @@
             <foreach collection="listLabel" item="label" separator=",">
                 (#{label.labelName},#{label.category},#{label.relationId},#{label.createDate},#{label.updateDate},#{label.creater},#{label.updater})
             </foreach>
+        </insert>
+
+        <insert id="saveLabel" keyProperty="id" useGeneratedKeys="true" keyColumn="id">
+            insert into tab_label(<include refid="baseResult"/>)
+            values (#{labelName},#{category},#{relationId},#{createDate},#{updateDate},#{creater},#{updater})
         </insert>
 
 
