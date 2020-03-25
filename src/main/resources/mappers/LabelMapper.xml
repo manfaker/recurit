@@ -30,5 +30,38 @@
             values (#{labelName},#{category},#{relationId},#{createDate},#{updateDate},#{creater},#{updater})
         </insert>
 
+        <select id="LabelVO" resultMap="baseResultMap">
+            select  id,<include refid="baseResult"/> from tab_label where id = #{id}
+        </select>
+
+        <select id="getLabelByCategory " resultMap="baseResultMap">
+            select  id,<include refid="baseResult"/> from tab_label where category = #{category} and relation_id= #{relationId}
+        </select>
+
+        <delete id="deleteLabelById">
+            delete from tab_label where id = #{id}
+        </delete>
+
+        <delete id="deleteLabelByCategory">
+            delete from tab_label where category = #{category} and relation_id= #{relationId}
+        </delete>
+
+        <update id="updateLabel">
+            update tab_label
+            <set>
+                <if test="labelName != null and labelName != ''">
+                    label_name = #{labelName},
+                </if>
+                <if test="category != null and category != ''">
+                    category = #{category},
+                </if>
+                <if test="relationId != null and relationId != ''">
+                    relation_id = #{relationId},
+                </if>
+                updater = #{updater},
+                update_date = #{updatDate}
+            </set>
+        </update>
+
 
 </mapper>

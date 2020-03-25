@@ -18,4 +18,40 @@ public interface LabelMapper {
      * @param labelVO
      */
     void saveLabel(LabelVO labelVO);
+
+    /**
+     * 根据id查找当前标签
+     * @param id
+     * @return
+     */
+    LabelVO getLabelById(int id);
+
+    /**
+     * 根据类型和关系id查询标签
+     * @param category
+     * @param relationId
+     */
+    void getLabelByCategory(@Param("category") String category,@Param("relationId") int relationId);
+
+    /**
+     * 根据id删除标签
+     * @param id
+     * @return
+     */
+    int deleteLabelById(int id);
+
+    /**
+     * 根据类型和关系id删除标签
+     * @param category
+     * @param relationId
+     * @return
+     */
+    int deleteLabelByCategory(@Param("category") String category,@Param("relationId") int relationId);
+
+    /**
+     * 根据id修改标签信息
+     * @param labelVO
+     * @return
+     */
+    int updateLabel(LabelVO labelVO);
 }
