@@ -6,14 +6,14 @@ import lombok.Data;
 public class PositionVO extends BaseVO{
 
     private int id;
-    private String positionName;
-    private int salary;
+    private String  positionName;
+    private String  positionCity;
+    private String salary;
     private String academicDegree;
-    private int experience;
-    private String companyId;
-    private int level;
-    private int yealSal;
-    private int smallint;
+    private String experience;
+    private String companyCode;
+    private int sexReq;
     private int status;
+    private String labels;
 
 }

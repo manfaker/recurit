@@ -26,10 +26,19 @@ public class LabelServiceImpl implements LabelService {
     private RedisTempleUtils redisTempleUtils;
     @Override
     public List<LabelVO> saveBatchLabel(List<LabelVO> listLabel) {
+        if(EmptyUtils.isEmpty(listLabel)||listLabel.isEmpty()){
+            return null;
+        }
+        String category = listLabel.get(NumberEnum.ZERO.getValue()).getCategory();
+        int relationId = listLabel.get(NumberEnum.ZERO.getValue()).getRelationId();
         setAllOperaterAndDate(listLabel);
         labelMapper.saveBatchLabel(listLabel);
+        List<LabelVO> labels = labelMapper.getLabelByCategory(category, relationId);
+        if(EmptyUtils.isEmpty(labels)||labels.isEmpty()){
+            return null;
+        }
         boolean flag = false;
-        for(LabelVO label :listLabel){
+        for(LabelVO label :labels){
             if(label.getId()> NumberEnum.ZERO.getValue()){
                 flag = true;
                 break;
@@ -37,13 +46,13 @@ public class LabelServiceImpl implements LabelService {
         }
         if(flag){
             JSONObject jsonObject = new JSONObject();
-            String redisKey = listLabel.get(NumberEnum.ZERO.getValue()).getCategory()+listLabel.get(NumberEnum.ZERO.getValue()).getRelationId();
-            for(LabelVO label : listLabel){
+            String redisKey = labels.get(NumberEnum.ZERO.getValue()).getCategory()+labels.get(NumberEnum.ZERO.getValue()).getRelationId();
+            for(LabelVO label : labels){
                 String key  = label.getId()+OrdinaryConstant.IS_BLACK;
                 jsonObject.put(key,JSON.toJSONString(label));
             }
             redisTempleUtils.setValue(redisKey, jsonObject);
-            return listLabel;
+            return labels;
         }
         return null;
     }
@@ -169,7 +178,7 @@ public class LabelServiceImpl implements LabelService {
             }
         }
         if(listLabelVO.isEmpty()){
-            labelMapper.getLabelByCategory(category,relationId);
+            listLabelVO = labelMapper.getLabelByCategory(category,relationId);
         }
         return listLabelVO;
     }

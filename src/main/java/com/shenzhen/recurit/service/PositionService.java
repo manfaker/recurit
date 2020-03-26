@@ -21,7 +21,7 @@ public interface PositionService {
      * 保存职位信息
      * @param position
      */
-    void savePosition(PositionVO position);
+    PositionVO savePosition(PositionVO position);
 
     /**
      * 根据Id查找公司信息

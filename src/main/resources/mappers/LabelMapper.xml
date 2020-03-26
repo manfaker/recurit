@@ -17,7 +17,7 @@
             label_name,category,relation_id,create_date,update_date,creater,updater
         </sql>
 
-        <insert id="saveBatchLabel" keyColumn="id" useGeneratedKeys="true" keyProperty="id">
+        <insert id="saveBatchLabel">
             insert into tab_label(<include refid="baseResult"/>)
                 values
             <foreach collection="listLabel" item="label" separator=",">
@@ -34,8 +34,9 @@
             select  id,<include refid="baseResult"/> from tab_label where id = #{id}
         </select>
 
-        <select id="getLabelByCategory " resultMap="baseResultMap">
-            select  id,<include refid="baseResult"/> from tab_label where category = #{category} and relation_id= #{relationId}
+        <select id="getLabelByCategory" resultMap="baseResultMap">
+            select  id,<include refid="baseResult"/> from tab_label
+            where category = #{category} and relation_id= #{relationId}
         </select>
 
         <delete id="deleteLabelById">
