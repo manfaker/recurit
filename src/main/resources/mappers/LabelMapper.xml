@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzhen.recurit.dao.LabelMapper">
+
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.vo.LabelVO">
+            <id column="id" property="id"/>
+            <result column="label_name" property="labelName"/>
+            <result column="category" property="category"/>
+            <result column="relation_id" property="relationId"/>
+            <result column="create_date" property="createDate"/>
+            <result column="update_date" property="updateDate"/>
+            <result column="creater" property="creater"/>
+            <result column="updater" property="updater"/>
+        </resultMap>
+
+        <sql id="baseResult">
+            label_name,category,relation_id,create_date,update_date,creater,updater
+        </sql>
+
+        <insert id="saveBatchLabel" keyColumn="id" useGeneratedKeys="true" keyProperty="id">
+            insert into tab_label(<include refid="baseResult"/>)
+                values
+            <foreach collection="listLabel" item="label" separator=",">
+                (#{label.labelName},#{label.category},#{label.relationId},#{label.createDate},#{label.updateDate},#{label.creater},#{label.updater})
+            </foreach>
+        </insert>
+
+        <insert id="saveLabel" keyProperty="id" useGeneratedKeys="true" keyColumn="id">
+            insert into tab_label(<include refid="baseResult"/>)
+            values (#{labelName},#{category},#{relationId},#{createDate},#{updateDate},#{creater},#{updater})
+        </insert>
+
+        <select id="LabelVO" resultMap="baseResultMap">
+            select  id,<include refid="baseResult"/> from tab_label where id = #{id}
+        </select>
+
+        <select id="getLabelByCategory " resultMap="baseResultMap">
+            select  id,<include refid="baseResult"/> from tab_label where category = #{category} and relation_id= #{relationId}
+        </select>
+
+        <delete id="deleteLabelById">
+            delete from tab_label where id = #{id}
+        </delete>
+
+        <delete id="deleteLabelByCategory">
+            delete from tab_label where category = #{category} and relation_id= #{relationId}
+        </delete>
+
+        <update id="updateLabel">
+            update tab_label
+            <set>
+                <if test="labelName != null and labelName != ''">
+                    label_name = #{labelName},
+                </if>
+                <if test="category != null and category != ''">
+                    category = #{category},
+                </if>
+                <if test="relationId != null and relationId != ''">
+                    relation_id = #{relationId},
+                </if>
+                updater = #{updater},
+                update_date = #{updatDate}
+            </set>
+        </update>
+
+
+</mapper>

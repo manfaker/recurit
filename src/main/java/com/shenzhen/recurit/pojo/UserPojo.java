@@ -1,12 +1,12 @@
-package com.shenzhen.recurit.vo;
+package com.shenzhen.recurit.pojo;
 
-import com.shenzhen.recurit.utils.EncryptBase64Utils;
+import com.shenzhen.recurit.vo.BaseVO;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
-public class UserVO extends BaseVO{
+public class UserPojo extends BaseVO{
     private int id;
     private String userName; //用户登录名
     private String realName;//真实姓名

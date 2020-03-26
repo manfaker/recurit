@@ -75,6 +75,7 @@ public class SchedulerTimer {
                         dictJson = new JSONObject();
                     }
                     dictJson.put(item.getDictNum(),JSON.toJSONString(item));
+                    redisTempleUtils.setValue(category, dictJson);
                 }
             });
         }

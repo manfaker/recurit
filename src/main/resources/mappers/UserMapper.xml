@@ -19,46 +19,49 @@
             <result column="birth" property="birth"/>
             <result column="create_date" property="createDate"/>
             <result column="update_date" property="updateDate"/>
+            <result column="nick_name" property="nickName"/>
+            <result column="status" property="status"/>
         </resultMap>
 
         <sql id="baseResult">
             user_name,real_name,phone,fixed_phone,email,password,contactser,
-                role_num,sex,age,birth,create_date,update_date
+                role_num,sex,age,birth,create_date,update_date,nick_name
         </sql>
         <sql id="preBaseResult">
             t.user_name,t.real_name,t.phone,t.fixed_phone,t.email,t.password,t.contactser,
-                t.role_num,t.sex,t.age,t.birth,t.create_date,t.update_date
+                t.role_num,t.sex,t.age,t.birth,t.create_date,t.update_date,t.nick_name,t.status
         </sql>
 
         <select id="getUserByEmail" resultMap="baseResultMap">
             select d.dict_name role_name,d.content role_content,t.id,<include refid="preBaseResult"/> from tab_user t
-                left join tab_dictionary d on t.role_num=d.dict_num where t.email = #{email} limit 1
+                left join tab_dictionary d on t.role_num=d.dict_num where t.email = #{email} and t.status = 1 limit 1
         </select>
 
         <select id="getUserByPhone" resultMap="baseResultMap">
             select d.dict_name role_name,d.content role_content,t.id,<include refid="preBaseResult"/> from tab_user t
-            left join tab_dictionary d on t.role_num=d.dict_num where t.phone = #{phone} limit 1
+            left join tab_dictionary d on t.role_num=d.dict_num where t.phone = #{phone} and t.status = 1 limit 1
         </select>
 
         <select id="getUserByName" resultMap="baseResultMap">
             select d.dict_name role_name,d.content role_content,t.id,<include refid="preBaseResult"/> from tab_user t
-            left join tab_dictionary d on t.role_num=d.dict_num where t.user_name = #{userName} limit 1
+            left join tab_dictionary d on t.role_num=d.dict_num where t.user_name = #{userName} and t.status = 1 limit 1
         </select>
 
         <insert id="addUser" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
             insert into tab_user(<include refid="baseResult"/>)
                 values(#{userName},#{realName},#{phone},#{fixedPhone},#{email},#{password},#{contactser},
-                        #{roleNum},#{sex},#{age},#{birth},#{createDate},#{updateDate})
+                        #{roleNum},#{sex},#{age},#{birth},#{createDate},#{updateDate},#{nickName})
         </insert>
 
         <select id="getUserByNameAndPass" resultMap="baseResultMap">
             select d.dict_name role_name,d.content role_content,t.id,<include refid="preBaseResult"/> from tab_user t
-            left join tab_dictionary d on t.role_num=d.dict_num where t.user_name = #{userName} and t.password = #{password} limit 1
+            left join tab_dictionary d on t.role_num=d.dict_num where t.user_name = #{userName} and t.password = #{password}
+             and t.status = 1 limit 1
         </select>
 
         <select id="getUserById"  resultMap="baseResultMap">
             select d.dict_name role_name,d.content role_content,t.id,<include refid="preBaseResult"/> from tab_user t
-            left join tab_dictionary d on t.role_num=d.dict_num where t.id = #{id}
+            left join tab_dictionary d on t.role_num=d.dict_num where t.id = #{id} and t.status = 1
         </select>
 
     <update id="updateUser">
@@ -96,6 +99,12 @@
             </if>
             <if test="birth != null">
                 birth = #{birth},
+            </if>
+            <if test="nickName != null and nickName != ''">
+                nick_name = #{nickName},
+            </if>
+            <if test="status != null and status != 0">
+                status = #{status},
             </if>
                 update_date = #{updateDate}
         </set>
