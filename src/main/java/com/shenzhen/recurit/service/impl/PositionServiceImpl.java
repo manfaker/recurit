@@ -4,9 +4,12 @@ import com.shenzhen.recurit.constant.InformationConstant;
 import com.shenzhen.recurit.constant.OrdinaryConstant;
 import com.shenzhen.recurit.dao.PositionMapper;
 import com.shenzhen.recurit.enums.NumberEnum;
+import com.shenzhen.recurit.pojo.PositionPojo;
+import com.shenzhen.recurit.service.DictionaryService;
 import com.shenzhen.recurit.service.LabelService;
 import com.shenzhen.recurit.service.PositionService;
 import com.shenzhen.recurit.utils.EmptyUtils;
+import com.shenzhen.recurit.utils.RedisTempleUtils;
 import com.shenzhen.recurit.vo.LabelVO;
 import com.shenzhen.recurit.vo.PositionVO;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,10 @@ public class PositionServiceImpl implements PositionService {
     private PositionMapper positionMapper;
     @Resource
     private LabelService labelService;
+    @Resource
+    private RedisTempleUtils redisTempleUtils;
+    @Resource
+    private DictionaryService dictionaryService;
 
     @Override
     public List<PositionVO> getAllPosition() {
@@ -70,12 +77,40 @@ public class PositionServiceImpl implements PositionService {
     }
 
     @Override
-    public List<PositionVO> getByCompanyId(String companyId) {
-        return null;
+    public List<PositionPojo> getByCompanyCode(String companyCode) {
+        List<PositionPojo> listPosition = positionMapper.getByCompanyCode(companyCode);
+        if(EmptyUtils.isNotEmpty(listPosition)&&!listPosition.isEmpty()){
+            listPosition.forEach(position->{
+                setInfoToPosition(position);
+            });
+        }
+        return listPosition;
+    }
+
+    private void setInfoToPosition(PositionPojo position){
+        if(EmptyUtils.isNotEmpty(position)){
+            if(EmptyUtils.isNotEmpty(position.getSalary())){
+                position.setSalaryDict(dictionaryService.getSignleByDictNumber(InformationConstant.SALARY,position.getSalary()));
+            }
+            if(EmptyUtils.isNotEmpty(position.getAcademicDegree())){
+                position.setAcademicDegreeDict(dictionaryService.getSignleByDictNumber(InformationConstant.EDUCATION,position.getAcademicDegree()));
+            }
+            if(EmptyUtils.isNotEmpty(position.getExperience())){
+                position.setExperienceDict(dictionaryService.getSignleByDictNumber(InformationConstant.EXPERIENCE,position.getExperience()));
+            }
+            position.setListLabel(labelService.queryByRelationId(InformationConstant.COMPANY,position.getId()));
+        }
     }
 
     @Override
     public int updatePosition(PositionVO position){
        return 0;
+    }
+
+    @Override
+    public PositionPojo getByPositionId(int id) {
+        PositionPojo position = positionMapper.getByPositionId(id);
+        setInfoToPosition(position);
+        return position;
     }
 }

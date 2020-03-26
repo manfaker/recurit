@@ -79,13 +79,13 @@ public class DictionaryServiceImpl implements DictionaryService {
     }
 
     @Override
-    public DictionaryVO getAllDictByCateAndNumber(String category, String dictNum) {
+    public DictionaryVO getSignleByDictNumber(String category, String dictNum) {
         JSONObject dictJson = redisTempleUtils.getValue(category, JSONObject.class);
         if(EmptyUtils.isNotEmpty(dictJson)&&dictJson.size()>NumberEnum.ZERO.getValue()&&dictJson.containsKey(dictNum)){
             DictionaryVO dictionary = JSONObject.parseObject(dictJson.getString(dictNum),DictionaryVO.class);
             return dictionary;
         }
-        DictionaryVO dictionaryVO = dictionaryMapper.getAllDictByDictNumber(dictNum);
+        DictionaryVO dictionaryVO = dictionaryMapper.getSignleByDictNumber(dictNum);
         saveSingleRedisDictionary(dictionaryVO);
         return dictionaryVO;
     }
@@ -111,7 +111,6 @@ public class DictionaryServiceImpl implements DictionaryService {
     @Override
     public List<DictionaryVO> getAllChildrenByDictNum(String dictNum) {
         List<DictionaryVO> listDict = dictionaryMapper.getAllChildrenByDictNum(dictNum);
-
         return listDict ;
     }
 
@@ -135,5 +134,25 @@ public class DictionaryServiceImpl implements DictionaryService {
             return dictionaryVO;
         }
 
+    }
+
+    @Override
+    public void refreshAllDict() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2000,1,1);
+        List<DictionaryVO> listAll = dictionaryMapper.getListAll(calendar.getTime(), new Date());
+        if(EmptyUtils.isNotEmpty(listAll)&&!listAll.isEmpty()){
+            listAll.forEach(item->{
+                String category = item.getCategory();
+                if(EmptyUtils.isNotEmpty(category)){
+                    JSONObject dictJson = redisTempleUtils.getValue(category, JSONObject.class);
+                    if(EmptyUtils.isEmpty(dictJson)){
+                        dictJson = new JSONObject();
+                    }
+                    dictJson.put(item.getDictNum(),JSON.toJSONString(item));
+                    redisTempleUtils.setValue(category, dictJson);
+                }
+            });
+        }
     }
 }

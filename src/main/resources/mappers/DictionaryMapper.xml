@@ -38,7 +38,7 @@
             select id,<include refid="baseResult"/> from tab_dictionary where category = #{category}
         </select>
 
-        <select id="getAllDictByDictNumber" resultMap="baseResultMap">
+        <select id="getSignleByDictNumber" resultMap="baseResultMap">
             select id,<include refid="baseResult"/> from tab_dictionary where dict_num = #{dictNum}
         </select>
 

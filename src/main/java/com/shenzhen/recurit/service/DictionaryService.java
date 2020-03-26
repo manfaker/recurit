@@ -45,7 +45,7 @@ public interface DictionaryService {
      *  @param dictNum
      * @return
      */
-    DictionaryVO getAllDictByCateAndNumber(String category,String dictNum);
+    DictionaryVO getSignleByDictNumber(String category,String dictNum);
 
     /**
      * 获取根据字典编码获取子集信息
@@ -61,5 +61,9 @@ public interface DictionaryService {
      */
     DictionaryVO updateDictionary(DictionaryVO dictionaryVO);
 
-
+    /**
+     * 刷新所有数据字典
+     * @return
+     */
+    void refreshAllDict();
 }

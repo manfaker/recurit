@@ -30,6 +30,13 @@
                 #{createDate},#{updateDate})
         </insert>
 
+        <select id="getByCompanyCode" resultMap="baseResultMap">
+            select id,status,<include refid="baseResult"/> from tab_position where company_code = #{companyCode}
+        </select>
+
+        <select id="getByPositionId" resultMap="baseResultMap">
+            select id,status,<include refid="baseResult"/> from tab_position where id = #{id}
+        </select>
 
 
 </mapper>

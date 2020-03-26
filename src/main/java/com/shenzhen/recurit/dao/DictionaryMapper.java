@@ -45,7 +45,7 @@ public interface DictionaryMapper {
      * @param dictNum
      * @return
      */
-    DictionaryVO getAllDictByDictNumber(String dictNum);
+    DictionaryVO getSignleByDictNumber(String dictNum);
 
     /**
      * dictNum 获取

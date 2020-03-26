@@ -33,9 +33,7 @@ public class ThreadLocalUtils {
      * @return
      */
    public static UserVO getUser(){
-       if(EmptyUtils.isNotEmpty(redisTempleUtils)){
-           redisTempleUtils = SpringUtils.getBean(RedisTempleUtils.class);
-       }
+       redisTempleUtils = SpringUtils.getBean(RedisTempleUtils.class);
        return redisTempleUtils.getValue(ThreadLocalUtils.getUserCode(),UserVO.class);
    }
 }

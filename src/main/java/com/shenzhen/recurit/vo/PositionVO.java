@@ -12,7 +12,7 @@ public class PositionVO extends BaseVO{
     private String academicDegree;
     private String experience;
     private String companyCode;
-    private int sexReq;
+    private String sexReq;
     private int status;
     private String labels;
 

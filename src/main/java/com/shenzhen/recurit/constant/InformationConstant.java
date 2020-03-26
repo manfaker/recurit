@@ -60,6 +60,11 @@ public interface InformationConstant {
     String COMPANY = "company";
     String POSITION="position";
 
+    //字典类别
+    String SALARY = "SALARY";
+    String EXPERIENCE = "EXPERIENCE";
+    String EDUCATION = "EDUCATION";
+
 
 
 

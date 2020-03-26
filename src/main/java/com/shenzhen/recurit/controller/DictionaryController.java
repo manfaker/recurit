@@ -48,9 +48,9 @@ public class DictionaryController {
 
     }
 
-    @RequestMapping(value="getAllDictByCateAndNumber",method = RequestMethod.GET)
-    public Object getAllDictByCateAndNumber(@Param("category") String category,@Param("category")  String dictNum){
-        DictionaryVO dictionary = dictionaryService.getAllDictByCateAndNumber(category,dictNum);
+    @RequestMapping(value="getSignleByDictNumber",method = RequestMethod.GET)
+    public Object getSignleByDictNumber(@Param("category") String category,@Param("dictNum")  String dictNum){
+        DictionaryVO dictionary = dictionaryService.getSignleByDictNumber(category,dictNum);
         return ResultVO.success(dictionary);
     }
 
@@ -66,6 +66,12 @@ public class DictionaryController {
         DictionaryVO dictionary = JSONObject.parseObject(jsonData, DictionaryVO.class);
         DictionaryVO resultVO = dictionaryService.updateDictionary(dictionary);
         return ResultVO.success(resultVO);
+    }
+
+    @RequestMapping(value="refreshAllDict",method = RequestMethod.GET)
+    public Object refreshAllDict(){
+        dictionaryService.refreshAllDict();
+        return ResultVO.success("刷新完毕");
     }
 
 }
