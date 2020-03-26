@@ -6,6 +6,7 @@ import com.shenzhen.recurit.constant.InformationConstant;
 import com.shenzhen.recurit.constant.OrdinaryConstant;
 import com.shenzhen.recurit.dao.UserMapper;
 import com.shenzhen.recurit.enums.NumberEnum;
+import com.shenzhen.recurit.enums.SymbolEnum;
 import com.shenzhen.recurit.service.UserService;
 import com.shenzhen.recurit.utils.*;
 import com.shenzhen.recurit.vo.ResultVO;
@@ -14,6 +15,7 @@ import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -57,7 +59,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Object addByNumber(String jsonData) {
-        JSONObject jsonObject = JSONObject.parseObject(jsonData);
+        JSONObject jsonObject = JSON.parseObject(jsonData);
         String number = jsonObject.getString(InformationConstant.NUMBER);
         String code = jsonObject.getString(InformationConstant.CODE);
         if(EmptyUtils.isEmpty(number)){
@@ -66,49 +68,65 @@ public class UserServiceImpl implements UserService {
         if(EmptyUtils.isEmpty(code)){
             return ResultVO.error("验证码不能为空！请输入验证码");
         }
-        UserVO currUser = null;
-        if(number.contains(OrdinaryConstant.SYMBOL_1)){
-            currUser = userMapper.getUserByEmail(number);
-        }else{
-            currUser = userMapper.getUserByPhone(number);
+        UserVO userVO=JSONObject.parseObject(jsonData,UserVO.class);
+        if(EmptyUtils.isEmpty(userVO)){
+            userVO = new UserVO();
         }
-        if(EmptyUtils.isNotEmpty(currUser)){
-            return loginUser(jsonData);
-        }
-        UserVO userVO=new UserVO();
-        if(jsonObject.containsKey(InformationConstant.ROLE_NUM)){
-            userVO.setRoleNum(jsonObject.getString(InformationConstant.ROLE_NUM));
-        }
-        int index = NumberEnum.ZERO.getValue();
-        while(index<NumberEnum.TEN.getValue()){
-            String userName = RandomUtils.randomStr(NumberEnum.SIXTEEN.getValue());
-            UserVO user = getUserByName(userName);
-            if(EmptyUtils.isEmpty(user)){
-                userVO.setUserName(userName);
-                break;
-            }
-            index++;
-        }
+        addUserName(userVO);
         if(code.equals(redisTempleUtils.getValue(number,String.class))){
-//            String category = OrdinaryConstant.IS_BLACK;
             if(number.contains(OrdinaryConstant.SYMBOL_1)){
                 userVO.setEmail(number);
-//                category=InformationConstant.EMAIL;
             }else{
                 userVO.setPhone(number);
-//                category=InformationConstant.PHONE;
             }
             ResultVO resultVO = addUser(userVO);
             if(resultVO.getCode()==200){
-                UserVO user = userMapper.getUserById(userVO.getId());
-//                String entryName = saveUserToRedis(user, category);
-                return ResultVO.success("注册成功，已转登录页面"/*,entryName*/);
+                return ResultVO.success("注册成功");
             }else{
                 return resultVO;
             }
-
         }
         return ResultVO.error("验证码已过期，请重新发送验证码！");
+    }
+
+    /**
+     * 没有登录名自动生成登录名
+     * @param userVO
+     */
+    private void addUserName(UserVO userVO){
+        if(EmptyUtils.isEmpty(userVO)){
+            userVO = new UserVO();
+        }
+        if(EmptyUtils.isEmpty(userVO.getUserName())){
+            int index = NumberEnum.ZERO.getValue();
+            while(index<NumberEnum.TEN.getValue()){
+                String userName = RandomUtils.randomStr(NumberEnum.SIXTEEN.getValue());
+                UserVO user = getUserByName(userName);
+                if(EmptyUtils.isEmpty(user)){
+                    userVO.setUserName(userName);
+                    break;
+                }
+                index++;
+            }
+        }
+    }
+
+    public static boolean isMobileNO(String mobiles){
+        Pattern p = Pattern.compile("^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$");
+        Matcher m = p.matcher(mobiles);
+        return m.matches();
+    }
+
+    public static boolean isEmailNO(String email){
+        Pattern p = Pattern.compile("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$");
+        Matcher m = p.matcher(email);
+        return m.matches();
+    }
+
+    public static boolean isUserNameNO(String userName){
+        Pattern p = Pattern.compile("^[a-zA-Z0-9_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]{2,18}$");
+        Matcher m = p.matcher(userName);
+        return m.matches();
     }
 
 
@@ -128,6 +146,9 @@ public class UserServiceImpl implements UserService {
         }
         String phone = userVO.getPhone();
         if(EmptyUtils.isNotEmpty(phone)){
+            if(!isMobileNO(phone)){
+                return ResultVO.error("手机号码不存在，请重新输入！");
+            }
             UserVO user = getUserByPhone(phone);
             if(EmptyUtils.isNotEmpty(user)){
                 return ResultVO.error("手机号码已存在，请重新输入！");
@@ -135,16 +156,41 @@ public class UserServiceImpl implements UserService {
         }
         String email = userVO.getEmail();
         if(EmptyUtils.isNotEmpty(email)){
+            if(email.length()>NumberEnum.THIRTY_TWO.getValue()){
+                return ResultVO.error("邮箱长度不能超过32个字符！");
+            }
+            if(!isEmailNO(email)){
+                return ResultVO.error("邮箱格式有误，请重新输入");
+            }
             UserVO user = getUserByEmail(email);
             if(EmptyUtils.isNotEmpty(user)){
                 return ResultVO.error("邮箱已存在，请重新输入！");
             }
+        }
+        if(EmptyUtils.isNotEmpty(userVO.getBirth())){
+            userVO.setAge(getCalculationAge(userVO.getBirth()));
         }
         userVO.setCreateDate(new Date());
         userVO.setUpdateDate(new Date());
         userVO.setPassword(EncryptBase64Utils.encryptBASE64(userVO.getPassword()));
         userMapper.addUser(userVO);
         return ResultVO.success(userVO);
+    }
+
+    private int getCalculationAge(Date birth){
+        int age = NumberEnum.ZERO.getValue();
+        Calendar birthCalendar = Calendar.getInstance();
+        birthCalendar.setTime(birth);
+        Calendar newCalendar = Calendar.getInstance();
+        age = newCalendar.get(Calendar.YEAR)-birthCalendar.get(Calendar.YEAR);
+        if(newCalendar.get(Calendar.MONTH)>birthCalendar.get(Calendar.MONTH)){
+            age++;
+        }else if (newCalendar.get(Calendar.MONTH)==birthCalendar.get(Calendar.MONTH)
+                    &&newCalendar.get(Calendar.DAY_OF_MONTH)>birthCalendar.get(Calendar.DAY_OF_MONTH)){
+            age++;
+        }else{
+        }
+        return age;
     }
 
     @Override
@@ -196,12 +242,111 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResultVO updatePassword(String jsonData) {
-        /*TODO*/ 
-        return ResultVO.success("修改成功");
+        UserVO user;
+        JSONObject jsonObject = JSON.parseObject(jsonData);
+        String newPassword = jsonObject.getString(InformationConstant.NEW_PASSWORD);
+        if(EmptyUtils.isEmpty(newPassword)){
+            return ResultVO.error("新密码不能为空");
+        }
+        if(jsonObject.containsKey(InformationConstant.USERNAME)&&jsonObject.containsKey(InformationConstant.PASSWORD)){
+            String userName = jsonObject.getString(InformationConstant.USERNAME);
+            String password = jsonObject.getString(InformationConstant.PASSWORD);
+            if(EmptyUtils.isEmpty(userName)){
+                return ResultVO.error("用户名不能为空");
+            }
+            if(EmptyUtils.isEmpty(password)){
+                return ResultVO.error("旧密码不能为空");
+            }
+            user = userMapper.getUserByNameAndPass(userName, EncryptBase64Utils.encryptBASE64(password));
+            if(EmptyUtils.isEmpty(user)){
+                return ResultVO.error("用户名或者密码有误，请重新填写！");
+            }
+        }else{
+            String number = jsonObject.getString(InformationConstant.NUMBER);
+            String code = jsonObject.getString(InformationConstant.CODE);
+            if(EmptyUtils.isEmpty(number)){
+                return ResultVO.error("登录号码不能为空！");
+            }
+            //忘记密码
+            //1 通过手机或者邮箱查找用户信息
+            //2 通过手机或者邮箱查找code，并比较code
+            if(number.contains(OrdinaryConstant.SYMBOL_1)){
+                if(number.length()>NumberEnum.THIRTY_TWO.getValue()){
+                    return ResultVO.error("邮箱长度不能超过32个字符！");
+                }
+                if(!isEmailNO(number)){
+                    return ResultVO.error("邮箱格式有误，请重新输入");
+                }
+                user = userMapper.getUserByEmail(number);
+                if(EmptyUtils.isEmpty(user)){
+                    return ResultVO.error("邮箱不存在，请先注册！");
+                }
+            }else{
+                if(!isMobileNO(number)){
+                    return ResultVO.error("手机号码填写有误，请重新输入！");
+                }
+                user = userMapper.getUserByPhone(number);
+                if(EmptyUtils.isEmpty(user)){
+                    return ResultVO.error("该手机号码不存在，请先注册！");
+                }
+            }
+            if(!code.equals(redisTempleUtils.getValue(number,String.class))){
+                return ResultVO.error("验证码有误！");
+            }
+        }
+        UserVO userVO = new UserVO();
+        userVO.setId(user.getId());
+        userVO.setPassword(EncryptBase64Utils.encryptBASE64(newPassword));
+        //旧密码换新密码
+        userVO.setUpdateDate(new Date());
+        int result = userMapper.updateUser(user);
+        if(result>NumberEnum.ZERO.getValue()){
+            return ResultVO.success(userVO);
+        }else{
+            return ResultVO.error("修改失败");
+        }
+
+    }
+
+    @Override
+    public UserVO getUserInfoByNameOrNumber(String jsonData) {
+        UserVO user;
+        JSONObject jsonObject = JSON.parseObject(jsonData);
+        if(jsonObject.containsKey(InformationConstant.USERNAME)){
+            String userName = jsonObject.getString(InformationConstant.USERNAME);
+            user = userMapper.getUserByName(userName);
+        }else if(jsonObject.containsKey(InformationConstant.NUMBER)){
+            String number = jsonObject.getString(InformationConstant.NUMBER);
+            if(number.contains(OrdinaryConstant.SYMBOL_1)){
+                user = userMapper.getUserByEmail(number);
+            }else{
+                user = userMapper.getUserByPhone(number);
+            }
+        }else{
+            user = null;
+        }
+        return user;
+    }
+
+    @Override
+    public ResultVO deleteUser(int userId) {
+        UserVO userVO = new UserVO();
+        UserVO currUser = userMapper.getUserById(userId);
+        if(EmptyUtils.isEmpty(currUser)){
+            return ResultVO.error("当前用户不存在，请勿重复删除");
+        }
+        userVO.setId(userId);
+        userVO.setStatus(NumberEnum.TWO.getValue());
+        userVO.setUpdateDate(new Date());
+        UserVO user = updateUser(userVO);
+        return ResultVO.success("删除成功");
     }
 
     @Override
     public UserVO updateUser(UserVO user) {
+        if(EmptyUtils.isNotEmpty(user.getBirth())){
+            user.setAge(getCalculationAge(user.getBirth()));
+        }
         user.setUpdateDate(new Date());
         int result = userMapper.updateUser(user);
         UserVO userVO;
@@ -229,9 +374,13 @@ public class UserServiceImpl implements UserService {
             if(EmptyUtils.isEmpty(password)){
                 return ResultVO.error("密码不能为空！");
             }
+            UserVO currUser = userMapper.getUserByName(userName);
+            if(EmptyUtils.isEmpty(currUser)){
+                return ResultVO.error("用户不存在，请先注册");
+            }
             userVO = userMapper.getUserByNameAndPass(userName,EncryptBase64Utils.encryptBASE64(password));
             if(EmptyUtils.isEmpty(userVO)||EmptyUtils.isEmpty(userVO.getUserName())){
-                return ResultVO.error("用户名或者密码错误！");
+                return ResultVO.error("密码错误！");
             }
             category = InformationConstant.USERNAME;
         }else{
@@ -248,21 +397,22 @@ public class UserServiceImpl implements UserService {
                     userVO = userMapper.getUserByPhone(number);
                     category=InformationConstant.PHONE;
                 }
-                if(EmptyUtils.isEmpty(userVO)||EmptyUtils.isEmpty(userVO.getUserName())){
-                    return ResultVO.error("用户不存在，请先注册！");
-                }
                 if(EmptyUtils.isEmpty(code)){
                     return ResultVO.error("验证码不能为空！");
+                }
+                if(EmptyUtils.isEmpty(userVO)){
+                    return ResultVO.error("用户不存在，请先注册！");
                 }
                 if(!code.equals(redisTempleUtils.getValue(number,String.class))){
                     return ResultVO.error("验证码不正确！");
                 }
             }else{
-                userVO = null;
+                userVO = new UserVO();
             }
         }
         entryName = saveUserToRedis(userVO,category);
-        return ResultVO.success("登录成功",entryName);
+        userVO.setEntryCode(entryName);
+        return ResultVO.success("登录成功",userVO);
     }
 
     private String saveUserToRedis(UserVO userVO,String category){
