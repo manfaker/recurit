@@ -36,6 +36,12 @@ public class PositionController {
         PositionVO positionVO = JSON.parseObject(jsonData, PositionVO.class);
         return ResultVO.success(positionService.deletePosition(positionVO));
     }
+    @RequestMapping(value = "updatePosition",method = RequestMethod.POST)
+    @PermissionVerification
+    public Object updatePosition(@RequestBody String jsonData){
+        PositionVO positionVO = JSON.parseObject(jsonData, PositionVO.class);
+        return ResultVO.success(positionService.updatePosition(positionVO));
+    }
 
     @RequestMapping(value = "getByCompanyCode",method = RequestMethod.GET)
     @PermissionVerification

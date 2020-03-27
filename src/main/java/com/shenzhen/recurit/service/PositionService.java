@@ -40,7 +40,7 @@ public interface PositionService {
      * 修改职位信息
      * @param position
      */
-    int updatePosition(PositionVO position);
+    ResultVO updatePosition(PositionVO position);
 
     /**
      * 根据id 获取职位信息

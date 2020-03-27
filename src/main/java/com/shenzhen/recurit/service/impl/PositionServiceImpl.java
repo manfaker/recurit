@@ -67,6 +67,7 @@ public class PositionServiceImpl implements PositionService {
 
     @Override
     public ResultVO deletePosition(PositionVO position) {
+        position.setUpdateDate(new Date());
         if(EmptyUtils.isNotEmpty(position)&&EmptyUtils.isNotEmpty(position.getCompanyCode())&&EmptyUtils.isNotEmpty(position.getId())&&position.getStatus()==1){
             positionMapper.deleteByPositionId(position.getId());
             return ResultVO.success("删除成功");
@@ -115,8 +116,13 @@ public class PositionServiceImpl implements PositionService {
     }
 
     @Override
-    public int updatePosition(PositionVO position){
-       return 0;
+    public ResultVO updatePosition(PositionVO position){
+        position.setUpdateDate(new Date());
+        if(EmptyUtils.isNotEmpty(position)&&EmptyUtils.isNotEmpty(position.getCompanyCode())&&EmptyUtils.isNotEmpty(position.getId())&&position.getStatus()==1){
+            positionMapper.updatePosition(position);
+            return ResultVO.success("修改成功");
+        }
+       return ResultVO.error("修改失败成功");
     }
 
     @Override

@@ -26,11 +26,22 @@ public interface PositionMapper {
      * @param id
      * @return
      */
+
     PositionPojo getByPositionId(int id);
+
+
     /**
-     * 根据id获取职位信息
+     * 根据id删除职位信息
      * @param id
      * @return
      */
     void deleteByPositionId(int id);
+
+    /**
+     * 根据修改职位信息
+     * @param position
+     * @return
+     */
+    int updatePosition(PositionVO position);
+
 }

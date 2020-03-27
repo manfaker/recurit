@@ -41,9 +41,36 @@
         <update id="deleteByPositionId">
             update tab_position
             <set>
-                status = 2
+                status = 2,
+                update_date = #{updateDate}
             </set>
                 where id = #{id}
         </update>
 
+    <update id="updatePosition">
+        update tab_position
+        <set>
+            <if test="positionName != null and positionName != '' ">
+                position_name = #{positionName},
+            </if>
+            <if test="positionCity != null and positionCity != '' ">
+                position_city = #{positionCity},
+            </if>
+            <if test="salary != null and salary != '' ">
+                salary = #{salary},
+            </if>
+            <if test="academicDegree != null and academicDegree != '' ">
+                academic_degree = #{academicDegree},
+            </if>
+            <if test="experience != null and experience != '' ">
+                experience = #{experience},
+            </if>
+            <if test="sexReq != null and sexReq != '' ">
+                sex_req = #{sexReq},
+            </if>
+            update_date = #{updateDate}
+        </set>
+        where id = #{id}
+        and company_code=#{companyCode}
+    </update>
 </mapper>
