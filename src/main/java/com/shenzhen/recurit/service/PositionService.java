@@ -2,6 +2,7 @@ package com.shenzhen.recurit.service;
 
 import com.shenzhen.recurit.pojo.PositionPojo;
 import com.shenzhen.recurit.vo.PositionVO;
+import com.shenzhen.recurit.vo.ResultVO;
 
 import java.util.List;
 
@@ -23,6 +24,11 @@ public interface PositionService {
      * @param position
      */
     PositionVO savePosition(PositionVO position);
+    /**
+     * 删除职位信息
+     * @param position
+     */
+    ResultVO deletePosition(PositionVO position);
 
     /**
      * 根据公司id查找职位信息

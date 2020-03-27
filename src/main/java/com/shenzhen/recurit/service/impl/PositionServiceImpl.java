@@ -1,5 +1,7 @@
 package com.shenzhen.recurit.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.shenzhen.recurit.constant.InformationConstant;
 import com.shenzhen.recurit.constant.OrdinaryConstant;
 import com.shenzhen.recurit.dao.PositionMapper;
@@ -12,6 +14,7 @@ import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.utils.RedisTempleUtils;
 import com.shenzhen.recurit.vo.LabelVO;
 import com.shenzhen.recurit.vo.PositionVO;
+import com.shenzhen.recurit.vo.ResultVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,6 +63,15 @@ public class PositionServiceImpl implements PositionService {
             }
         }
         return position;
+    }
+
+    @Override
+    public ResultVO deletePosition(PositionVO position) {
+        if(EmptyUtils.isNotEmpty(position)&&EmptyUtils.isNotEmpty(position.getCompanyCode())&&EmptyUtils.isNotEmpty(position.getId())&&position.getStatus()==1){
+            positionMapper.deleteByPositionId(position.getId());
+            return ResultVO.success("删除成功");
+        }
+        return ResultVO.error("服务器错误，请稍后重试");
     }
 
     private void getAssembleLabels(List<String> listStr,List<LabelVO> listLabel,PositionVO position){
