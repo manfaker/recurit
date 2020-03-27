@@ -12,13 +12,19 @@ import com.shenzhen.recurit.service.LabelService;
 import com.shenzhen.recurit.service.PositionService;
 import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.utils.RedisTempleUtils;
+import com.shenzhen.recurit.utils.ThreadLocalUtils;
 import com.shenzhen.recurit.vo.LabelVO;
 import com.shenzhen.recurit.vo.PositionVO;
 import com.shenzhen.recurit.vo.ResultVO;
+import com.shenzhen.recurit.vo.UserVO;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.swing.text.Position;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -65,14 +71,54 @@ public class PositionServiceImpl implements PositionService {
         return position;
     }
 
+    /**
+     * 判断市修改还是新增
+     * @param positionVO
+     * @param isUpdate   yes 修改 no新增
+     */
+    private void setOrdinaryInfo(PositionVO positionVO,boolean isUpdate){
+        if(EmptyUtils.isEmpty(positionVO)){
+            return;
+        }
+        UserVO user = ThreadLocalUtils.getUser();
+        if(!isUpdate){
+            if(EmptyUtils.isNotEmpty(user)){
+                positionVO.setCreater(user.getUserName());
+            }
+            positionVO.setCreateDate(new Date());
+        }
+        if(EmptyUtils.isNotEmpty(user)){
+            positionVO.setUpdater(user.getUserName());
+        }
+        positionVO.setUpdateDate(new Date());
+    }
+
+
+    @Transactional
     @Override
-    public ResultVO deletePosition(PositionVO position) {
-        position.setUpdateDate(new Date());
-        if(EmptyUtils.isNotEmpty(position)&&EmptyUtils.isNotEmpty(position.getCompanyCode())&&EmptyUtils.isNotEmpty(position.getId())&&position.getStatus()==1){
-            positionMapper.deleteByPositionId(position.getId());
+    public ResultVO deletePositionById(int id) {
+        PositionPojo positionPojo = positionMapper.getByPositionId(id);
+        if(EmptyUtils.isEmpty(positionPojo)){
+            return ResultVO.error("该职位信息不存在");
+        }
+        PositionVO positionVO = new PositionVO();
+        String category = InformationConstant.COMPANY;
+        int relationId = positionPojo.getId();
+        positionVO.setId(relationId);
+        positionVO.setStatus(NumberEnum.TWO.getValue());
+        setOrdinaryInfo(positionVO,true);
+        String redisKey = category +relationId;
+        int result = positionMapper.updatePosition(positionVO);
+        if(result>NumberEnum.ZERO.getValue()){
+            if(EmptyUtils.isNotEmpty(redisKey)){
+                int num = labelService.deleteLabelByRelationId(category, relationId);
+                if(num>NumberEnum.ZERO.getValue()){
+                    redisTempleUtils.deleteValue(redisKey);
+                }
+            }
             return ResultVO.success("删除成功");
         }
-        return ResultVO.error("服务器错误，请稍后重试");
+        return ResultVO.error("删除失败");
     }
 
     private void getAssembleLabels(List<String> listStr,List<LabelVO> listLabel,PositionVO position){
@@ -117,7 +163,7 @@ public class PositionServiceImpl implements PositionService {
 
     @Override
     public ResultVO updatePosition(PositionVO position){
-        position.setUpdateDate(new Date());
+        setOrdinaryInfo(position,true);
         if(EmptyUtils.isNotEmpty(position)&&EmptyUtils.isNotEmpty(position.getCompanyCode())&&EmptyUtils.isNotEmpty(position.getId())&&position.getStatus()==1){
             positionMapper.updatePosition(position);
             return ResultVO.success("修改成功");

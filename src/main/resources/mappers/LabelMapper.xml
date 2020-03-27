@@ -30,7 +30,7 @@
             values (#{labelName},#{category},#{relationId},#{createDate},#{updateDate},#{creater},#{updater})
         </insert>
 
-        <select id="LabelVO" resultMap="baseResultMap">
+        <select id="getLabelById" resultMap="baseResultMap">
             select  id,<include refid="baseResult"/> from tab_label where id = #{id}
         </select>
 

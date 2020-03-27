@@ -8,10 +8,8 @@ import com.shenzhen.recurit.service.LabelService;
 import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.vo.LabelVO;
 import com.shenzhen.recurit.vo.ResultVO;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -56,7 +54,7 @@ public class LabelController {
         return ResultVO.success(labelService.deleteLabelByRelationId(category,relationId));
     }
 
-    @RequestMapping(value = "deleteLabelByRelationId",method = RequestMethod.PUT)
+    @RequestMapping(value = "updateLabel",method = RequestMethod.PUT)
     public ResultVO updateLabel(@RequestBody String jsonData){
         LabelVO labelVO = JSON.parseObject(jsonData, LabelVO.class);
         return ResultVO.success(labelService.updateLabel(labelVO));

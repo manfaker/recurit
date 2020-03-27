@@ -77,7 +77,7 @@ public class LabelServiceImpl implements LabelService {
     public LabelVO saveLabel(LabelVO labelVO) {
         setSingleOperaterAndDate(labelVO);
         labelMapper.saveLabel(labelVO);
-        String redisKey = labelVO.getCategory()+ OrdinaryConstant.SYMBOL_2+labelVO.getRelationId();
+        String redisKey = labelVO.getCategory()+labelVO.getRelationId();
         if(EmptyUtils.isNotEmpty(labelVO)&&labelVO.getId()>NumberEnum.ZERO.getValue()){
             String value = redisTempleUtils.getValue(redisKey, String.class);
             JSONObject jsonObject;

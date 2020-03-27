@@ -25,10 +25,10 @@ public interface PositionService {
      */
     PositionVO savePosition(PositionVO position);
     /**
-     * 删除职位信息
-     * @param position
+     * 根据id删除职位信息
+     * @param id
      */
-    ResultVO deletePosition(PositionVO position);
+    ResultVO deletePositionById(int id);
 
     /**
      * 根据公司id查找职位信息
