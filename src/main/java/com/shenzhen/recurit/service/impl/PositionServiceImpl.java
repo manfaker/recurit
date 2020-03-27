@@ -59,16 +59,23 @@ public class PositionServiceImpl implements PositionService {
         position.setUpdateDate(new Date());
         position.setCreateDate(new Date());
         positionMapper.savePosition(position);
+        PositionPojo positionPojo = new PositionPojo();
         if(position.getId()> NumberEnum.ZERO.getValue()){
+            positionPojo = positionMapper.getByPositionId(position.getId());
             String labels = position.getLabels();
-            if(EmptyUtils.isNotEmpty(labels)){
-                List<LabelVO> listLabel = new ArrayList<>();
-                List<String> listStr = Arrays.asList(labels.split(OrdinaryConstant.SYMBOL_4));
-                getAssembleLabels(listStr,listLabel,position);
-                List<LabelVO> labelList = labelService.saveBatchLabel(listLabel);
-            }
+            savePositions(labels,positionPojo);
         }
+        setInfoToPosition(positionPojo);
         return position;
+    }
+
+    private void savePositions(String labels,PositionPojo position){
+        if(EmptyUtils.isNotEmpty(labels)){
+            List<LabelVO> listLabel = new ArrayList<>();
+            List<String> listStr = Arrays.asList(labels.split(OrdinaryConstant.SYMBOL_4));
+            getAssembleLabels(listStr,listLabel,position);
+            List<LabelVO> labelList = labelService.saveBatchLabel(listLabel);
+        }
     }
 
     /**
@@ -121,11 +128,14 @@ public class PositionServiceImpl implements PositionService {
         return ResultVO.error("删除失败");
     }
 
-    private void getAssembleLabels(List<String> listStr,List<LabelVO> listLabel,PositionVO position){
+    private void getAssembleLabels(List<String> listStr,List<LabelVO> listLabel,PositionPojo position){
         if(EmptyUtils.isEmpty(listStr)||listStr.isEmpty()){
             return;
         }
         for(String str : listStr){
+            if(EmptyUtils.isEmpty(str)){
+                continue;
+            }
             LabelVO labelVO = new LabelVO();
             labelVO.setLabelName(str);
             labelVO.setCategory(InformationConstant.COMPANY);
@@ -166,9 +176,12 @@ public class PositionServiceImpl implements PositionService {
         setOrdinaryInfo(position,true);
         if(EmptyUtils.isNotEmpty(position)&&EmptyUtils.isNotEmpty(position.getCompanyCode())&&EmptyUtils.isNotEmpty(position.getId())&&position.getStatus()==1){
             positionMapper.updatePosition(position);
-            return ResultVO.success("修改成功");
+            PositionPojo positionPojo = positionMapper.getByPositionId(position.getId());
+            savePositions(position.getLabels(),positionPojo);
+            setInfoToPosition(positionPojo);
+            return ResultVO.success("修改成功",positionPojo);
         }
-       return ResultVO.error("修改失败成功");
+       return ResultVO.error("修改失败",position);
     }
 
     @Override

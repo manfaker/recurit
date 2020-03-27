@@ -8,6 +8,7 @@ import com.shenzhen.recurit.service.LabelService;
 import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.vo.LabelVO;
 import com.shenzhen.recurit.vo.ResultVO;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.*;
 

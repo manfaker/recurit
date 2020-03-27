@@ -84,5 +84,13 @@ public class ResultVO implements Serializable {
             return new ResultVO(false,code,msg,null);
         }
 
+    /**
+     * 响应错误(带错误码,消息提醒)
+     * @return
+     */
+    public static ResultVO error(String msg,Object data){
+        return new ResultVO(false,ReturnEnum.DEFAULT_302.getCode(),msg,data);
+    }
+
 
 }

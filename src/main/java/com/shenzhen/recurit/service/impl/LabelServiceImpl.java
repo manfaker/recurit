@@ -31,30 +31,39 @@ public class LabelServiceImpl implements LabelService {
         }
         String category = listLabel.get(NumberEnum.ZERO.getValue()).getCategory();
         int relationId = listLabel.get(NumberEnum.ZERO.getValue()).getRelationId();
+        String redisKey = category+relationId;
+        List<LabelVO> currLabels = labelMapper.getLabelByCategory(category, relationId);
+        if(EmptyUtils.isNotEmpty(currLabels)){
+            for(int index=listLabel.size()-NumberEnum.ONE.getValue();index>=NumberEnum.ZERO.getValue();index--){
+                if(currLabels.contains(listLabel.get(index))){
+                    listLabel.remove(index);
+                }
+            }
+        }
         setAllOperaterAndDate(listLabel);
         labelMapper.saveBatchLabel(listLabel);
         List<LabelVO> labels = labelMapper.getLabelByCategory(category, relationId);
-        if(EmptyUtils.isEmpty(labels)||labels.isEmpty()){
-            return null;
+        setLabelToResis(labels,redisKey);
+        return labels;
+    }
+
+    private void setLabelToResis(List<LabelVO> labels,String redisKey){
+        if(EmptyUtils.isEmpty(labels)||labels.size()==NumberEnum.ZERO.getValue()){
+            return;
         }
-        boolean flag = false;
-        for(LabelVO label :labels){
-            if(label.getId()> NumberEnum.ZERO.getValue()){
-                flag = true;
-                break;
+        if(EmptyUtils.isEmpty(redisKey)){
+            return;
+        }
+        JSONObject jsonObject=redisTempleUtils.getValue(redisKey,JSONObject.class);
+        if(EmptyUtils.isEmpty(jsonObject)){
+            jsonObject = new JSONObject();
+        }
+        for(LabelVO label:labels){
+            if(EmptyUtils.isNotEmpty(label)){
+                jsonObject.put(label.getId()+OrdinaryConstant.IS_BLACK,JSON.toJSONString(label));
             }
         }
-        if(flag){
-            JSONObject jsonObject = new JSONObject();
-            String redisKey = labels.get(NumberEnum.ZERO.getValue()).getCategory()+labels.get(NumberEnum.ZERO.getValue()).getRelationId();
-            for(LabelVO label : labels){
-                String key  = label.getId()+OrdinaryConstant.IS_BLACK;
-                jsonObject.put(key,JSON.toJSONString(label));
-            }
-            redisTempleUtils.setValue(redisKey, jsonObject);
-            return labels;
-        }
-        return null;
+        redisTempleUtils.setValue(redisKey,jsonObject);
     }
 
     private void setAllOperaterAndDate(List<LabelVO> listLabel){

@@ -86,7 +86,9 @@ public class DictionaryServiceImpl implements DictionaryService {
             return dictionary;
         }
         DictionaryVO dictionaryVO = dictionaryMapper.getSignleByDictNumber(dictNum);
-        saveSingleRedisDictionary(dictionaryVO);
+        if(EmptyUtils.isNotEmpty(dictionaryVO)){
+            saveSingleRedisDictionary(dictionaryVO);
+        }
         return dictionaryVO;
     }
 
