@@ -2,15 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.shenzhen.recurit.dao.PositionMapper">
 
-        <resultMap id="baseResultMap" type="com.shenzhen.recurit.vo.PositionVO">
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.pojo.PositionPojo">
             <id column="id" property="id"/>
-            <result column="position_name" property="positionName"/>
             <result column="salary" property="salary"/>
             <result column="academic_degree" property="academicDegree"/>
             <result column="experience" property="experience"/>
-            <result column="company_id" property="companyId"/>
-            <result column="level" property="level"/>
-            <result column="yeal_sal" property="yealSal"/>
+            <result column="company_code" property="companyCode"/>
+            <result column="sex_req" property="sexReq"/>
+            <result column="position_name" property="positionName"/>
+            <result column="position_city" property="positionCity"/>
             <result column="status" property="status"/>
             <result column="creater" property="creater"/>
             <result column="updater" property="updater"/>
@@ -19,85 +19,24 @@
         </resultMap>
 
         <sql id="baseResult">
-            position_name,salary,academic_degree,experience,company_id,level,yeal_sal,
+            salary,academic_degree,experience,company_code,sex_req,position_name,position_city,
             creater,updater,create_date,update_date
         </sql>
 
-        <select id="getAllPosition" resultMap="baseResultMap">
-            select id,status,<include refid="baseResult"/> from tab_position where status = 1
-        </select>
-
-        <select id="getAllPositionByCondition" resultMap="baseResultMap" >
-            select id,<include refid="baseResult"/> from tab_position
-                <where>
-                    <if test="positionName != null and positionName != ''">
-                        position_name = #{positionName} and
-                    </if>
-                    <if test="salary != null and salary != 0">
-                        salary = #{salary} and
-                    </if>
-                    <if test="academicDegree != null and academicDegree != ''">
-                        academic_degree = #{academicDegree} and
-                    </if>
-                    <if test="experience != null and experience != 0">
-                        experience = #{experience} and
-                    </if>
-                    <if test="companyId != null and companyId != ''">
-                        company_id = #{companyId} and
-                    </if>
-                    <if test="level != null and level != 0">
-                        level = #{level} and
-                    </if>
-                    <if test="yealSal != null and yealSal != 0">
-                        yeal_sal = #{yealSal} and
-                    </if>
-                        status = 1
-                </where>
-        </select>
-
         <insert id="savePosition" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
             insert into tab_position(<include refid="baseResult"/>)
-                values(#{positionName},#{salary},#{academicDegree},#{experience},
-                #{companyId},#{level},#{yealSal},#{creater},#{updater},
+                values(#{salary},#{academicDegree},#{experience},
+                #{companyCode},#{sexReq},#{positionName},#{positionCity},#{creater},#{updater},
                 #{createDate},#{updateDate})
         </insert>
 
-        <select id="getByCompanyId" resultMap="baseResultMap">
-            select id,status,<include refid="baseResult"/> from tab_position where company_id = #{companyId} and status =1
+        <select id="getByCompanyCode" resultMap="baseResultMap">
+            select id,status,<include refid="baseResult"/> from tab_position where company_code = #{companyCode}
         </select>
 
-        <update id="updatePosition">
-            update tab_position
-                <set>
-                    <if test="positionName != null and positionName != ''">
-                        position_name = #{positionName} ,
-                    </if>
-                    <if test="salary != null and salary != 0">
-                        salary = #{salary} ,
-                    </if>
-                    <if test="academicDegree != null and academicDegree != ''">
-                        academic_degree = #{academicDegree} ,
-                    </if>
-                    <if test="experience != null and experience != 0">
-                        experience = #{experience} ,
-                    </if>
-                    <if test="companyId != null and companyId != ''">
-                        company_id = #{companyId} ,
-                    </if>
-                    <if test="level != null and level != 0">
-                        level = #{level} ,
-                    </if>
-                    <if test="yealSal != null and yealSal != 0">
-                        yeal_sal = #{yealSal} ,
-                    </if>
-                    <if test="status != null and status != 0">
-                        status = #{status} ,
-                    </if>
-                    updater = #{updater},
-                    update_date=#{updateDate}
-                </set>
-                where id = #{id}
-        </update>
+        <select id="getByPositionId" resultMap="baseResultMap">
+            select id,status,<include refid="baseResult"/> from tab_position where id = #{id}
+        </select>
 
 
 </mapper>

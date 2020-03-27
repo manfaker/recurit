@@ -55,6 +55,16 @@ public interface InformationConstant {
     String PROXY_CLIENT_IP="Proxy-Client-IP";
     String WL_PROXY_CLIENT_IP="WL-Proxy-Client-IP";
 
+    //
+    String USER ="user";
+    String COMPANY = "company";
+    String POSITION="position";
+
+    //字典类别
+    String SALARY = "SALARY";
+    String EXPERIENCE = "EXPERIENCE";
+    String EDUCATION = "EDUCATION";
+
 
 
 

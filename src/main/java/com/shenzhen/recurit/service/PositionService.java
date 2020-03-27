@@ -1,5 +1,6 @@
 package com.shenzhen.recurit.service;
 
+import com.shenzhen.recurit.pojo.PositionPojo;
 import com.shenzhen.recurit.vo.PositionVO;
 
 import java.util.List;
@@ -21,13 +22,13 @@ public interface PositionService {
      * 保存职位信息
      * @param position
      */
-    void savePosition(PositionVO position);
+    PositionVO savePosition(PositionVO position);
 
     /**
-     * 根据Id查找公司信息
-     * @param companyId
+     * 根据公司id查找职位信息
+     * @param companyCode
      */
-    List<PositionVO> getByCompanyId(String companyId);
+    List<PositionPojo> getByCompanyCode(String companyCode);
 
     /**
      * 修改职位信息
@@ -35,4 +36,10 @@ public interface PositionService {
      */
     int updatePosition(PositionVO position);
 
+    /**
+     * 根据id 获取职位信息
+     * @param id
+     * @return
+     */
+    PositionPojo getByPositionId(int id);
 }

@@ -8,6 +8,7 @@ import com.shenzhen.recurit.enums.SymbolEnum;
 import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.utils.Md5EncryptUtils;
 import com.shenzhen.recurit.utils.RedisTempleUtils;
+import com.shenzhen.recurit.utils.ThreadLocalUtils;
 import com.shenzhen.recurit.vo.UserVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,8 @@ public class UserInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String authUser= String.valueOf(request.getAttribute(InformationConstant.AUTH_USER));
+        String authUser= String.valueOf(request.getHeader(InformationConstant.AUTH_USER));
+        ThreadLocalUtils.setUserCode(authUser);
         //获取用户的ip地址，从而存入服务器，进行对应
         String ipAddr = UserInterceptor.getIpAddress(request);
         if(hasPermission(handler,authUser)){
@@ -70,7 +72,7 @@ public class UserInterceptor implements HandlerInterceptor {
             // 获取方法上的注解
             PermissionVerification requiredPermission = handlerMethod.getMethod().getAnnotation(PermissionVerification.class);
             if(EmptyUtils.isNotEmpty(requiredPermission)){
-                String value = redisTempleUtils.getValue(Md5EncryptUtils.encryptMd5(authUser), String.class);
+                String value = redisTempleUtils.getValue(authUser, String.class);
                 UserVO userVO = JSONObject.parseObject(value,UserVO.class);
                 if(EmptyUtils.isNotEmpty(userVO)){
                     return false;

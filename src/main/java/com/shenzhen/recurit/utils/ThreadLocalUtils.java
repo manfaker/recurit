@@ -5,6 +5,8 @@ import com.shenzhen.recurit.vo.UserVO;
 public class ThreadLocalUtils {
    private static  ThreadLocal<String> stringThreadLocal;
 
+   private static RedisTempleUtils redisTempleUtils;
+
    public static void init(){
        if(EmptyUtils.isEmpty(stringThreadLocal)){
            stringThreadLocal = new ThreadLocal<>();
@@ -15,7 +17,7 @@ public class ThreadLocalUtils {
      * 获取用户动态口令
      * @return
      */
-   public static String getUser(){
+   public static String getUserCode(){
         return stringThreadLocal.get();
    }
     /**
@@ -23,7 +25,15 @@ public class ThreadLocalUtils {
      */
    public static void setUserCode(String userName){
        init();
-       String encodeUser = EncryptBase64Utils.encryptBASE64(userName);
-       stringThreadLocal.set(encodeUser);
+       stringThreadLocal.set(userName);
+   }
+
+    /**
+     * 获取登录用户的信息
+     * @return
+     */
+   public static UserVO getUser(){
+       redisTempleUtils = SpringUtils.getBean(RedisTempleUtils.class);
+       return redisTempleUtils.getValue(ThreadLocalUtils.getUserCode(),UserVO.class);
    }
 }

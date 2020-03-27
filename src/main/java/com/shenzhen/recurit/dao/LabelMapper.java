@@ -11,7 +11,7 @@ public interface LabelMapper {
      * @param listLabel
      * @return
      */
-    List<LabelVO> saveBatchLabel(@Param("listLabel") List<LabelVO> listLabel);
+    void saveBatchLabel(@Param("listLabel") List<LabelVO> listLabel);
 
     /**
      * 单个新增
@@ -31,7 +31,7 @@ public interface LabelMapper {
      * @param category
      * @param relationId
      */
-    void getLabelByCategory(@Param("category") String category,@Param("relationId") int relationId);
+    List<LabelVO> getLabelByCategory(@Param("category") String category,@Param("relationId") int relationId);
 
     /**
      * 根据id删除标签

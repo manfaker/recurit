@@ -7,6 +7,6 @@ public class LabelVO extends BaseVO{
     private int id ;
     private String labelName;
     private String category;
-    private String  relationId;
+    private int  relationId;
 
 }
