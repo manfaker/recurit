@@ -39,12 +39,29 @@ public class LabelServiceImpl implements LabelService {
                     listLabel.remove(index);
                 }
             }
+            List<Integer> listIds = new ArrayList<>();
+            for(LabelVO labelVO :currLabels){
+                if(!listLabel.contains(labelVO)){
+                    listIds.add(labelVO.getId());
+                }
+            }
+            deleteBatchIds(listIds);
+        }else{
+            labelMapper.deleteLabelByCategory(category,relationId);
         }
         setAllOperaterAndDate(listLabel);
         labelMapper.saveBatchLabel(listLabel);
         List<LabelVO> labels = labelMapper.getLabelByCategory(category, relationId);
         setLabelToResis(labels,redisKey);
         return labels;
+    }
+
+    @Override
+    public int deleteBatchIds(List<Integer> listIds) {
+        if(EmptyUtils.isNotEmpty(listIds)&&listIds.size()>NumberEnum.ZERO.getValue()){
+            return labelMapper.deleteBatchIds(listIds);
+        }
+        return NumberEnum.ZERO.getValue();
     }
 
     private void setLabelToResis(List<LabelVO> labels,String redisKey){

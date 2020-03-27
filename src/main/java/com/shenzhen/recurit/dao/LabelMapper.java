@@ -54,4 +54,10 @@ public interface LabelMapper {
      * @return
      */
     int updateLabel(LabelVO labelVO);
+
+    /**
+     * 根据ids批量删除
+     * @param listIds
+     */
+    int deleteBatchIds(@Param("listIds") List<Integer> listIds);
 }

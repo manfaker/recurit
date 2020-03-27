@@ -63,6 +63,13 @@
                 update_date = #{updatDate}
             </set>
         </update>
+    
+        <delete id="deleteBatchIds">
+            delete from tab_label where 
+                <foreach collection="listIds" item="labelId" open="(" close=")" separator=",">
+                    #{labelId}
+                </foreach>
+        </delete>
 
 
 </mapper>

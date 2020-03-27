@@ -57,6 +57,12 @@ public interface LabelService {
      */
     List<LabelVO>  queryByRelationId(String category,int relationId);
 
+    /**
+     * 根据id批量删除职位信息
+     * @param listIds
+     * @return
+     */
+    int deleteBatchIds(List<Integer> listIds);
 
 
 
