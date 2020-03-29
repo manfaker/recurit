@@ -34,7 +34,7 @@ public interface PositionService {
      * 根据公司id查找职位信息
      * @param companyCode
      */
-    List<PositionPojo> getByCompanyCode(String companyCode);
+    List<PositionPojo> getByCompanyCode(String companyCode,String userCode);
 
     /**
      * 修改职位信息

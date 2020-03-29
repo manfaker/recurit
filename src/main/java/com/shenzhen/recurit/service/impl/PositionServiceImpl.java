@@ -146,8 +146,8 @@ public class PositionServiceImpl implements PositionService {
     }
 
     @Override
-    public List<PositionPojo> getByCompanyCode(String companyCode) {
-        List<PositionPojo> listPosition = positionMapper.getByCompanyCode(companyCode);
+    public List<PositionPojo> getByCompanyCode(String companyCode,String userCode) {
+        List<PositionPojo> listPosition = positionMapper.getByCompanyCode(companyCode,userCode);
         if(EmptyUtils.isNotEmpty(listPosition)&&!listPosition.isEmpty()){
             listPosition.forEach(position->{
                 setInfoToPosition(position);
@@ -161,11 +161,17 @@ public class PositionServiceImpl implements PositionService {
             if(EmptyUtils.isNotEmpty(position.getSalary())){
                 position.setSalaryDict(dictionaryService.getSignleByDictNumber(InformationConstant.SALARY,position.getSalary()));
             }
-            if(EmptyUtils.isNotEmpty(position.getAcademicDegree())){
-                position.setAcademicDegreeDict(dictionaryService.getSignleByDictNumber(InformationConstant.EDUCATION,position.getAcademicDegree()));
+            if(EmptyUtils.isNotEmpty(position.getEducation())){
+                position.setAcademicDegreeDict(dictionaryService.getSignleByDictNumber(InformationConstant.EDUCATION,position.getEducation()));
             }
             if(EmptyUtils.isNotEmpty(position.getExperience())){
                 position.setExperienceDict(dictionaryService.getSignleByDictNumber(InformationConstant.EXPERIENCE,position.getExperience()));
+            }
+            if(EmptyUtils.isNotEmpty(position.getUserCode())){
+                UserVO user = ThreadLocalUtils.getUser();
+                if(position.getUserCode().equals(user.getUserCode())){
+                    position.setUserVO(user);
+                }
             }
             position.setListLabel(labelService.queryByRelationId(InformationConstant.COMPANY,position.getId()));
         }

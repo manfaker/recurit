@@ -3,6 +3,7 @@ package com.shenzhen.recurit.pojo;
 import com.shenzhen.recurit.vo.BaseVO;
 import com.shenzhen.recurit.vo.DictionaryVO;
 import com.shenzhen.recurit.vo.LabelVO;
+import com.shenzhen.recurit.vo.UserVO;
 import lombok.Data;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public class PositionPojo extends BaseVO {
     private String  positionCity;
     private String  positionAddress;
     private String  salary;
-    private String  academicDegree;
+    private String  education;
     private String  experience;
     private DictionaryVO salaryDict;
     private DictionaryVO  academicDegreeDict;
@@ -23,5 +24,9 @@ public class PositionPojo extends BaseVO {
     private String  sexReq;
     private String  status;
     private List<LabelVO> listLabel;
+    private String userCode;
+    private UserVO userVO;
+    private String description;
+    private String skillRequirement;
 }
 

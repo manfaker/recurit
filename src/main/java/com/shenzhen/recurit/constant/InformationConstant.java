@@ -57,6 +57,7 @@ public interface InformationConstant {
 
     //
     String USER ="user";
+    String UPPER_USER = "USER";
     String COMPANY = "company";
     String POSITION="position";
 

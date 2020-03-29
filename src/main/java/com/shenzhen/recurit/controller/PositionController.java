@@ -46,7 +46,7 @@ public class PositionController {
     @PermissionVerification
     public Object getByCompanyCode(){
         UserVO userVO = ThreadLocalUtils.getUser();
-        return ResultVO.success(positionService.getByCompanyCode(userVO.getCompanyCode()));
+        return ResultVO.success(positionService.getByCompanyCode(userVO.getCompanyCode(),userVO.getUserCode()));
     }
 
     @RequestMapping(value = "getByPositionId",method = RequestMethod.GET)

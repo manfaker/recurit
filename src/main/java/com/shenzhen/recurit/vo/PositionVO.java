@@ -9,11 +9,14 @@ public class PositionVO extends BaseVO{
     private String  positionName;
     private String  positionCity;
     private String salary;
-    private String academicDegree;
+    private String education;
     private String experience;
     private String companyCode;
     private String sexReq;
     private int status;
     private String labels;
+    private String userCode;
+    private String description;
+    private String skillRequirement;
 
 }

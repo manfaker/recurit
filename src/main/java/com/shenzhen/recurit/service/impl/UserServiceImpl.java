@@ -170,11 +170,25 @@ public class UserServiceImpl implements UserService {
         if(EmptyUtils.isNotEmpty(userVO.getBirth())){
             userVO.setAge(getCalculationAge(userVO.getBirth()));
         }
-        userVO.setCreateDate(new Date());
-        userVO.setUpdateDate(new Date());
-        userVO.setPassword(EncryptBase64Utils.encryptBASE64(userVO.getPassword()));
+        setBaseUser(userVO);
         userMapper.addUser(userVO);
         return ResultVO.success(userVO);
+    }
+
+    private void setBaseUser(UserVO userVO){
+        if(EmptyUtils.isEmpty(userVO)){
+            userVO = new UserVO();
+        }
+        if(EmptyUtils.isNotEmpty(userVO.getPassword())){
+            userVO.setPassword(EncryptBase64Utils.encryptBASE64(userVO.getPassword()));
+        }
+        userVO.setUserCode(getUserCodeByTime());
+        userVO.setCreateDate(new Date());
+        userVO.setUpdateDate(new Date());
+    }
+
+    private String getUserCodeByTime(){
+        return InformationConstant.UPPER_USER+new Date().getTime();
     }
 
     private int getCalculationAge(Date birth){

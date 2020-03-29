@@ -26,6 +26,7 @@ public class UserVO extends BaseVO{
     private String entryCode;//动态识别码
     private int status;//动态识别码
     private String companyCode;//公司编码
+    private String userCode;//公司编码
 
 
 

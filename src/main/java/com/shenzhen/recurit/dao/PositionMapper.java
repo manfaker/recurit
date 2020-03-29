@@ -2,6 +2,7 @@ package com.shenzhen.recurit.dao;
 
 import com.shenzhen.recurit.pojo.PositionPojo;
 import com.shenzhen.recurit.vo.PositionVO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface PositionMapper {
      * @param companyCode
      * @return
      */
-    List<PositionPojo> getByCompanyCode(String companyCode);
+    List<PositionPojo> getByCompanyCode(@Param("companyCode") String companyCode,@Param("userCode")  String userCode);
 
     /**
      * 根据id获取职位信息

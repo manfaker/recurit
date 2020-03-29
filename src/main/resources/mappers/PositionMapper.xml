@@ -5,7 +5,7 @@
         <resultMap id="baseResultMap" type="com.shenzhen.recurit.pojo.PositionPojo">
             <id column="id" property="id"/>
             <result column="salary" property="salary"/>
-            <result column="academic_degree" property="academicDegree"/>
+            <result column="education" property="education"/>
             <result column="experience" property="experience"/>
             <result column="company_code" property="companyCode"/>
             <result column="sex_req" property="sexReq"/>
@@ -16,26 +16,30 @@
             <result column="updater" property="updater"/>
             <result column="create_date" property="createDate"/>
             <result column="update_date" property="updateDate"/>
+            <result column="user_code" property="userCode"/>
+            <result column="description" property="description"/>
+            <result column="skill_requirement" property="skillRequirement"/>
         </resultMap>
 
         <sql id="baseResult">
-            salary,academic_degree,experience,company_code,sex_req,position_name,position_city,
-            creater,updater,create_date,update_date
+            salary,education,experience,company_code,sex_req,position_name,position_city,
+            creater,updater,create_date,update_date,user_code,description,skill_requirement
         </sql>
 
         <insert id="savePosition" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
             insert into tab_position(<include refid="baseResult"/>)
-                values(#{salary},#{academicDegree},#{experience},
+                values(#{salary},#{education},#{experience},
                 #{companyCode},#{sexReq},#{positionName},#{positionCity},#{creater},#{updater},
-                #{createDate},#{updateDate})
+                #{createDate},#{updateDate},#{userCode},#{description},#{skillRequirement})
         </insert>
 
         <select id="getByCompanyCode" resultMap="baseResultMap">
-            select id,status,<include refid="baseResult"/> from tab_position where company_code = #{companyCode}
+            select id,status,<include refid="baseResult"/> from tab_position
+                where company_code = #{companyCode} and  user_code = #{userCode} and status = 1
         </select>
 
         <select id="getByPositionId" resultMap="baseResultMap">
-            select id,status,<include refid="baseResult"/> from tab_position where id = #{id}
+            select id,status,<include refid="baseResult"/> from tab_position where id = #{id} and status = 1
         </select>
 
         <update id="deleteByPositionId">
@@ -59,14 +63,23 @@
             <if test="salary != null and salary != '' ">
                 salary = #{salary},
             </if>
-            <if test="academicDegree != null and academicDegree != '' ">
-                academic_degree = #{academicDegree},
+            <if test="education != null and education != '' ">
+                education = #{education},
             </if>
             <if test="experience != null and experience != '' ">
                 experience = #{experience},
             </if>
             <if test="sexReq != null and sexReq != '' ">
                 sex_req = #{sexReq},
+            </if>
+            <if test="userCode != null and userCode != '' ">
+                user_code = #{userCode},
+            </if>
+            <if test="description != null and description != '' ">
+                description = #{description},
+            </if>
+            <if test="skillRequirement != null and skillRequirement != '' ">
+                skill_requirement = #{skillRequirement},
             </if>
             update_date = #{updateDate}
         </set>
