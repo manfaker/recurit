@@ -56,8 +56,7 @@ public class PositionServiceImpl implements PositionService {
     @Transactional
     @Override
     public PositionVO savePosition(PositionVO position) {
-        position.setUpdateDate(new Date());
-        position.setCreateDate(new Date());
+        setOrdinaryInfo(position,false);
         positionMapper.savePosition(position);
         PositionPojo positionPojo = new PositionPojo();
         if(position.getId()> NumberEnum.ZERO.getValue()){
@@ -93,6 +92,8 @@ public class PositionServiceImpl implements PositionService {
                 positionVO.setCreater(user.getUserName());
             }
             positionVO.setCreateDate(new Date());
+            positionVO.setCompanyCode(user.getCompanyCode());
+            positionVO.setUserCode(user.getUserCode());
         }
         if(EmptyUtils.isNotEmpty(user)){
             positionVO.setUpdater(user.getUserName());
