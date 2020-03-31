@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzhen.recurit.dao.CompanyMapper">
+
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.vo.CompanyVO">
+            <id column="id" property="id"/>
+            <result column="company_code" property="companyCode"/>
+            <result column="company_name" property="companyName"/>
+            <result column="legal_representative" property="legalRepresentative"/>
+            <result column="company_info" property="companyInfo"/>
+            <result column="icon" property="icon"/>
+            <result column="province" property="province"/>
+            <result column="city" property="city"/>
+            <result column="county" property="county"/>
+            <result column="address" property="address"/>
+            <result column="status" property="status"/>
+            <result column="user_code" property="userCode"/>
+
+        </resultMap>
+
+        <sql id="baseResult">
+            company_name,legal_representative,company_info,icon,province,company_code,city,county,address,status,user_code
+        </sql>
+
+        <insert id="saveCompany" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+            insert into tab_company (<include refid="baseResult"/>)
+            values(#{companyName},#{legalRepresentative},#{companyInfo},
+                #{icon},#{province},#{companyCode},#{city},#{county},#{address})
+        </insert>
+
+        <select id="getCompanyByCode" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_company
+            where company_code = #{companyCode}
+        </select>
+
+        <select id="getCompanyByLegalRepresentative" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_company where legal_representative = #{legalRepresentative}
+        </select>
+
+        <select id="getCompanyByName" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_company where company_name = #{companyName}
+        </select>
+
+       <!-- <update id="deleteByCompanyId">
+            update tab_company
+            <set>
+            </set>
+                where id = #{id}
+        </update>-->
+
+    <update id="updateCompany">
+        update tab_company
+        <set>
+            <if test="companyInfo != null and companyInfo != '' ">
+                company_info = #{companyInfo},
+            </if>
+            <if test="icon != null and icon != '' ">
+                icon = #{icon},
+            </if>
+            <if test="province != null and province != '' ">
+                province = #{province},
+            </if>
+            <if test="city != null and city != '' ">
+                city = #{city},
+            </if>
+            <if test="county != null and county != '' ">
+                county = #{county},
+            </if>
+            <if test="address != null and address != '' ">
+                address = #{address}
+            </if>
+
+        </set>
+        where company_code = #{companyCode}
+    </update>
+</mapper>

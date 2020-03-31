@@ -60,7 +60,7 @@
                     relation_id = #{relationId},
                 </if>
                 updater = #{updater},
-                update_date = #{updatDate}
+                update_date = #{updateDate}
             </set>
         </update>
     

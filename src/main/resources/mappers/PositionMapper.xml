@@ -22,7 +22,7 @@
         </resultMap>
 
         <sql id="baseResult">
-            salary,education,experience,company_code,sex_req,position_name,position_city,
+            salary,education,experience,company_code,sex_req,position_name,position_city,position_address,
             creater,updater,create_date,update_date,user_code,description,skill_requirement
         </sql>
 
@@ -57,14 +57,14 @@
             <if test="positionName != null and positionName != '' ">
                 position_name = #{positionName},
             </if>
+            <if test="positionAddress != null and positionAddress != '' ">
+                position_address = #{positionAddress},
+            </if>
             <if test="positionCity != null and positionCity != '' ">
                 position_city = #{positionCity},
             </if>
             <if test="salary != null and salary != '' ">
                 salary = #{salary},
-            </if>
-            <if test="education != null and education != '' ">
-                education = #{education},
             </if>
             <if test="experience != null and experience != '' ">
                 experience = #{experience},
@@ -81,9 +81,20 @@
             <if test="skillRequirement != null and skillRequirement != '' ">
                 skill_requirement = #{skillRequirement},
             </if>
+            <if test="education != null and education != '' ">
+                education = #{education},
+            </if>
+            <if test="status != null and status != '' ">
+                status = #{status},
+            </if>
+            <if test="updater != null and updater != '' ">
+                updater = #{updater},
+            </if>
+            <if test="labels != null and labels != '' ">
+                labels = #{labels},
+            </if>
             update_date = #{updateDate}
         </set>
         where id = #{id}
-        and company_code=#{companyCode}
     </update>
 </mapper>
