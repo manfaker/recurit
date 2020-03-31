@@ -77,6 +77,7 @@ public class PositionServiceImpl implements PositionService {
         }
     }
 
+
     /**
      * 判断市修改还是新增
      * @param positionVO
@@ -100,7 +101,6 @@ public class PositionServiceImpl implements PositionService {
         }
         positionVO.setUpdateDate(new Date());
     }
-
 
     @Transactional
     @Override
@@ -178,10 +178,12 @@ public class PositionServiceImpl implements PositionService {
         }
     }
 
+    @Transactional
     @Override
     public ResultVO updatePosition(PositionVO position){
         setOrdinaryInfo(position,true);
-        if(EmptyUtils.isNotEmpty(position)&&EmptyUtils.isNotEmpty(position.getCompanyCode())&&EmptyUtils.isNotEmpty(position.getId())&&position.getStatus()==1){
+        if(EmptyUtils.isNotEmpty(position)
+                &&position.getId()>NumberEnum.ZERO.getValue()){
             positionMapper.updatePosition(position);
             PositionPojo positionPojo = positionMapper.getByPositionId(position.getId());
             savePositions(position.getLabels(),positionPojo);

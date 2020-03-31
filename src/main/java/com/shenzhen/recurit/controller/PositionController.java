@@ -35,11 +35,11 @@ public class PositionController {
     public Object deletePosition(int id){
         return ResultVO.success(positionService.deletePositionById(id));
     }
-    @RequestMapping(value = "updatePosition",method = RequestMethod.POST)
+    @RequestMapping(value = "updatePosition",method = RequestMethod.PUT)
     @PermissionVerification
     public Object updatePosition(@RequestBody String jsonData){
         PositionVO positionVO = JSON.parseObject(jsonData, PositionVO.class);
-        return ResultVO.success(positionService.updatePosition(positionVO));
+        return positionService.updatePosition(positionVO);
     }
 
     @RequestMapping(value = "getByCompanyCode",method = RequestMethod.GET)

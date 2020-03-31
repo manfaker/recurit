@@ -90,9 +90,6 @@
             <if test="updater != null and updater != '' ">
                 updater = #{updater},
             </if>
-            <if test="labels != null and labels != '' ">
-                labels = #{labels},
-            </if>
             update_date = #{updateDate}
         </set>
         where id = #{id}

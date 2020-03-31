@@ -50,9 +50,12 @@ public class LabelServiceImpl implements LabelService {
             labelMapper.deleteLabelByCategory(category,relationId);
         }
         setAllOperaterAndDate(listLabel);
-        labelMapper.saveBatchLabel(listLabel);
-        List<LabelVO> labels = labelMapper.getLabelByCategory(category, relationId);
-        setLabelToResis(labels,redisKey);
+        List<LabelVO> labels = new ArrayList<>();
+        if(EmptyUtils.isNotEmpty(listLabel)&&listLabel.size()>NumberEnum.ZERO.getValue()){
+            labelMapper.saveBatchLabel(listLabel);
+            labels.addAll(labelMapper.getLabelByCategory(category, relationId));
+            setLabelToResis(labels,redisKey);
+        }
         return labels;
     }
 

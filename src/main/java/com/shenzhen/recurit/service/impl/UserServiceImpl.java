@@ -250,6 +250,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserVO getUserInfoCookie(String userCode) {
+
         return redisTempleUtils.getValue(userCode,UserVO.class);
     }
 

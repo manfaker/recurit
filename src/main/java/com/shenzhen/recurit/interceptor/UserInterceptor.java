@@ -38,7 +38,6 @@ public class UserInterceptor implements HandlerInterceptor {
             response.sendRedirect("/recurit/user/reLogin");
             return false;
         }
-
         return true;
     }
 
@@ -64,7 +63,6 @@ public class UserInterceptor implements HandlerInterceptor {
             return ipAddr;
         }
     }
-
 
     private boolean hasPermission(Object handler,String authUser){
         if (handler instanceof HandlerMethod) {
