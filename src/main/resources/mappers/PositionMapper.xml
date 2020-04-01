@@ -18,19 +18,20 @@
             <result column="update_date" property="updateDate"/>
             <result column="user_code" property="userCode"/>
             <result column="description" property="description"/>
+            <result column="position_address" property="positionAddress"/>
             <result column="skill_requirement" property="skillRequirement"/>
         </resultMap>
 
         <sql id="baseResult">
             salary,education,experience,company_code,sex_req,position_name,position_city,
-            creater,updater,create_date,update_date,user_code,description,skill_requirement
+            creater,updater,create_date,update_date,user_code,description,skill_requirement,position_address
         </sql>
 
         <insert id="savePosition" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
             insert into tab_position(<include refid="baseResult"/>)
                 values(#{salary},#{education},#{experience},
                 #{companyCode},#{sexReq},#{positionName},#{positionCity},#{creater},#{updater},
-                #{createDate},#{updateDate},#{userCode},#{description},#{skillRequirement})
+                #{createDate},#{updateDate},#{userCode},#{description},#{skillRequirement},#{positionAddress})
         </insert>
 
         <select id="getByCompanyCode" resultMap="baseResultMap">
