@@ -22,7 +22,7 @@
         </resultMap>
 
         <sql id="baseResult">
-            salary,education,experience,company_code,sex_req,position_name,position_city,position_address,
+            salary,education,experience,company_code,sex_req,position_name,position_city,
             creater,updater,create_date,update_date,user_code,description,skill_requirement
         </sql>
 
