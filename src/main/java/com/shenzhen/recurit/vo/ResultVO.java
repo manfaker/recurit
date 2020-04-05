@@ -76,6 +76,14 @@ public class ResultVO implements Serializable {
             return new ResultVO(false, ReturnEnum.DEFAULT_302.getCode(),msg,null);
         }
 
+    /**
+     * 响应错误(不带状态码,带消息)
+     * @return Result
+     */
+    public static ResultVO error(Object data){
+        return new ResultVO(false, ReturnEnum.DEFAULT_302.getCode(), ReturnEnum.DEFAULT_302.getValue(),data);
+    }
+
         /**
          * 响应错误(带错误码,消息提醒)
          * @return

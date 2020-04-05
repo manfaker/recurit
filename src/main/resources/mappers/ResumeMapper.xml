@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzhen.recurit.dao.ResumeMapper">
+
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.pojo.ResumePojo">
+            <id column="id" property="id"/>
+            <result column="user_code" property="userCode"/>
+            <result column="domicile_province" property="domicileProvince"/>
+            <result column="domicile_city" property="domicileCity"/>
+            <result column="domicile_county" property="domicileCounty"/>
+            <result column="domicile_addr" property="domicileAddr"/>
+            <result column="residence_province" property="residenceProvince"/>
+            <result column="residence_city" property="residenceCity"/>
+            <result column="residence_county" property="residenceCounty"/>
+            <result column="residence_addr" property="residenceAddr"/>
+            <result column="experience" property="experience"/>
+            <result column="education" property="education"/>
+            <result column="job_status" property="jobStatus"/>
+            <result column="salary" property="salary"/>
+            <result column="city" property="city"/>
+            <result column="profession" property="profession"/>
+            <result column="admission_time" property="admissionTime"/>
+            <result column="graduation_time" property="graduationTtime"/>
+            <result column="introduce" property="introduce"/>
+            <result column="creater" property="creater"/>
+            <result column="updater" property="updater"/>
+            <result column="create_date" property="createDate"/>
+            <result column="update_date" property="updateDate"/>
+        </resultMap>
+
+        <sql id="baseResult">
+            user_code,domicile_province,domicile_city,domicile_county,domicile_addr,residence_province,residence_city,
+                residence_county,residence_addr,experience,education,job_status,salary,city,profession,admission_time,
+                graduation_time,introduce,creater,updater,create_date,update_date
+        </sql>
+
+        <delete id="deleteById">
+            delete from tab_resume where id = #{id}
+        </delete>
+
+        <select id="getByUserCode" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from  tab_resume where user_code = #{userCode}
+        </select>
+
+        <select id="getById" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from  tab_resume where id = #{id}
+        </select>
+
+        <insert id="addResume" keyColumn="id" useGeneratedKeys="true" keyProperty="id">
+            insert into tab_resume(<include refid="baseResult"/>)
+                values (#{userCode},#{domicileProvince},#{domicileCity},#{domicileCounty},#{domicileAddr},
+                #{residenceProvince},#{residenceCity},#{residenceCounty},#{residenceAddr},#{experience},
+                #{education},#{jobStatus},#{salary},#{city},#{profession},#{admissionTime},
+                #{graduationTime},#{introduce},#{creater},#{updater},#{createDate},#{updateDate})
+        </insert>
+
+        <update id="updateResume">
+            update tab_resume
+            <set>
+                <if test="userCode !=null and userCode != '' ">
+                    user_code = #{userCode},
+                </if>
+                <if test="domicileProvince !=null and domicileProvince != '' ">
+                    domicile_province = #{domicileProvince},
+                </if>
+                <if test="domicileCity !=null and domicileCity != '' ">
+                    domicile_city = #{domicileCity},
+                </if>
+                <if test="domicileCounty !=null and domicileCounty != '' ">
+                    domicile_county = #{domicileCounty},
+                </if>
+                <if test="domicileAddr !=null and domicileAddr != '' ">
+                    domicile_addr = #{domicileAddr},
+                </if>
+                <if test="residenceProvince !=null and residenceProvince != '' ">
+                    residence_province = #{residenceProvince},
+                </if>
+                <if test="residenceCity !=null and residenceCity != '' ">
+                    residence_city = #{residenceCity},
+                </if>
+                <if test="residenceCounty !=null and residenceCounty != '' ">
+                    residence_county = #{residenceCounty},
+                </if>
+                <if test="residenceAddr !=null and residenceAddr != '' ">
+                    residence_addr = #{residenceAddr},
+                </if>
+                <if test="experience !=null and experience != '' ">
+                    experience = #{experience},
+                </if>
+                <if test="education !=null and education != '' ">
+                    education = #{education},
+                </if>
+                <if test="jobStatus !=null and jobStatus != '' ">
+                    job_status = #{jobStatus},
+                </if>
+                <if test="salary !=null and salary != '' ">
+                    salary = #{salary},
+                </if>
+                <if test="city !=null and city != '' ">
+                    city = #{city},
+                </if>
+                <if test="profession !=null and profession != '' ">
+                    profession = #{profession},
+                </if>
+                <if test="admissionTime !=null ">
+                    admission_time = #{admissionTime},
+                </if>
+                <if test="graduationTime !=null ">
+                    graduation_time = #{graduationTime},
+                </if>
+                <if test="introduce !=null and introduce != '' ">
+                    introduce = #{introduce},
+                </if>
+                updater = #{updater},
+                update_date = #{updateDate}
+            </set>
+            where id = #{id}
+        </update>
+
+</mapper>

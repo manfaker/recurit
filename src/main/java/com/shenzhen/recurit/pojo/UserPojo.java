@@ -25,6 +25,7 @@ public class UserPojo extends BaseVO{
     private String nickName; //昵称
     private String entryCode;//动态识别码
     private int status;//动态识别码
+    private ResumePojo resumePojo;//简历信息
 
 
 
