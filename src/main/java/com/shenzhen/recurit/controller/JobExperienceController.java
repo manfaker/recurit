@@ -1,5 +1,6 @@
 package com.shenzhen.recurit.controller;
 
+import com.shenzhen.recurit.Interface.PermissionVerification;
 import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.pojo.JobExperiencePojo;
 import com.shenzhen.recurit.service.JobExperienceService;
@@ -22,12 +23,14 @@ public class JobExperienceController {
     private JobExperienceService jobExperienceService;
 
     @ApiOperation(value = "保存个人经历")
+    @PermissionVerification
     @PostMapping(value = "saveJobExperience",produces={ MediaType.APPLICATION_JSON_UTF8_VALUE })
     private ResultVO saveJobExperience(@RequestBody @ApiParam(required = true) JobExperienceVO jobExperienceVO){
         return jobExperienceService.saveJobExperience(jobExperienceVO);
     }
 
     @ApiOperation(value = "删除个人经历")
+    @PermissionVerification
     @ApiImplicitParam(value = "主键",name = "id",required = true)
     @DeleteMapping (value = "deleteJobExperienceById", produces={ MediaType.APPLICATION_JSON_UTF8_VALUE })
     private ResultVO deleteJobExperienceById(int id){
@@ -39,6 +42,7 @@ public class JobExperienceController {
     }
 
     @ApiOperation(value = "修改个人经历")
+    @PermissionVerification
     @PutMapping (value = "updateJobExperience", produces={ MediaType.APPLICATION_JSON_UTF8_VALUE })
     private ResultVO updateJobExperience(@RequestBody @ApiParam(required = true) JobExperienceVO jobExperienceVO){
         int result = jobExperienceService.updateJobExperience(jobExperienceVO);

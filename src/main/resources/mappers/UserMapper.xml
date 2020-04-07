@@ -31,7 +31,8 @@
         </sql>
         <sql id="preBaseResult">
             t.user_name,t.real_name,t.phone,t.fixed_phone,t.email,t.password,t.contactser,
-                t.role_num,t.sex,t.age,t.birth,t.create_date,t.update_date,t.nick_name,t.status,t.company_code,t.user_code
+                t.role_num,t.sex,t.age,t.birth,t.create_date,t.update_date,
+                t.nick_name,t.status,t.company_code,t.user_code
         </sql>
 
         <select id="getUserByEmail" resultMap="baseResultMap">
@@ -52,7 +53,8 @@
         <insert id="addUser" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
             insert into tab_user(<include refid="baseResult"/>)
                 values(#{userName},#{realName},#{phone},#{fixedPhone},#{email},#{password},#{contactser},
-                        #{roleNum},#{sex},#{age},#{birth},#{createDate},#{updateDate},#{nickName},#{companyCode},#{userCode})
+                        #{roleNum},#{sex},#{age},#{birth},#{createDate},#{updateDate}
+                        ,#{nickName},#{companyCode},#{userCode})
         </insert>
 
         <select id="getUserByNameAndPass" resultMap="baseResultMap">

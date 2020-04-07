@@ -48,4 +48,10 @@ public interface PositionService {
      * @return
      */
     PositionPojo getByPositionId(int id);
+
+    /**
+     * 获取所有的简历信息
+     * @return
+     */
+    List<PositionPojo> getAllPositions();
 }

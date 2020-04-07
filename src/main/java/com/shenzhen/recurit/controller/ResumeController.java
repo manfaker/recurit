@@ -1,5 +1,6 @@
 package com.shenzhen.recurit.controller;
 
+import com.shenzhen.recurit.Interface.PermissionVerification;
 import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.service.ResumeService;
 import com.shenzhen.recurit.vo.ResultVO;
@@ -22,12 +23,14 @@ public class ResumeController {
     private ResumeService resumeService;
 
     @ApiOperation(value = "新增简历信息")
+    @PermissionVerification
     @PostMapping(value = "saveResume",produces={ MediaType.APPLICATION_JSON_UTF8_VALUE })
     public ResultVO saveResume(@RequestBody @ApiParam(required = true) ResumeVO resumeVO){
         return resumeService.saveResume(resumeVO);
     }
 
     @ApiOperation(value = "修改简历信息")
+    @PermissionVerification
     @PutMapping(value = "updateResume",produces={ MediaType.APPLICATION_JSON_UTF8_VALUE })
     public ResultVO updateResume(@RequestBody @ApiParam(required = true) ResumeVO resumeVO){
         int result = resumeService.updateResume(resumeVO);
@@ -39,6 +42,7 @@ public class ResumeController {
 
     @ApiOperation(value ="删除简历信息")
     @ApiImplicitParam(value = "ID",name = "id",required = true)
+    @PermissionVerification
     @DeleteMapping(value = "deleteById",produces={ MediaType.APPLICATION_JSON_UTF8_VALUE })
     public ResultVO deleteById(int id){
         int result = resumeService.deleteById(id);
@@ -49,6 +53,7 @@ public class ResumeController {
     }
 
     @ApiOperation(value = "根据当前用户获取用户和简历信息")
+    @PermissionVerification
     @GetMapping(value = "getByCurrUser",produces={ MediaType.APPLICATION_JSON_UTF8_VALUE })
     public ResultVO getByCurrUser(){
          return ResultVO.success(resumeService.getByCurrUser());

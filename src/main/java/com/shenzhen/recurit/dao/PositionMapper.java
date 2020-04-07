@@ -45,4 +45,9 @@ public interface PositionMapper {
      */
     int updatePosition(PositionVO position);
 
+    /**
+     * 获取所有的简历信息
+     * @return
+     */
+    List<PositionPojo> getAllPositions();
 }

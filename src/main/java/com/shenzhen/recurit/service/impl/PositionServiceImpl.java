@@ -199,4 +199,9 @@ public class PositionServiceImpl implements PositionService {
         setInfoToPosition(position);
         return position;
     }
+
+    @Override
+    public List<PositionPojo> getAllPositions(){
+        return positionMapper.getAllPositions();
+    }
 }

@@ -20,18 +20,20 @@
             <result column="description" property="description"/>
             <result column="position_address" property="positionAddress"/>
             <result column="skill_requirement" property="skillRequirement"/>
+            <result column="location" property="location"/>
         </resultMap>
 
         <sql id="baseResult">
             salary,education,experience,company_code,sex_req,position_name,position_city,
-            creater,updater,create_date,update_date,user_code,description,skill_requirement,position_address
+            creater,updater,create_date,update_date,user_code,description,skill_requirement,position_address,location
         </sql>
 
         <insert id="savePosition" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
             insert into tab_position(<include refid="baseResult"/>)
                 values(#{salary},#{education},#{experience},
                 #{companyCode},#{sexReq},#{positionName},#{positionCity},#{creater},#{updater},
-                #{createDate},#{updateDate},#{userCode},#{description},#{skillRequirement},#{positionAddress})
+                #{createDate},#{updateDate},#{userCode},#{description}
+                ,#{skillRequirement},#{positionAddress},#{location})
         </insert>
 
         <select id="getByCompanyCode" resultMap="baseResultMap">
@@ -91,8 +93,16 @@
             <if test="updater != null and updater != '' ">
                 updater = #{updater},
             </if>
+            <if test="location != null and location != '' ">
+                location = #{location},
+            </if>
             update_date = #{updateDate}
         </set>
         where id = #{id}
     </update>
+
+    <select id="getAllPositions"  resultMap="baseResultMap">
+        select id,status,<include refid="baseResult"/> from tab_position where status = 1
+            order by update_date desc
+    </select>
 </mapper>

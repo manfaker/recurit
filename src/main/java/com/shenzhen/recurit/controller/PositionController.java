@@ -9,6 +9,8 @@ import com.shenzhen.recurit.vo.DictionaryVO;
 import com.shenzhen.recurit.vo.PositionVO;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.UserVO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.List;
 
+@Api(tags = {"职位信息"})
 @RestController
 @RequestMapping(value = "position")
 public class PositionController {
@@ -53,6 +56,13 @@ public class PositionController {
     @PermissionVerification
     public Object getByPositionId(int id){
         return ResultVO.success(positionService.getByPositionId(id));
+    }
+
+    @RequestMapping(value = "getAllPositions",method = RequestMethod.GET)
+    @PermissionVerification
+    @ApiOperation(value = "获取所有的职位信息")
+    public Object getAllPositions(){
+        return ResultVO.success(positionService.getAllPositions());
     }
 
 }
