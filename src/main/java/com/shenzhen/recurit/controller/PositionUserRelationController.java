@@ -22,13 +22,27 @@ public class PositionUserRelationController {
     @PermissionVerification
     @PostMapping(value = "saveBatchRelation")
     public ResultVO saveBatchRelation(@RequestBody @ApiParam PositionUserRelationVO positionUserRelationVO){
-        return positionUserRelationService.saveBatchRelation(positionUserRelationVO.getPositionIds(),positionUserRelationVO.getRelationStatus());
+        return positionUserRelationService.saveBatchRelation(positionUserRelationVO);
     }
 
     @ApiOperation(value = "批量删除信息")
     @PermissionVerification
     @DeleteMapping (value = "deleteBatchRelation")
     public ResultVO deleteBatchRelation(@RequestBody @ApiParam PositionUserRelationVO positionUserRelationVO){
-        return positionUserRelationService.deleteBatchRelation(positionUserRelationVO.getPositionIds(),positionUserRelationVO.getRelationStatus());
+        return positionUserRelationService.deleteBatchRelation(positionUserRelationVO);
+    }
+
+    @ApiOperation(value = "修改信息")
+    @PermissionVerification
+    @PutMapping (value = "updateRelation")
+    public ResultVO updateRelation(@RequestBody @ApiParam PositionUserRelationVO positionUserRelationVO){
+        return positionUserRelationService.updateRelation(positionUserRelationVO);
+    }
+
+    @ApiOperation(value = "保存或者修改信息")
+    @PermissionVerification
+    @PostMapping  (value = "createOrUpdateRelation")
+    public ResultVO createOrUpdateRelation(@RequestBody @ApiParam PositionUserRelationVO positionUserRelationVO){
+        return positionUserRelationService.createOrUpdateRelation(positionUserRelationVO);
     }
 }

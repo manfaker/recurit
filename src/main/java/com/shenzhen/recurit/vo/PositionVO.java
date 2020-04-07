@@ -19,5 +19,6 @@ public class PositionVO extends BaseVO{
     private String description;
     private String skillRequirement;
     private String education;
-    private String location;
+    private String follow;
+    private String apply;
 }

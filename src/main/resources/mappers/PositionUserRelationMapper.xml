@@ -7,7 +7,9 @@
             <result column="position_id" property="positionId"/>
             <result column="user_code" property="userCode"/>
             <result column="status" property="status"/>
-            <result column="relation_status" property="relationStatus"/>
+            <result column="follow" property="follow"/>
+            <result column="apply" property="apply"/>
+            <result column="is_checked" property="isChecked"/>
             <result column="create_date" property="createDate"/>
             <result column="update_date" property="updateDate"/>
             <result column="creater" property="creater"/>
@@ -15,21 +17,22 @@
         </resultMap>
 
         <sql id="baseResult">
-            position_id,user_code,status,relation_status,create_date,update_date,creater,updater
+            position_id,user_code,status,follow,apply,is_checked,create_date,update_date,creater,updater
         </sql>
 
         <insert id="saveBatchRelation">
             insert into tab_position_user_relation(<include refid="baseResult"/>)
                 values
             <foreach collection="relations" item="relation" separator=",">
-                (#{relation.positionId},#{relation.userCode},#{relation.status},#{relation.relationStatus}
+                (#{relation.positionId},#{relation.userCode},#{relation.status},#{relation.follow}
+                    ,#{relation.apply},1
                 ,#{relation.createDate},#{relation.updateDate},#{relation.creater},#{relation.updater})
             </foreach>
         </insert>
 
         <select id="getRelationByPostionAndUser" resultMap="baseResultMap">
             select id,<include refid="baseResult"/> from tab_position_user_relation
-                where user_code = #{userCode} and relation_status = #{relationStatus} and status = 1
+                where user_code = #{userCode} and status = 1
                     and position_id in
                     <foreach collection="listPositionId" item="positionId" open="(" close=")" separator=",">
                         #{positionId}
@@ -38,11 +41,44 @@
 
         <update id="deleteBatchRelation">
             update tab_position_user_relation set status =2
-            where user_code = #{userCode} and relation_status = #{relationStatus} and status = 1
+            where user_code = #{userCode}  and status = 1
             and position_id in
             <foreach collection="listPositionId" item="positionId" open="(" close=")" separator=",">
                 #{positionId}
             </foreach>
         </update>
+
+        <update id="updateRelation">
+            update tab_position_user_relation
+                <set>
+                    <if test="positionId != null and positionId != 0">
+                        position_id = #{positionId},
+                    </if>
+                    <if test="follow != null and follow != 0">
+                        follow = #{follow},
+                    </if>
+                    <if test="apply != null and apply != 0">
+                        apply = #{apply},
+                    </if>
+                    <if test="isChecked != null and isChecked != 0">
+                        is_checked = #{isChecked},
+                    </if>
+                    updater=#{updater},
+                    update_date=#{updateDate}
+                </set>
+                where id = #{id}
+        </update>
+
+        <select id="getRelationByPositionIdAndUserCode" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_position_user_relation
+            where user_code = #{userCode}  and position_id = #{positionId} and status = 1
+        </select>
+
+    <insert id="saveBatchRelation" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        insert into tab_position_user_relation(<include refid="baseResult"/>)
+        values
+            (#{positionId},#{userCode},#{status},#{follow},#{apply},1
+            ,#{createDate},#{updateDate},#{creater},#{updater})
+    </insert>
 
 </mapper>
