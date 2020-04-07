@@ -4,6 +4,7 @@ import com.shenzhen.recurit.vo.BaseVO;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class UserPojo extends BaseVO{
@@ -26,6 +27,7 @@ public class UserPojo extends BaseVO{
     private String entryCode;//动态识别码
     private int status;//动态识别码
     private ResumePojo resumePojo;//简历信息
+    private List<JobExperiencePojo> listJobExperiences;//简历信息
 
 
 

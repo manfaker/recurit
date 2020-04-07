@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzhen.recurit.dao.JobExperienceMapper">
+
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.pojo.JobExperiencePojo">
+            <id column="id" property="id"/>
+            <result column="user_code" property="userCode"/>
+            <result column="company_code" property="companyCode"/>
+            <result column="company_name" property="companyName"/>
+            <result column="department" property="department"/>
+            <result column="profession" property="profession"/>
+            <result column="profession_name" property="professionName"/>
+            <result column="profession_category" property="professionCategory"/>
+            <result column="start_time" property="startTime"/>
+            <result column="end_time" property="endTime"/>
+            <result column="content" property="content"/>
+            <result column="achievement" property="achievement"/>
+            <result column="creater" property="creater"/>
+            <result column="updater" property="updater"/>
+            <result column="create_date" property="createDate"/>
+            <result column="update_date" property="updateDate"/>
+        </resultMap>
+
+        <sql id="baseResult">
+            user_code,company_code,profession,department,profession_name,profession_category,start_time
+            ,end_time,content,achievement,creater,updater,create_date,update_date
+        </sql>
+
+        <insert id="addJobExperience" keyProperty="id" useGeneratedKeys="true" keyColumn="id">
+            insert into tab_job_experience(<include refid="baseResult"/>)
+                values(#{userCode},#{companyCode},#{profession},#{department},#{professionName},
+                #{professionCategory},#{startTime},#{endTime},#{content},#{achievement}
+                ,#{creater},#{updater},#{createDate},#{updateDate})
+        </insert>
+
+        <select id="getJobExperienceById" resultMap="baseResultMap">
+            select job.*,c.company_name from tab_job_experience job left join
+                (select company_code,company_name,status from tab_company where status = 1) c
+                on job.company_code = c.company_code where job.id = #{id}
+        </select>
+
+        <delete id="deleteJobExperienceById" >
+            delete from  tab_job_experience where id = #{id}
+        </delete>
+
+        <select id="getJobExperienceByUserCode" resultMap="baseResultMap">
+            select job.*,c.company_name from tab_job_experience job left join
+            (select company_code,company_name,status from tab_company where status = 1) c
+                on job.company_code = c.company_code where  job.user_code = #{userCode}
+        </select>
+
+        <update id="updateJobExperience">
+            update tab_job_experience
+                <set>
+                    <if test="userCode != null and userCode != ''">
+                        user_code = #{userCode},
+                    </if>
+                    <if test="companyCode != null and companyCode != ''">
+                        company_code = #{companyCode},
+                    </if>
+                    <if test="profession != null and profession != ''">
+                        profession = #{profession},
+                    </if>
+                    <if test="department != null and department != ''">
+                        department = #{department},
+                    </if>
+                    <if test="professionName != null and professionName != ''">
+                        profession_name = #{professionName},
+                    </if>
+                    <if test="professionCategory != null and professionCategory != ''">
+                        profession_category = #{professionCategory},
+                    </if>
+                    <if test="startTime != null and startTime != ''">
+                        start_time = #{startTime},
+                    </if>
+                    <if test="endTime != null and endTime != ''">
+                        end_time = #{endTime},
+                    </if>
+                    <if test="endTime != null and endTime != ''">
+                        end_time = #{endTime},
+                    </if>
+                    <if test="content != null and content != ''">
+                        content = #{content},
+                    </if>
+                    <if test="achievement != null and achievement != ''">
+                        achievement = #{achievement},
+                    </if>
+                    updater = #{updater},
+                    update_date = #{updateDate}
+                </set>
+                 where id = #{id}
+        </update>
+
+
+</mapper>

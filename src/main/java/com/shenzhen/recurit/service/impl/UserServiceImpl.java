@@ -314,7 +314,7 @@ public class UserServiceImpl implements UserService {
         userVO.setPassword(EncryptBase64Utils.encryptBASE64(newPassword));
         //旧密码换新密码
         userVO.setUpdateDate(new Date());
-        int result = userMapper.updateUser(user);
+        int result = userMapper.updateUser(userVO);
         if(result>NumberEnum.ZERO.getValue()){
             return ResultVO.success(userVO);
         }else{

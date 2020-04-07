@@ -4,6 +4,7 @@ import com.shenzhen.recurit.dao.ResumeMapper;
 import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.pojo.ResumePojo;
 import com.shenzhen.recurit.pojo.UserPojo;
+import com.shenzhen.recurit.service.JobExperienceService;
 import com.shenzhen.recurit.service.ResumeService;
 import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.utils.ThreadLocalUtils;
@@ -11,12 +12,9 @@ import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.ResumeVO;
 import com.shenzhen.recurit.vo.UserVO;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.logging.log4j.util.PropertiesUtil;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
 @Service
@@ -24,6 +22,8 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Resource
     private ResumeMapper resumeMapper;
+    @Resource
+    private JobExperienceService jobExperienceService;
 
     @Override
     public int deleteById(int id) {
@@ -85,6 +85,7 @@ public class ResumeServiceImpl implements ResumeService {
         try {
             PropertyUtils.copyProperties(userPojo,userVO);
             userPojo.setResumePojo(getByUserCode(userVO.getUserCode()));
+            userPojo.setListJobExperiences(jobExperienceService.getJobExperienceByUserCode(userVO.getUserCode()));
             return userPojo;
         } catch (Exception e) {
             e.printStackTrace();
