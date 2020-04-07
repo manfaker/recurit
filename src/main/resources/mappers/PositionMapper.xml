@@ -21,11 +21,18 @@
             <result column="position_address" property="positionAddress"/>
             <result column="skill_requirement" property="skillRequirement"/>
             <result column="location" property="location"/>
+            <result column="company_name" property="companyName"/>
+            <result column="relation_status" property="relationStatus"/>
         </resultMap>
 
         <sql id="baseResult">
             salary,education,experience,company_code,sex_req,position_name,position_city,
             creater,updater,create_date,update_date,user_code,description,skill_requirement,position_address,location
+        </sql>
+        <sql id="baseResultSql">
+            t.salary,t.education,t.experience,t.company_code,t.sex_req,t.position_name,t.position_city,
+            t.creater,t.updater,t.create_date,t.update_date,t.user_code,t.description,
+            t.skill_requirement,t.position_address,t.location
         </sql>
 
         <insert id="savePosition" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
@@ -102,7 +109,10 @@
     </update>
 
     <select id="getAllPositions"  resultMap="baseResultMap">
-        select id,status,<include refid="baseResult"/> from tab_position where status = 1
-            order by update_date desc
+        select t.id,t.status,<include refid="baseResultSql"/>,c.company_name,p.relation_status from
+                tab_position t
+                left join (select company_code,company_name from tab_company where status =1) c on t.company_code = c.company_code
+                left join (select position_id,relation_status from tab_position_user_relation where status =1 and relation_status=1) p on t.id = p.position_id
+                where t.status = 1 order by t.update_date desc
     </select>
 </mapper>

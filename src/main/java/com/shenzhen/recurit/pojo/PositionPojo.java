@@ -21,6 +21,7 @@ public class PositionPojo extends BaseVO {
     private DictionaryVO  academicDegreeDict;
     private DictionaryVO  experienceDict;
     private String  companyCode;
+    private String companyName;
     private String  sexReq;
     private String  status;
     private List<LabelVO> listLabel;
@@ -29,5 +30,6 @@ public class PositionPojo extends BaseVO {
     private String description;
     private String skillRequirement;
     private String location;
+    private int relationStatus;
 }
 

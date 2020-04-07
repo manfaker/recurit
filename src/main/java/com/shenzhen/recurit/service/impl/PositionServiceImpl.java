@@ -202,6 +202,12 @@ public class PositionServiceImpl implements PositionService {
 
     @Override
     public List<PositionPojo> getAllPositions(){
-        return positionMapper.getAllPositions();
+        List<PositionPojo> listPostion = positionMapper.getAllPositions();
+        if(EmptyUtils.isNotEmpty(listPostion)&&listPostion.size()>NumberEnum.ZERO.getValue()){
+            listPostion.forEach(position->{
+                setInfoToPosition(position);
+            });
+        }
+        return listPostion;
     }
 }
