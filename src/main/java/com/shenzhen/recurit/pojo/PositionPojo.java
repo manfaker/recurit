@@ -30,8 +30,10 @@ public class PositionPojo extends BaseVO {
     private String description;
     private String skillRequirement;
     private String location;
-    private int relationStatus;
+    private int follow;
+    private int apply;
     private int userId;
     private String userRealName;
+
 }
 

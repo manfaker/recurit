@@ -24,7 +24,7 @@
             insert into tab_position_user_relation(<include refid="baseResult"/>)
                 values
             <foreach collection="relations" item="relation" separator=",">
-                (#{relation.positionId},#{relation.userCode},#{relation.status},#{relation.follow}
+                (#{relation.positionId},#{relation.userCode},1,#{relation.follow}
                     ,#{relation.apply},1
                 ,#{relation.createDate},#{relation.updateDate},#{relation.creater},#{relation.updater})
             </foreach>
@@ -74,10 +74,10 @@
             where user_code = #{userCode}  and position_id = #{positionId} and status = 1
         </select>
 
-    <insert id="saveBatchRelation" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+    <insert id="saveRelation" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
         insert into tab_position_user_relation(<include refid="baseResult"/>)
         values
-            (#{positionId},#{userCode},#{status},#{follow},#{apply},1
+            (#{positionId},#{userCode},1,#{follow},#{apply},1
             ,#{createDate},#{updateDate},#{creater},#{updater})
     </insert>
 

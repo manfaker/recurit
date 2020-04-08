@@ -133,12 +133,15 @@ public class PositionUserRelationServiceImpl implements PositionUserRelationServ
         PositionUserRelationVO relation = positionUserRelationMapper.getRelationByPositionIdAndUserCode(positionUserRelationVO.getPositionId(), user.getUserCode());
         if(EmptyUtils.isNotEmpty(relation)){
             positionUserRelationVO.setId(relation.getId());
+            setRelationBaseInfo(positionUserRelationVO,false);
             int result = positionUserRelationMapper.updateRelation(positionUserRelationVO);
             if(result>NumberEnum.ZERO.getValue()){
                 return ResultVO.success("修改成功");
             }
             return ResultVO.success("修改失败");
         }else{
+            setRelationBaseInfo(positionUserRelationVO,true);
+            positionUserRelationVO.setUserCode(user.getUserCode());
             positionUserRelationMapper.saveRelation(positionUserRelationVO);
             return ResultVO.success("添加成功");
         }
