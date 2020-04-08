@@ -2,6 +2,7 @@ package com.shenzhen.recurit.enums;
 
 public enum NumberEnum {
 
+    NEGATIVE_ONE(-1),
     ZERO(0),
     ONE(1),
     TWO(2),

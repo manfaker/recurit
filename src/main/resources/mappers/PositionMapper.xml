@@ -117,6 +117,13 @@
                 left join (select company_code,company_name from tab_company where status =1) c on t.company_code = c.company_code
                 left join (select position_id,apply,follow from tab_position_user_relation where status =1) p on t.id = p.position_id
                 left join (select user_code,id,real_name from tab_user where status =1 ) u on u.user_code=t.user_code
-                where t.status = 1 order by t.update_date desc
+                where t.status = 1
+                    <if test="apply != null and apply != 0">
+                         and p.apply=#{apply}
+                    </if>
+                    <if test="follow != null and follow != 0">
+                        and p.follow=#{follow}
+                    </if>
+                    order by t.update_date desc
     </select>
 </mapper>

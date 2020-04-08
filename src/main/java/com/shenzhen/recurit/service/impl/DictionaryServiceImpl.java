@@ -75,7 +75,20 @@ public class DictionaryServiceImpl implements DictionaryService {
             DictionaryVO dictionary = JSONObject.parseObject(dictJson.getString(key),DictionaryVO.class);
             dictList.add(dictionary);
         }
+        sortDictList(dictList);
         return dictList;
+    }
+
+    private void sortDictList(List<DictionaryVO> dictList){
+        Collections.sort(dictList, new Comparator<DictionaryVO>() {
+            @Override
+            public int compare(DictionaryVO o1, DictionaryVO o2) {
+                if(EmptyUtils.isEmpty(o1.getDictNum())||EmptyUtils.isEmpty(o2.getDictNum())){
+                    return NumberEnum.NEGATIVE_ONE.getValue();
+                }
+                return o2.getDictNum().compareTo(o1.getDictNum());
+            }
+        });
     }
 
     @Override
@@ -113,6 +126,7 @@ public class DictionaryServiceImpl implements DictionaryService {
     @Override
     public List<DictionaryVO> getAllChildrenByDictNum(String dictNum) {
         List<DictionaryVO> listDict = dictionaryMapper.getAllChildrenByDictNum(dictNum);
+        sortDictList(listDict);
         return listDict ;
     }
 

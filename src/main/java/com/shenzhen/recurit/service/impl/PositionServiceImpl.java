@@ -201,8 +201,8 @@ public class PositionServiceImpl implements PositionService {
     }
 
     @Override
-    public List<PositionPojo> getAllPositions(){
-        List<PositionPojo> listPostion = positionMapper.getAllPositions();
+    public List<PositionPojo> getAllPositions(int follow,int apply){
+        List<PositionPojo> listPostion = positionMapper.getAllPositions(follow,apply);
         if(EmptyUtils.isNotEmpty(listPostion)&&listPostion.size()>NumberEnum.ZERO.getValue()){
             listPostion.forEach(position->{
                 setInfoToPosition(position);
