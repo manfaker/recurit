@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.shenzhen.recurit.Interface.PermissionVerification;
 import com.shenzhen.recurit.service.PositionService;
+import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.utils.ThreadLocalUtils;
 import com.shenzhen.recurit.vo.DictionaryVO;
 import com.shenzhen.recurit.vo.PositionVO;
@@ -67,7 +68,13 @@ public class PositionController {
             @ApiImplicitParam(value = "申请",name="apply",required = false)
     })
     @ApiOperation(value = "获取所有的或者已关注或者申请过的所有职位信息")
-    public Object getAllPositions(int follow,int apply){
+    public Object getAllPositions(Integer follow,Integer apply){
+        if(EmptyUtils.isEmpty(follow)){
+            follow = 0;
+        }
+        if(EmptyUtils.isEmpty(apply)){
+            apply = 0;
+        }
         return ResultVO.success(positionService.getAllPositions(follow,apply));
     }
 

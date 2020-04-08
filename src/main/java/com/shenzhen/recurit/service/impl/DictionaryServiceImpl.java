@@ -86,7 +86,7 @@ public class DictionaryServiceImpl implements DictionaryService {
                 if(EmptyUtils.isEmpty(o1.getDictNum())||EmptyUtils.isEmpty(o2.getDictNum())){
                     return NumberEnum.NEGATIVE_ONE.getValue();
                 }
-                return o2.getDictNum().compareTo(o1.getDictNum());
+                return o1.getDictNum().compareTo(o2.getDictNum());
             }
         });
     }
