@@ -116,12 +116,11 @@
     <select id="getAllPositions"  resultMap="baseResultMap">
         select t.id,t.status,<include refid="baseResultSql"/>,
         c.company_name,p.follow,p.apply,u.id user_id,u.real_name user_real_name,
-        company.financing financing, company.scale scale from
+        c.financing, c.scale from
                 tab_position t
-                left join (select company_code,company_name from tab_company where status =1) c on t.company_code = c.company_code
+                left join (select company_code,company_name,financing,scale from tab_company where status =1) c on t.company_code = c.company_code
                 left join (select position_id,apply,follow from tab_position_user_relation where status =1) p on t.id = p.position_id
                 left join (select user_code,id,real_name from tab_user where status =1 ) u on u.user_code=t.user_code
-                left join (select financing,scale,company_code from tab_company where status =1 ) company on t.company_code=company.company_code
                 where t.status = 1
                     <if test="education != null and education != ''">
                        and t.education = #{education}
@@ -133,10 +132,10 @@
                         and t.salary = #{salary}
                     </if>
                     <if test="financing != null and financing != ''">
-                        and company.financing = #{company}
+                        and c.financing = #{financing}
                     </if>
                     <if test="scale != null and scale != ''">
-                        and company.scale = #{scale}
+                        and c.scale = #{scale}
                     </if>
                     <if test="apply != null and apply != 0">
                          and p.apply=#{apply} and u.user_code = #{userCode}
