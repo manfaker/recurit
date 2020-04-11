@@ -1,5 +1,6 @@
 package com.shenzhen.recurit.vo;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -20,4 +21,8 @@ public class CompanyVO {
     private String address;  //详细地址
     private String userCode; //创建人的userCode
     private int status; //状态  1 正常，2作废，3待审核
+    @ApiModelProperty(value = "融资")
+    private String financing;
+    @ApiModelProperty(value = "规模")
+    private String scale;
 }

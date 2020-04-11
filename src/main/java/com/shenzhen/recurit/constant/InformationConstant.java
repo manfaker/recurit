@@ -62,10 +62,11 @@ public interface InformationConstant {
     String POSITION="position";
 
     //字典类别
-    String SALARY = "SALARY";
-    String EXPERIENCE = "EXPERIENCE";
-    String EDUCATION = "EDUCATION";
-
+    String SALARY = "SALARY";        //薪资
+    String EXPERIENCE = "EXPERIENCE"; //经历
+    String EDUCATION = "EDUCATION";   //教育
+    String FINANCING = "FINANCING";   //融资
+    String SCALE = "SCALE";   //公司规模
 
 
 

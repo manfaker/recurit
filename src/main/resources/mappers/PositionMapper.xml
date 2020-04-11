@@ -26,11 +26,14 @@
             <result column="apply" property="apply"/>
             <result column="user_id" property="userId"/>
             <result column="user_real_name" property="userRealName"/>
+            <result column="financing" property="financing"/>
+            <result column="scale" property="scale"/>
         </resultMap>
 
         <sql id="baseResult">
             salary,education,experience,company_code,sex_req,position_name,position_city,
-            creater,updater,create_date,update_date,user_code,description,skill_requirement,position_address,location
+            creater,updater,create_date,update_date,user_code,description,skill_requirement
+            ,position_address,location
         </sql>
         <sql id="baseResultSql">
             t.salary,t.education,t.experience,t.company_code,t.sex_req,t.position_name,t.position_city,
@@ -106,23 +109,40 @@
             <if test="location != null and location != '' ">
                 location = #{location},
             </if>
-            update_date = #{updateDate}
         </set>
         where id = #{id}
     </update>
 
     <select id="getAllPositions"  resultMap="baseResultMap">
-        select t.id,t.status,<include refid="baseResultSql"/>,c.company_name,p.follow,p.apply,u.id user_id,u.real_name user_real_name from
+        select t.id,t.status,<include refid="baseResultSql"/>,
+        c.company_name,p.follow,p.apply,u.id user_id,u.real_name user_real_name,
+        company.financing financing, company.scale scale from
                 tab_position t
                 left join (select company_code,company_name from tab_company where status =1) c on t.company_code = c.company_code
                 left join (select position_id,apply,follow from tab_position_user_relation where status =1) p on t.id = p.position_id
                 left join (select user_code,id,real_name from tab_user where status =1 ) u on u.user_code=t.user_code
+                left join (select financing,scale,company_code from tab_company where status =1 ) company on t.company_code=company.company_code
                 where t.status = 1
+                    <if test="education != null and education != ''">
+                       and t.education = #{education}
+                    </if>
+                    <if test="experience != null and experience != ''">
+                        and t.experience = #{experience}
+                    </if>
+                    <if test="salary != null and salary != ''">
+                        and t.salary = #{salary}
+                    </if>
+                    <if test="financing != null and financing != ''">
+                        and company.financing = #{company}
+                    </if>
+                    <if test="scale != null and scale != ''">
+                        and company.scale = #{scale}
+                    </if>
                     <if test="apply != null and apply != 0">
-                         and p.apply=#{apply}
+                         and p.apply=#{apply} and u.user_code = #{userCode}
                     </if>
                     <if test="follow != null and follow != 0">
-                        and p.follow=#{follow}
+                        and p.follow=#{follow} and u.user_code = #{userCode}
                     </if>
                     order by t.update_date desc
     </select>

@@ -49,5 +49,5 @@ public interface PositionMapper {
      * 获取所有的简历信息
      * @return
      */
-    List<PositionPojo> getAllPositions(int follow,int apply);
+    List<PositionPojo> getAllPositions(PositionVO positionVO);
 }

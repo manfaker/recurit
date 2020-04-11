@@ -10,10 +10,7 @@ import com.shenzhen.recurit.vo.DictionaryVO;
 import com.shenzhen.recurit.vo.PositionVO;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.UserVO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -61,21 +58,11 @@ public class PositionController {
         return ResultVO.success(positionService.getByPositionId(id));
     }
 
-    @RequestMapping(value = "getAllPositions",method = RequestMethod.GET)
+    @RequestMapping(value = "getAllPositions",method = RequestMethod.POST)
     @PermissionVerification
-    @ApiImplicitParams({
-            @ApiImplicitParam(value = "关注",name="follow",required = false),
-            @ApiImplicitParam(value = "申请",name="apply",required = false)
-    })
     @ApiOperation(value = "获取所有的或者已关注或者申请过的所有职位信息")
-    public Object getAllPositions(Integer follow,Integer apply){
-        if(EmptyUtils.isEmpty(follow)){
-            follow = 0;
-        }
-        if(EmptyUtils.isEmpty(apply)){
-            apply = 0;
-        }
-        return ResultVO.success(positionService.getAllPositions(follow,apply));
+    public Object getAllPositions(@RequestBody @ApiParam PositionVO positionVO){
+        return ResultVO.success(positionService.getAllPositions(positionVO));
     }
 
 

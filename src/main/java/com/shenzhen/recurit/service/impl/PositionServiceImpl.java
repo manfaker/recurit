@@ -168,6 +168,12 @@ public class PositionServiceImpl implements PositionService {
             if(EmptyUtils.isNotEmpty(position.getExperience())){
                 position.setExperienceDict(dictionaryService.getSignleByDictNumber(InformationConstant.EXPERIENCE,position.getExperience()));
             }
+            if(EmptyUtils.isNotEmpty(position.getFinancing())){
+                position.setFinancingDict(dictionaryService.getSignleByDictNumber(InformationConstant.FINANCING,position.getFinancing()));
+            }
+            if(EmptyUtils.isNotEmpty(position.getScale())){
+                position.setScaleDict(dictionaryService.getSignleByDictNumber(InformationConstant.SCALE,position.getScale()));
+            }
             if(EmptyUtils.isNotEmpty(position.getUserCode())){
                 UserVO user = ThreadLocalUtils.getUser();
                 if(position.getUserCode().equals(user.getUserCode())){
@@ -201,8 +207,10 @@ public class PositionServiceImpl implements PositionService {
     }
 
     @Override
-    public List<PositionPojo> getAllPositions(int follow,int apply){
-        List<PositionPojo> listPostion = positionMapper.getAllPositions(follow,apply);
+    public List<PositionPojo> getAllPositions(PositionVO positionVO){
+        String userCode = null;
+        positionVO.setUserCode(ThreadLocalUtils.getUser().getUserCode());
+        List<PositionPojo> listPostion = positionMapper.getAllPositions(positionVO);
         if(EmptyUtils.isNotEmpty(listPostion)&&listPostion.size()>NumberEnum.ZERO.getValue()){
             listPostion.forEach(position->{
                 setInfoToPosition(position);

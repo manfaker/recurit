@@ -15,17 +15,20 @@
             <result column="address" property="address"/>
             <result column="status" property="status"/>
             <result column="user_code" property="userCode"/>
-
+            <result column="financing" property="financing"/>
+            <result column="scale" property="scale"/>
         </resultMap>
 
         <sql id="baseResult">
-            company_name,legal_representative,company_info,icon,province,company_code,city,county,address,status,user_code
+            company_name,legal_representative,company_info,icon,province,company_code,city,
+            county,address,status,user_code,financing,scale
         </sql>
 
         <insert id="saveCompany" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
             insert into tab_company (<include refid="baseResult"/>)
             values(#{companyName},#{legalRepresentative},#{companyInfo},
-                #{icon},#{province},#{companyCode},#{city},#{county},#{address})
+                #{icon},#{province},#{companyCode},#{city},#{county},#{address},
+                #{financing},#{scale})
         </insert>
 
         <select id="getCompanyByCode" resultMap="baseResultMap">
@@ -67,8 +70,16 @@
                 county = #{county},
             </if>
             <if test="address != null and address != '' ">
-                address = #{address}
+                address = #{address},
             </if>
+            <if test="financing != null and financing != '' ">
+                financing = #{financing},
+            </if>
+            <if test="scale != null and scale != '' ">
+                scale = #{scale},
+            </if>
+            updater = #{updater},
+            update_date = #{updateDate}
 
         </set>
         where company_code = #{companyCode}
