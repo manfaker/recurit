@@ -29,4 +29,6 @@ public class JobExperienceVO extends BaseVO{
     private String content;
     @ApiModelProperty(value = "业绩")
     private String achievement;
+    @ApiModelProperty(value = "标签")
+    private String labels;
 }

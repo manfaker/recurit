@@ -59,6 +59,7 @@ public interface InformationConstant {
     String USER ="user";
     String UPPER_USER = "USER";
     String COMPANY = "company";
+    String JOB_EXPERIENCE = "job_experience";
     String POSITION="position";
 
     //字典类别
