@@ -43,8 +43,7 @@ public class DictionaryServiceImpl implements DictionaryService {
         String dictNum = dictionary.getDictNum();
         DictionaryVO dictByNum = getDictByNum(dictNum);
         if(EmptyUtils.isEmpty(dictByNum)){
-            dictionary.setCreateDate(new Date());
-            dictionary.setUpdateDate(new Date());
+            setDictionaryInfo(dictionary,true);
             dictionaryMapper.saveDictionary(dictionary);
             String category = dictionary.getCategory();
             JSONObject dictJson = redisTempleUtils.getValue(category,JSONObject.class);
@@ -55,6 +54,21 @@ public class DictionaryServiceImpl implements DictionaryService {
             dictJson.put(dictNum, str);
             redisTempleUtils.setValue(category,dictJson);
         }
+    }
+
+    /**
+     *
+     * @param dictionary
+     * @param flag
+     */
+    private void setDictionaryInfo(DictionaryVO dictionary,boolean flag){
+        if(EmptyUtils.isNotEmpty(dictionary)){
+            return;
+        }
+        if(flag){
+            dictionary.setCreateDate(new Date());
+        }
+        dictionary.setUpdateDate(new Date());
     }
 
     @Override
@@ -169,6 +183,33 @@ public class DictionaryServiceImpl implements DictionaryService {
                     redisTempleUtils.setValue(category, dictJson);
                 }
             });
+        }
+    }
+
+    @Override
+    public void saveBatch(List<DictionaryVO> listDict) {
+        if(EmptyUtils.isNotEmpty(listDict)&&listDict.size()>NumberEnum.ZERO.getValue()){
+            listDict.forEach(dict->{
+                saveDictionary(dict);
+            });
+        }
+    }
+
+    @Override
+    public void removeDict(String category, String dictNum) {
+        if(EmptyUtils.isNotEmpty(dictNum)){
+            JSONObject dictJson = redisTempleUtils.getValue(category, JSONObject.class);
+            if(EmptyUtils.isNotEmpty(dictJson)&&dictJson.containsKey(dictNum)){
+                dictJson.remove(dictNum);
+                redisTempleUtils.setValue(category,dictJson.toJSONString());
+                dictionaryMapper.deleteByDictNum(dictNum);
+            }
+        }else{
+            JSONObject dictJson = redisTempleUtils.getValue(category, JSONObject.class);
+            if(EmptyUtils.isNotEmpty(dictJson)){
+                redisTempleUtils.deleteValue(category);
+                dictionaryMapper.deleteByCategory(category);
+            }
         }
     }
 }

@@ -60,4 +60,16 @@ public interface DictionaryMapper {
      * @return
      */
     int updateDictionary(DictionaryVO dictionaryVO);
+
+    /**
+     * 删除数据字典根据类型
+     * @param category
+     */
+    int deleteByCategory(String category);
+
+    /**
+     * 根据编码删除
+     * @param dictNum
+     */
+    int deleteByDictNum(String dictNum);
 }

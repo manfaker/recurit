@@ -66,4 +66,12 @@ public interface DictionaryService {
      * @return
      */
     void refreshAllDict();
+
+    /**
+     * 批量保存数据字典
+     * @param listDict
+     */
+    void saveBatch(List<DictionaryVO> listDict);
+
+    void removeDict(String category, String dictNum);
 }

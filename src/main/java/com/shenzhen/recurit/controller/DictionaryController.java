@@ -10,11 +10,9 @@ import com.shenzhen.recurit.utils.RedisTempleUtils;
 import com.shenzhen.recurit.vo.BaseVO;
 import com.shenzhen.recurit.vo.DictionaryVO;
 import com.shenzhen.recurit.vo.ResultVO;
+import io.swagger.annotations.*;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -25,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping(value = "dictionary")
+@Api(tags = {"数据字典"})
 public class DictionaryController {
 
     @Resource
@@ -39,6 +38,24 @@ public class DictionaryController {
         }else{
             return ResultVO.error("网络异常。。。。");
         }
+    }
+
+    @PostMapping(value="saveBatch")
+    @ApiOperation(value = "批量保存职位信息")
+    public Object saveBatch(@RequestBody @ApiParam List<DictionaryVO> listDict){
+        dictionaryService.saveBatch(listDict);
+        return ResultVO.success();
+    }
+
+    @DeleteMapping(value="removeDict")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "类型",name = "category",required = true),
+            @ApiImplicitParam(value = "编码",name = "dictNum",required = false)
+    })
+    @ApiOperation(value = "根据类型或者编码删除数据字典")
+    public Object removeDict(String category,String dictNum){
+        dictionaryService.removeDict(category,dictNum);
+        return ResultVO.success();
     }
 
     @RequestMapping(value="getAllDictByCategory",method = RequestMethod.GET)

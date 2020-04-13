@@ -65,4 +65,12 @@
                     where  dict_num = #{dictNum}
         </update>
 
+        <delete id="deleteByCategory" >
+            delete from tab_dictionary where category = #{category}
+        </delete>
+
+        <delete id="deleteByDictNum" >
+            delete from tab_dictionary where dict_num = #{dictNum}
+        </delete>
+
 </mapper>
