@@ -2,6 +2,7 @@ package com.shenzhen.recurit.controller;
 
 import com.shenzhen.recurit.Interface.PermissionVerification;
 import com.shenzhen.recurit.service.PositionUserRelationService;
+import com.shenzhen.recurit.utils.EmailUtils;
 import com.shenzhen.recurit.vo.PositionUserRelationVO;
 import com.shenzhen.recurit.vo.ResultVO;
 import io.swagger.annotations.Api;
@@ -45,4 +46,5 @@ public class PositionUserRelationController {
     public ResultVO createOrUpdateRelation(@RequestBody @ApiParam PositionUserRelationVO positionUserRelationVO){
         return positionUserRelationService.createOrUpdateRelation(positionUserRelationVO);
     }
+
 }

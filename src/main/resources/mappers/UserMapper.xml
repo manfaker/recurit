@@ -118,5 +118,10 @@
             where id = #{id}
     </update>
 
+    <select id="getUserCode" resultMap="baseResultMap">
+        select d.dict_name role_name,d.content role_content,t.id,<include refid="preBaseResult"/> from tab_user t
+        left join tab_dictionary d on t.role_num=d.dict_num where t.user_code = #{userCode}
+        and t.status = 1 limit 1
+    </select>
 
 </mapper>

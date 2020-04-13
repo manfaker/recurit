@@ -51,4 +51,11 @@ public interface UserMapper {
      * @return
      */
     UserVO getUserById(int id);
+
+    /**
+     * 根据用户编码查找用户
+     * @param userCode
+     * @return
+     */
+    UserVO getUserCode(String userCode);
 }

@@ -78,4 +78,18 @@ public interface UserService {
      * @return
      */
     ResultVO deleteUser(int userId);
+
+    /**
+     * 保存或者修改用户头像信息
+     * @param userVO
+     * @return
+     */
+    ResultVO updateOrSaveImage(UserVO userVO);
+
+    /**
+     * 根据用户编码查询用户信息
+     * @param userCode
+     * @return
+     */
+    UserVO getUserCode(String userCode);
 }

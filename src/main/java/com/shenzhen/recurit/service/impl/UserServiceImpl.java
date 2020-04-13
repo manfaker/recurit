@@ -1,6 +1,7 @@
 package com.shenzhen.recurit.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.shenzhen.recurit.constant.InformationConstant;
 import com.shenzhen.recurit.constant.OrdinaryConstant;
@@ -15,8 +16,10 @@ import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -250,8 +253,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserVO getUserInfoCookie(String userCode) {
-
-        return redisTempleUtils.getValue(userCode,UserVO.class);
+        UserVO userVO = redisTempleUtils.getValue(userCode, UserVO.class);
+        if(EmptyUtils.isNotEmpty(userVO)&&EmptyUtils.isNotEmpty(userVO.getUserCode())){
+            JSONArray images = redisTempleUtils.getValue(userVO.getUserCode(), JSONArray.class);
+            if(EmptyUtils.isNotEmpty(images)&&images.size()>NumberEnum.ZERO.getValue()){
+                userVO.setImage(images.getString(images.size()-NumberEnum.ONE.getValue()));
+            }
+        }
+        return userVO;
     }
 
 
@@ -534,6 +543,24 @@ public class UserServiceImpl implements UserService {
         return stringBuilder.toString();
     }
 
+    public ResultVO updateOrSaveImage(UserVO userVO){
+        if(EmptyUtils.isEmpty(userVO)||EmptyUtils.isEmpty(userVO.getUserCode())){
+            return ResultVO.error("用户未登录，请先登录");
+        }
+        JSONArray images = redisTempleUtils.getValue(userVO.getUserCode(), JSONArray.class);
+        if(EmptyUtils.isEmpty(images)){
+            images = new JSONArray();
+        }
+        if(images.size()>NumberEnum.FOUR.getValue()){
+            images.remove(NumberEnum.ZERO.getValue());
+        }
+        images.add(userVO.getImage());
+        redisTempleUtils.setValue(userVO.getUserCode(),images.toJSONString());
+        return ResultVO.success();
+    }
 
+    public  UserVO getUserCode(String userCode){
+        return userMapper.getUserCode(userCode);
+    }
 
 }

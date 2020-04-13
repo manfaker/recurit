@@ -15,7 +15,9 @@ public enum NumberEnum {
     THIRTY_TWO(32),
     NINETY_SEVEN(97),
     SIXTY_FIVE(65),
-    TWENTY_SIX(26);
+    TWENTY_SIX(26),
+    FIVE_M(5*1024*1024),
+    ONE_M(1024*1024);
 
     private int value;
     private NumberEnum(int value){

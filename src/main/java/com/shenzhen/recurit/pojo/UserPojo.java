@@ -28,7 +28,7 @@ public class UserPojo extends BaseVO{
     private int status;//动态识别码
     private ResumePojo resumePojo;//简历信息
     private List<JobExperiencePojo> listJobExperiences;//简历信息
-
+    private String image;//头像信息
 
 
 }

@@ -54,4 +54,5 @@ public interface PositionService {
      * @return
      */
     List<PositionPojo> getAllPositions(PositionVO positionVO);
+
 }

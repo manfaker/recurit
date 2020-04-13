@@ -69,6 +69,14 @@ public interface InformationConstant {
     String FINANCING = "FINANCING";   //融资
     String SCALE = "SCALE";   //公司规模
 
+    //模板
+    String TEMPLATE = "template";
+    String RESUME_DOCX = "resume.docx"; //简历docx
+    String RESUME_FTL = "resume.ftl";   //简历模板
+
+    //字符级别
+    String UTF_8 = "UTF-8";
+
 
 
 }

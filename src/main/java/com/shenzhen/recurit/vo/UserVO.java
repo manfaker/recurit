@@ -1,11 +1,15 @@
 package com.shenzhen.recurit.vo;
 
 import com.shenzhen.recurit.utils.EncryptBase64Utils;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
+@ApiModel(value = "用户信息")
 public class UserVO extends BaseVO{
     private int id;
     private String userName; //用户登录名
@@ -27,6 +31,8 @@ public class UserVO extends BaseVO{
     private int status;//动态识别码
     private String companyCode;//公司编码
     private String userCode;//公司编码
+    @ApiModelProperty(value = "用户信息")
+    private String image;//头像信息
 
 
 

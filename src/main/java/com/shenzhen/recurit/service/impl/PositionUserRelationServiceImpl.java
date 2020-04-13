@@ -3,8 +3,12 @@ package com.shenzhen.recurit.service.impl;
 import com.shenzhen.recurit.constant.OrdinaryConstant;
 import com.shenzhen.recurit.dao.PositionUserRelationMapper;
 import com.shenzhen.recurit.enums.NumberEnum;
+import com.shenzhen.recurit.pojo.PositionPojo;
+import com.shenzhen.recurit.service.CompanyService;
+import com.shenzhen.recurit.service.PositionService;
 import com.shenzhen.recurit.service.PositionUserRelationService;
 import com.shenzhen.recurit.service.UserService;
+import com.shenzhen.recurit.utils.EmailUtils;
 import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.utils.ThreadLocalUtils;
 import com.shenzhen.recurit.vo.PositionUserRelationVO;
@@ -21,6 +25,10 @@ import java.util.List;
 public class PositionUserRelationServiceImpl implements PositionUserRelationService {
     @Resource
     private PositionUserRelationMapper positionUserRelationMapper;
+    @Resource
+    private PositionService positionService;
+    @Resource
+    private UserService userService;
 
     @Override
     public ResultVO saveBatchRelation(PositionUserRelationVO positionUserRelationVO) {
@@ -136,6 +144,7 @@ public class PositionUserRelationServiceImpl implements PositionUserRelationServ
             setRelationBaseInfo(positionUserRelationVO,false);
             int result = positionUserRelationMapper.updateRelation(positionUserRelationVO);
             if(result>NumberEnum.ZERO.getValue()){
+                sendResumeEmail(positionUserRelationVO);
                 return ResultVO.success("修改成功");
             }
             return ResultVO.success("修改失败");
@@ -143,8 +152,24 @@ public class PositionUserRelationServiceImpl implements PositionUserRelationServ
             setRelationBaseInfo(positionUserRelationVO,true);
             positionUserRelationVO.setUserCode(user.getUserCode());
             positionUserRelationMapper.saveRelation(positionUserRelationVO);
+            sendResumeEmail(positionUserRelationVO);
             return ResultVO.success("添加成功");
         }
 
+    }
+    
+    private void sendResumeEmail(PositionUserRelationVO positionUserRelationVO){
+        if(EmptyUtils.isEmpty(positionUserRelationVO)){
+            return;
+        }
+        if(positionUserRelationVO.getApply()==NumberEnum.ONE.getValue()){
+            PositionPojo position = positionService.getByPositionId(positionUserRelationVO.getPositionId());
+            if(EmptyUtils.isNotEmpty(position)&&EmptyUtils.isNotEmpty(position.getUserCode())){
+                UserVO userVO = userService.getUserCode(position.getUserCode());
+                if(EmptyUtils.isNotEmpty(userVO)&&EmptyUtils.isNotEmpty(userVO.getEmail())){
+                    EmailUtils.sendResume(userVO.getEmail());
+                }
+            }
+        }
     }
 }
