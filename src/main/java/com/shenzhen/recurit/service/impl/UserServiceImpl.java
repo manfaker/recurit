@@ -194,6 +194,11 @@ public class UserServiceImpl implements UserService {
         return InformationConstant.UPPER_USER+new Date().getTime();
     }
 
+    /**
+     * 计算年龄
+     * @param birth
+     * @return
+     */
     private int getCalculationAge(Date birth){
         int age = NumberEnum.ZERO.getValue();
         Calendar birthCalendar = Calendar.getInstance();

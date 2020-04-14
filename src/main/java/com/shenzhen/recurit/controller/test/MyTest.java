@@ -1,12 +1,7 @@
 package com.shenzhen.recurit.controller.test;
 
-import com.shenzhen.recurit.service.impl.UserServiceImpl;
-import com.shenzhen.recurit.utils.EncryptBase64Utils;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import com.shenzhen.recurit.utils.EncryptBase64Utils;
 
 public class MyTest {
 

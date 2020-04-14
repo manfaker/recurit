@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 @ApiModel(value = "简历")
 public class ResumeVO extends BaseVO{
@@ -40,9 +42,11 @@ public class ResumeVO extends BaseVO{
     @ApiModelProperty(value = "行业")
     private String profession;
     @ApiModelProperty(value = "入学时间")
-    private String admissionTime;
+    private Date admissionTime;
     @ApiModelProperty(value = "毕业时间")
-    private String graduationTime;
+    private Date graduationTime;
     @ApiModelProperty(value = "自我介绍")
     private String introduce;
+    @ApiModelProperty(value = "工作年限")
+    private int workingLife;
 }

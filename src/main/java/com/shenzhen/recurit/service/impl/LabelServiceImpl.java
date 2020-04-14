@@ -9,7 +9,9 @@ import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.service.LabelService;
 import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.utils.RedisTempleUtils;
+import com.shenzhen.recurit.utils.ThreadLocalUtils;
 import com.shenzhen.recurit.vo.LabelVO;
+import com.shenzhen.recurit.vo.UserVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -49,7 +51,7 @@ public class LabelServiceImpl implements LabelService {
         }else{
             labelMapper.deleteLabelByCategory(category,relationId);
         }
-        setAllOperaterAndDate(listLabel);
+        setAllOperaterAndDate(listLabel,true);
         List<LabelVO> labels = new ArrayList<>();
         if(EmptyUtils.isNotEmpty(listLabel)&&listLabel.size()>NumberEnum.ZERO.getValue()){
             labelMapper.saveBatchLabel(listLabel);
@@ -86,25 +88,30 @@ public class LabelServiceImpl implements LabelService {
         redisTempleUtils.setValue(redisKey,jsonObject);
     }
 
-    private void setAllOperaterAndDate(List<LabelVO> listLabel){
+    private void setAllOperaterAndDate(List<LabelVO> listLabel,boolean flag){
         if(EmptyUtils.isNotEmpty(listLabel)||!listLabel.isEmpty()){
             for(LabelVO labelVO:listLabel){
-                setSingleOperaterAndDate(labelVO);
+                setSingleOperaterAndDate(labelVO,flag);
             }
         }
     }
 
-    private void setSingleOperaterAndDate(LabelVO labelVO){
+    private void setSingleOperaterAndDate(LabelVO labelVO,boolean flag){
         if(EmptyUtils.isEmpty(labelVO)){
             labelVO = new LabelVO();
         }
-        labelVO.setCreateDate(new Date());
+        UserVO user = ThreadLocalUtils.getUser();
+        if(flag){
+            labelVO.setCreateDate(new Date());
+            labelVO.setCreater(user.getUserName());
+        }
+        labelVO.setUpdater(user.getUserName());
         labelVO.setUpdateDate(new Date());
     }
 
     @Override
     public LabelVO saveLabel(LabelVO labelVO) {
-        setSingleOperaterAndDate(labelVO);
+        setSingleOperaterAndDate(labelVO,true);
         labelMapper.saveLabel(labelVO);
         String redisKey = labelVO.getCategory()+labelVO.getRelationId();
         if(EmptyUtils.isNotEmpty(labelVO)&&labelVO.getId()>NumberEnum.ZERO.getValue()){
@@ -151,7 +158,7 @@ public class LabelServiceImpl implements LabelService {
 
     @Override
     public int updateLabel(LabelVO labelVO) {
-        setSingleOperaterAndDate(labelVO);
+        setSingleOperaterAndDate(labelVO,false);
         int result = labelMapper.updateLabel(labelVO);
         if(result>NumberEnum.ZERO.getValue()&&EmptyUtils.isNotEmpty(labelVO)){
             labelVO=labelMapper.getLabelById(labelVO.getId());

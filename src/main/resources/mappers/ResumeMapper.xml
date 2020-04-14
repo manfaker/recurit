@@ -26,12 +26,13 @@
             <result column="updater" property="updater"/>
             <result column="create_date" property="createDate"/>
             <result column="update_date" property="updateDate"/>
+            <result column="working_life" property="workingLife"/>
         </resultMap>
 
         <sql id="baseResult">
             user_code,domicile_province,domicile_city,domicile_county,domicile_addr,residence_province,residence_city,
                 residence_county,residence_addr,experience,education,job_status,salary,city,profession,admission_time,
-                graduation_time,introduce,creater,updater,create_date,update_date
+                graduation_time,introduce,creater,updater,create_date,update_date,working_life
         </sql>
 
         <delete id="deleteById">
@@ -51,7 +52,7 @@
                 values (#{userCode},#{domicileProvince},#{domicileCity},#{domicileCounty},#{domicileAddr},
                 #{residenceProvince},#{residenceCity},#{residenceCounty},#{residenceAddr},#{experience},
                 #{education},#{jobStatus},#{salary},#{city},#{profession},#{admissionTime},
-                #{graduationTime},#{introduce},#{creater},#{updater},#{createDate},#{updateDate})
+                #{graduationTime},#{introduce},#{creater},#{updater},#{createDate},#{updateDate},#{workingLife})
         </insert>
 
         <update id="updateResume">
@@ -110,6 +111,9 @@
                 </if>
                 <if test="introduce !=null and introduce != '' ">
                     introduce = #{introduce},
+                </if>
+                <if test="workingLife !=null and workingLife != 0 ">
+                    working_life = #{workingLife},
                 </if>
                 updater = #{updater},
                 update_date = #{updateDate}

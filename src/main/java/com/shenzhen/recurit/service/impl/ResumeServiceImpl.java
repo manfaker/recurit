@@ -15,6 +15,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Calendar;
 import java.util.Date;
 
 @Service
@@ -47,8 +48,30 @@ public class ResumeServiceImpl implements ResumeService {
             resumeVO.setCreater(userVO.getUserName());
             resumeVO.setCreateDate(new Date());
         }
+        resumeVO.setWorkingLife(getCalculationAge(resumeVO.getGraduationTime()));
         resumeVO.setUpdater(userVO.getUserName());
         resumeVO.setUpdateDate(new Date());
+    }
+
+    /**
+     * 计算工作年限
+     * @param endTime
+     * @return
+     */
+    private int getCalculationAge(Date endTime){
+        int workingLife = NumberEnum.ZERO.getValue();
+        Calendar birthCalendar = Calendar.getInstance();
+        birthCalendar.setTime(endTime);
+        Calendar newCalendar = Calendar.getInstance();
+        workingLife = newCalendar.get(Calendar.YEAR)-birthCalendar.get(Calendar.YEAR);
+        if(newCalendar.get(Calendar.MONTH)>birthCalendar.get(Calendar.MONTH)){
+            workingLife++;
+        }else if (newCalendar.get(Calendar.MONTH)==birthCalendar.get(Calendar.MONTH)
+                &&newCalendar.get(Calendar.DAY_OF_MONTH)>birthCalendar.get(Calendar.DAY_OF_MONTH)){
+            workingLife++;
+        }else{
+        }
+        return workingLife;
     }
 
     @Override

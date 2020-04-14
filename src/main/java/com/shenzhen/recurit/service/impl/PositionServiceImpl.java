@@ -139,7 +139,7 @@ public class PositionServiceImpl implements PositionService {
             }
             LabelVO labelVO = new LabelVO();
             labelVO.setLabelName(str);
-            labelVO.setCategory(InformationConstant.COMPANY);
+            labelVO.setCategory(InformationConstant.POSITION);
             labelVO.setRelationId(position.getId());
             listLabel.add(labelVO);
         }
@@ -180,7 +180,7 @@ public class PositionServiceImpl implements PositionService {
                     position.setUserVO(user);
                 }
             }
-            position.setListLabel(labelService.queryByRelationId(InformationConstant.COMPANY,position.getId()));
+            position.setListLabel(labelService.queryByRelationId(InformationConstant.POSITION,position.getId()));
         }
     }
 
