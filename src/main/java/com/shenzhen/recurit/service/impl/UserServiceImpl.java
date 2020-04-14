@@ -260,10 +260,8 @@ public class UserServiceImpl implements UserService {
     public UserVO getUserInfoCookie(String userCode) {
         UserVO userVO = redisTempleUtils.getValue(userCode, UserVO.class);
         if(EmptyUtils.isNotEmpty(userVO)&&EmptyUtils.isNotEmpty(userVO.getUserCode())){
-            JSONArray images = redisTempleUtils.getValue(userVO.getUserCode(), JSONArray.class);
-            if(EmptyUtils.isNotEmpty(images)&&images.size()>NumberEnum.ZERO.getValue()){
-                userVO.setImage(images.getString(images.size()-NumberEnum.ONE.getValue()));
-            }
+            String image = redisTempleUtils.getValue(userVO.getUserCode(), String.class);
+            userVO.setImage(image);
         }
         return userVO;
     }
@@ -549,18 +547,11 @@ public class UserServiceImpl implements UserService {
     }
 
     public ResultVO updateOrSaveImage(UserVO userVO){
-        if(EmptyUtils.isEmpty(userVO)||EmptyUtils.isEmpty(userVO.getUserCode())){
+        UserVO user = userMapper.getUserCode(userVO.getUserCode());
+        if(EmptyUtils.isEmpty(user)||EmptyUtils.isEmpty(user.getUserCode())){
             return ResultVO.error("用户未登录，请先登录");
         }
-        JSONArray images = redisTempleUtils.getValue(userVO.getUserCode(), JSONArray.class);
-        if(EmptyUtils.isEmpty(images)){
-            images = new JSONArray();
-        }
-        if(images.size()>NumberEnum.FOUR.getValue()){
-            images.remove(NumberEnum.ZERO.getValue());
-        }
-        images.add(userVO.getImage());
-        redisTempleUtils.setValue(userVO.getUserCode(),images.toJSONString());
+        redisTempleUtils.setValue(user.getUserCode(),user.getImage());
         return ResultVO.success();
     }
 

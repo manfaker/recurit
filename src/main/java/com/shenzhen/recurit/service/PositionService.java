@@ -55,4 +55,11 @@ public interface PositionService {
      */
     List<PositionPojo> getAllPositions(PositionVO positionVO);
 
+    /**
+     *
+     * @return
+     */
+    List<PositionPojo> getPopularPositions();
+
+    List<PositionPojo> getRecentlyPositions();
 }

@@ -218,4 +218,14 @@ public class PositionServiceImpl implements PositionService {
         }
         return listPostion;
     }
+
+    @Override
+    public List<PositionPojo> getPopularPositions() {
+        return null;
+    }
+
+    @Override
+    public List<PositionPojo> getRecentlyPositions() {
+        return null;
+    }
 }
