@@ -38,4 +38,11 @@ public interface ResumeMapper {
      * @return
      */
     int updateResume(ResumeVO resumeVO);
+
+    /**
+     * 查看所有发布简历的人员
+     * @param resumeVO
+     * @return
+     */
+    ResumePojo getResumeAllByCondition(ResumeVO resumeVO);
 }

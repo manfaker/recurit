@@ -59,6 +59,9 @@ public class ResumeServiceImpl implements ResumeService {
      * @return
      */
     private int getCalculationAge(Date endTime){
+        if(EmptyUtils.isEmpty(endTime)){
+            return NumberEnum.ZERO.getValue();
+        }
         int workingLife = NumberEnum.ZERO.getValue();
         Calendar birthCalendar = Calendar.getInstance();
         birthCalendar.setTime(endTime);
@@ -119,5 +122,10 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public ResumePojo getById(int id) {
         return resumeMapper.getById(id);
+    }
+
+    @Override
+    public ResumePojo getResumeAllByCondition(ResumeVO resumeVO) {
+        return resumeMapper.getResumeAllByCondition(resumeVO);
     }
 }

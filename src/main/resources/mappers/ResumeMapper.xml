@@ -120,5 +120,9 @@
             </set>
             where id = #{id}
         </update>
+    
+        <select id="getResumeAllByCondition" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from  tab_resume order by update_date desc
+        </select>
 
 </mapper>
