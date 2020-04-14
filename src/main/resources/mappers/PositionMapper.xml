@@ -121,6 +121,7 @@
                 left join (select company_code,company_name,financing,scale from tab_company where status =1) c on t.company_code = c.company_code
                 left join (select position_id,apply,follow from tab_position_user_relation where status =1 and user_code = #{userCode}) p on t.id = p.position_id
                 left join (select user_code,id,real_name from tab_user where status =1 ) u on u.user_code=t.user_code
+                left join (select label_name,relation_id from tab_label where category = 'position') l on l.relation_id = t.id
                 where t.status = 1
                     <if test="education != null and education != ''">
                        and t.education = #{education}
@@ -143,6 +144,12 @@
                     <if test="follow != null and follow != 0">
                         and p.follow=#{follow} and u.user_code = #{userCode}
                     </if>
+                    <if test="positionName != null and positionName != ''">
+                        and (instr(t.position_name,#{positionName})>0
+                        or instr(l.label_name,#{positionName})>0
+                        or instr(c.company_name,#{positionName})>0)
+                    </if>
+
                     order by t.update_date desc
     </select>
 </mapper>

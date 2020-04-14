@@ -46,4 +46,5 @@ public class PositionVO extends BaseVO{
     private String financing;
     @ApiModelProperty(value = "规模")
     private String scale;
+
 }
