@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzhen.recurit.dao.EducationExperinceMapper">
+
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.pojo.EducationExperiencesPojo">
+            <id column="id" property="id"/>
+            <result column="user_code" property="userCode"/>
+            <result column="school_name" property="schoolName"/>
+            <result column="category" property="category"/>
+            <result column="major" property="major"/>
+            <result column="association_activity" property="associationActivity"/>
+            <result column="start_time" property="startTime"/>
+            <result column="end_time" property="endTime"/>
+            <result column="experience" property="experience"/>
+            <result column="creater" property="creater"/>
+            <result column="updater" property="updater"/>
+            <result column="create_date" property="createDate"/>
+            <result column="update_date" property="updateDate"/>
+        </resultMap>
+
+        <sql id="baseResult">
+            user_code,school_name,category,major,association_activity,start_time
+            ,end_time,experience,creater,updater,create_date,update_date
+        </sql>
+
+        <insert id="saveEducationExperince" keyProperty="id" useGeneratedKeys="true" keyColumn="id">
+            insert into tab_education_experience(<include refid="baseResult"/>)
+                values(#{userCode},#{schoolName},#{category},#{major},#{associationActivity},
+                    #{startTime},#{endTime},#{experience},#{creater},#{updater},#{createDate},#{updateDate})
+        </insert>
+
+        <select id="getEducationExperinceById" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_education_experience  where id = #{id}
+        </select>
+
+        <delete id="deleteEducationExperinceById" >
+            delete from  tab_education_experience where id = #{id}
+        </delete>
+
+
+        <update id="updateEducationExperince">
+            update tab_education_experience
+                <set>
+                    <if test="userCode != null and userCode != ''">
+                        user_code = #{userCode},
+                    </if>
+                    <if test="schoolName != null and schoolName != ''">
+                        school_name = #{schoolName},
+                    </if>
+                    <if test="category != null and category != ''">
+                        category = #{category},
+                    </if>
+                    <if test="major != null and major != ''">
+                        major = #{major},
+                    </if>
+                    <if test="associationActivity != null and associationActivity != ''">
+                        association_activity = #{associationActivity},
+                    </if>
+                    <if test="startTime != null ">
+                        start_time = #{startTime},
+                    </if>
+                    <if test="endTime != null ">
+                        end_time = #{endTime},
+                    </if>
+                    <if test="experience != null and experience != ''">
+                        experience = #{experience},
+                    </if>
+                    updater = #{updater},
+                    update_date = #{updateDate}
+                </set>
+                 where id = #{id}
+        </update>
+
+
+</mapper>
