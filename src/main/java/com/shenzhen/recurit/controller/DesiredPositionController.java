@@ -3,6 +3,7 @@ package com.shenzhen.recurit.controller;
 import com.shenzhen.recurit.Interface.PermissionVerification;
 import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.service.DesiredPositionService;
+import com.shenzhen.recurit.service.ResumeService;
 import com.shenzhen.recurit.vo.DesiredPositionVO;
 import com.shenzhen.recurit.vo.JobExperienceVO;
 import com.shenzhen.recurit.vo.ResultVO;
@@ -23,12 +24,17 @@ public class DesiredPositionController {
     @Resource
     private DesiredPositionService desiredPositionService;
 
+    @Resource
+    private ResumeService resumeService;
+
     @ApiOperation(value = "修改期望职位信息")
     @PermissionVerification
     @PostMapping(value = "saveDesiredPosition",produces={ MediaType.APPLICATION_JSON_UTF8_VALUE })
     private ResultVO saveDesiredPosition(@RequestBody @ApiParam(required = true) DesiredPositionVO desiredPositionVO){
         return desiredPositionService.saveDesiredPosition(desiredPositionVO);
     }
+
+
 
     @ApiOperation(value = "删除期望职位信息")
     @PermissionVerification

@@ -6,12 +6,14 @@ import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.pojo.DesiredPositionPojo;
 import com.shenzhen.recurit.service.DesiredPositionService;
 import com.shenzhen.recurit.service.DictionaryService;
+import com.shenzhen.recurit.service.ResumeService;
 import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.utils.ThreadLocalUtils;
 import com.shenzhen.recurit.vo.DesiredPositionVO;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.UserVO;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -22,16 +24,27 @@ public class DesiredPositionServiceImpl implements DesiredPositionService {
     private DesiredPositionMapper desiredPositionMapper;
     @Resource
     private DictionaryService dictionaryService;
+    @Resource
+    private ResumeService resumeService;
 
     @Override
+    @Transactional
     public ResultVO saveDesiredPosition(DesiredPositionVO desiredPositionVO) {
         setDesiredPositionInfo(desiredPositionVO,true);
         desiredPositionMapper.saveDesiredPosition(desiredPositionVO);
+        setResumeRecord();
         if(desiredPositionVO.getId()> NumberEnum.ZERO.getValue()){
             DesiredPositionPojo desiredPositionPojo=getDesiredPosition(desiredPositionVO.getId());
             return ResultVO.success(desiredPositionPojo);
         }
         return ResultVO.error(desiredPositionVO);
+    }
+
+    private void setResumeRecord(){
+        UserVO user = ThreadLocalUtils.getUser();
+        if(EmptyUtils.isNotEmpty(user)&&EmptyUtils.isNotEmpty(user.getUserCode())){
+            resumeService.updateRecentTimeByUserCode(user.getUserCode());
+        }
     }
 
     private void setDesiredPosition(DesiredPositionPojo desiredPositionPojo){
@@ -56,12 +69,16 @@ public class DesiredPositionServiceImpl implements DesiredPositionService {
         desiredPositionVO.setUpdater(user.getUserName());
     }
     @Override
+    @Transactional
     public int deleteDesiredPositionById(int id) {
+        setResumeRecord();
         return desiredPositionMapper.deleteDesiredPositionById(id);
     }
 
     @Override
+    @Transactional
     public int updateDesiredPosition(DesiredPositionVO desiredPositionVO) {
+        setResumeRecord();
         setDesiredPositionInfo(desiredPositionVO,false);
         return desiredPositionMapper.updateDesiredPosition(desiredPositionVO);
     }

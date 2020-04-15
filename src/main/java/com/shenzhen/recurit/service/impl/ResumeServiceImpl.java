@@ -128,4 +128,12 @@ public class ResumeServiceImpl implements ResumeService {
     public ResumePojo getResumeAllByCondition(ResumeVO resumeVO) {
         return resumeMapper.getResumeAllByCondition(resumeVO);
     }
+
+    @Override
+    public int updateRecentTimeByUserCode(String userCode) {
+        ResumeVO resumeVO = new ResumeVO();
+        resumeVO.setUserCode(userCode);
+        setResumentBaseInfo(resumeVO,false);
+        return resumeMapper.updateRecentTimeByUserCode(resumeVO);
+    }
 }

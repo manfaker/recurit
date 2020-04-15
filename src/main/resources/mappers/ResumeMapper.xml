@@ -125,4 +125,11 @@
             select id,<include refid="baseResult"/> from  tab_resume order by update_date desc
         </select>
 
+        <update id="updateRecentTimeByUserCode">
+            update tab_resume set
+                updater = #{updater},
+                update_date = #{updateDate}
+                    where  user_code = #{userCode}
+        </update>
+
 </mapper>

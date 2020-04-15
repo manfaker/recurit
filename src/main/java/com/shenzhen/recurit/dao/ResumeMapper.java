@@ -45,4 +45,6 @@ public interface ResumeMapper {
      * @return
      */
     ResumePojo getResumeAllByCondition(ResumeVO resumeVO);
+
+    int updateRecentTimeByUserCode(ResumeVO resumeVO);
 }

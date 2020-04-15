@@ -8,6 +8,7 @@ import com.shenzhen.recurit.pojo.JobExperiencePojo;
 import com.shenzhen.recurit.pojo.PositionPojo;
 import com.shenzhen.recurit.service.JobExperienceService;
 import com.shenzhen.recurit.service.LabelService;
+import com.shenzhen.recurit.service.ResumeService;
 import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.utils.ThreadLocalUtils;
 import com.shenzhen.recurit.vo.JobExperienceVO;
@@ -31,6 +32,8 @@ public class JobExperienceServiceImpl implements JobExperienceService {
     private JobExperienceMapper jobExperienceMapper;
     @Resource
     private LabelService labelService;
+    @Resource
+    private ResumeService resumeService;
 
 
     @Override
@@ -40,6 +43,7 @@ public class JobExperienceServiceImpl implements JobExperienceService {
         jobExperienceMapper.addJobExperience(jobExperienceVO);
         JobExperiencePojo jobExperiencePojo = getJobExperienceById(jobExperienceVO.getId());
         savePositions(jobExperienceVO.getLabels(),jobExperiencePojo);
+        resumeService.updateRecentTimeByUserCode(jobExperienceVO.getUserCode());
     }
 
     /**
@@ -82,7 +86,12 @@ public class JobExperienceServiceImpl implements JobExperienceService {
 
 
     @Override
+    @Transactional
     public int deleteJobExperienceById(int id) {
+        UserVO user = ThreadLocalUtils.getUser();
+        if(EmptyUtils.isNotEmpty(user)&&EmptyUtils.isNotEmpty(user.getUserCode())){
+            resumeService.updateRecentTimeByUserCode(user.getUserCode());
+        }
         return jobExperienceMapper.deleteJobExperienceById(id);
     }
 
@@ -112,6 +121,10 @@ public class JobExperienceServiceImpl implements JobExperienceService {
     @Transactional
     public int updateJobExperience(JobExperienceVO jobExperienceVO) {
         int result = jobExperienceMapper.updateJobExperience(jobExperienceVO);
+        UserVO user = ThreadLocalUtils.getUser();
+        if(EmptyUtils.isNotEmpty(user)&&EmptyUtils.isNotEmpty(user.getUserCode())){
+            resumeService.updateRecentTimeByUserCode(user.getUserCode());
+        }
         if(result>NumberEnum.ZERO.getValue()){
             JobExperiencePojo jobExperiencePojo = jobExperienceMapper.getJobExperienceById(jobExperienceVO.getId());
             savePositions(jobExperienceVO.getLabels(),jobExperiencePojo);

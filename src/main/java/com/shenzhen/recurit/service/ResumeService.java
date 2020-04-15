@@ -60,4 +60,11 @@ public interface ResumeService {
      * @return
      */
     ResumePojo getResumeAllByCondition(ResumeVO resumeVO);
+
+    /**
+     * 跟新时间记录
+     * @param userCode
+     * @return
+     */
+    int updateRecentTimeByUserCode(String userCode);
 }
