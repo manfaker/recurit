@@ -151,4 +151,34 @@
                     </if>
                     order by t.update_date desc
     </select>
+
+    <select id="getPopularPositions" resultMap="baseResultMap">
+        select id,status,<include refid="baseResult"/> from tab_position where status=1
+        and id in (SELECT
+	        t.position_id
+        FROM
+	    ( SELECT position_id, count( 1 ) position_num FROM tab_browse_record GROUP BY position_id ) t
+        ORDER BY
+	    t.position_num) limit 6
+    </select>
+
+    <select id="getRecentlyPositions" resultMap="baseResultMap">
+        select id,status,<include refid="baseResult"/> from tab_position where status=1
+        and id in
+            ( SELECT
+        t.position_id
+        FROM
+            ( SELECT position_id, MAX( create_date ) max_time FROM tab_browse_record
+                WHERE
+                <choose>
+                    <when test="userCode != null and userCode != ''">
+                        user_code = #{userCode}
+                    </when>
+                    <otherwise>1=2</otherwise>
+                </choose>
+                 GROUP BY position_id ) t
+        ORDER BY
+            t.max_time DESC
+        ) LIMIT 4
+    </select>
 </mapper>

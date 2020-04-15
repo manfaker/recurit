@@ -221,11 +221,28 @@ public class PositionServiceImpl implements PositionService {
 
     @Override
     public List<PositionPojo> getPopularPositions() {
-        return null;
+        List<PositionPojo> listPosition = positionMapper.getPopularPositions();
+        if(EmptyUtils.isNotEmpty(listPosition)){
+            listPosition.forEach(position->{
+                setInfoToPosition(position);
+            });
+        }
+        return listPosition;
     }
 
     @Override
     public List<PositionPojo> getRecentlyPositions() {
-        return null;
+        UserVO user = ThreadLocalUtils.getUser();
+        String userCode = OrdinaryConstant.IS_BLACK;
+        if(EmptyUtils.isNotEmpty(user)){
+            userCode = user.getUserCode();
+        }
+        List<PositionPojo> recentlyPositions = positionMapper.getRecentlyPositions(userCode);
+        if(EmptyUtils.isNotEmpty(recentlyPositions)){
+            recentlyPositions.forEach(position->{
+                setInfoToPosition(position);
+            });
+        }
+        return recentlyPositions;
     }
 }

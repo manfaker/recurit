@@ -50,4 +50,17 @@ public interface PositionMapper {
      * @return
      */
     List<PositionPojo> getAllPositions(PositionVO positionVO);
+
+    /**
+     * 获取热门职业
+     * @return
+     */
+    List<PositionPojo> getPopularPositions();
+
+    /**
+     * 通过信息获取最近浏览记录
+     * @param userCode
+     * @return
+     */
+    List<PositionPojo> getRecentlyPositions(@Param("userCode") String userCode);
 }

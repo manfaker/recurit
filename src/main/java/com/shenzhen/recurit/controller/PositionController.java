@@ -65,13 +65,13 @@ public class PositionController {
         return ResultVO.success(positionService.getAllPositions(positionVO));
     }
 
-    @RequestMapping(value = "getPopularPositions",method = RequestMethod.POST)
+    @RequestMapping(value = "getPopularPositions",method = RequestMethod.GET)
     @ApiOperation(value = "获取热门职位")
     public Object getPopularPositions(){
         return ResultVO.success(positionService.getPopularPositions());
     }
 
-    @RequestMapping(value = "getRecentlyPositions",method = RequestMethod.POST)
+    @RequestMapping(value = "getRecentlyPositions",method = RequestMethod.GET)
     @ApiOperation(value = "最近浏览职位")
     public Object getRecentlyPositions(){
         return ResultVO.success(positionService.getRecentlyPositions());
