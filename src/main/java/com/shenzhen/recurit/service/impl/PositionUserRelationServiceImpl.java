@@ -162,7 +162,7 @@ public class PositionUserRelationServiceImpl implements PositionUserRelationServ
         if(EmptyUtils.isEmpty(positionUserRelationVO)){
             return;
         }
-        if(positionUserRelationVO.getApply()==NumberEnum.ONE.getValue()){
+        if(positionUserRelationVO.getApply()==NumberEnum.TWO.getValue()){
             PositionPojo position = positionService.getByPositionId(positionUserRelationVO.getPositionId());
             if(EmptyUtils.isNotEmpty(position)&&EmptyUtils.isNotEmpty(position.getUserCode())){
                 UserVO userVO = userService.getUserCode(position.getUserCode());

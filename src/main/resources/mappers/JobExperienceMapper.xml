@@ -70,13 +70,10 @@
                     <if test="professionCategory != null and professionCategory != ''">
                         profession_category = #{professionCategory},
                     </if>
-                    <if test="startTime != null and startTime != ''">
+                    <if test="startTime != null">
                         start_time = #{startTime},
                     </if>
-                    <if test="endTime != null and endTime != ''">
-                        end_time = #{endTime},
-                    </if>
-                    <if test="endTime != null and endTime != ''">
+                    <if test="endTime != null">
                         end_time = #{endTime},
                     </if>
                     <if test="content != null and content != ''">

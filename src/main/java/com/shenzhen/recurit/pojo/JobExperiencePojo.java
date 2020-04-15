@@ -5,6 +5,7 @@ import com.shenzhen.recurit.vo.LabelVO;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -18,8 +19,8 @@ public class JobExperiencePojo extends BaseVO {
     private String department;
     private String professionName;
     private String professionCategory;
-    private String startTime;
-    private String endTime;
+    private Date startTime;
+    private Date endTime;
     private String content;
     private String achievement;
     private List<LabelVO> listLabel;

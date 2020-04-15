@@ -22,7 +22,7 @@ public class CompanyController {
 
     @ApiOperation("保存公司信息")
     @PostMapping(value = "saveCompany")
-    public Object savePosition(@RequestBody  @ApiParam(required=true) CompanyVO companyVO){
+    public ResultVO savePosition(@RequestBody  @ApiParam(required=true) CompanyVO companyVO){
         return companyService.saveCompany(companyVO);
     }
 
@@ -32,7 +32,7 @@ public class CompanyController {
 //    }
 
     @RequestMapping(value = "updateCompany",method = RequestMethod.POST)
-    public Object updatePosition(@RequestBody String jsonData){
+    public ResultVO updatePosition(@RequestBody String jsonData){
         CompanyVO companyVO = JSON.parseObject(jsonData, CompanyVO.class);
         return companyService.updateCompany(companyVO);
     }
@@ -48,8 +48,8 @@ public class CompanyController {
             @ApiImplicitParam(name="companyName",value = "公司名称",required = false)
     })
     @GetMapping(value = "getCompanyByCompanyName")
-    public Object getByPositionId(String companyName){
-        return ResultVO.success(companyService.getCompanyByName(companyName));
+    public ResultVO getByPositionId(String companyName){
+        return companyService.getCompanyByName(companyName);
     }
 
 }

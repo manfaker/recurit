@@ -41,7 +41,7 @@
         </select>
 
         <select id="getCompanyByName" resultMap="baseResultMap">
-            select id,<include refid="baseResult"/> from tab_company where company_name = #{companyName}
+            select id,<include refid="baseResult"/> from tab_company where instr(company_name,#{companyName})>0
         </select>
 
        <!-- <update id="deleteByCompanyId">

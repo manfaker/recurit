@@ -43,7 +43,7 @@ public class JobExperienceController {
 
     @ApiOperation(value = "修改个人经历")
     @PermissionVerification
-    @PutMapping (value = "updateJobExperience", produces={ MediaType.APPLICATION_JSON_UTF8_VALUE })
+    @PutMapping (value = "updateJobExperience")
     private ResultVO updateJobExperience(@RequestBody @ApiParam(required = true) JobExperienceVO jobExperienceVO){
         int result = jobExperienceService.updateJobExperience(jobExperienceVO);
         if(result> NumberEnum.ZERO.getValue()){

@@ -62,7 +62,7 @@ public class DictionaryServiceImpl implements DictionaryService {
      * @param flag
      */
     private void setDictionaryInfo(DictionaryVO dictionary,boolean flag){
-        if(EmptyUtils.isNotEmpty(dictionary)){
+        if(EmptyUtils.isEmpty(dictionary)){
             return;
         }
         if(flag){

@@ -8,12 +8,15 @@ import com.shenzhen.recurit.constant.OrdinaryConstant;
 import com.shenzhen.recurit.dao.UserMapper;
 import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.enums.SymbolEnum;
+import com.shenzhen.recurit.service.ResumeService;
 import com.shenzhen.recurit.service.UserService;
 import com.shenzhen.recurit.utils.*;
 import com.shenzhen.recurit.vo.ResultVO;
+import com.shenzhen.recurit.vo.ResumeVO;
 import com.shenzhen.recurit.vo.UserVO;
 import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -31,6 +34,8 @@ public class UserServiceImpl implements UserService {
     private RedisTempleUtils redisTempleUtils;
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private ResumeService resumeService;
 
     @Override
     public Object getVerificationCode(String number) {
@@ -61,6 +66,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public Object addByNumber(String jsonData) {
         JSONObject jsonObject = JSON.parseObject(jsonData);
         String number = jsonObject.getString(InformationConstant.NUMBER);
@@ -76,6 +82,7 @@ public class UserServiceImpl implements UserService {
             userVO = new UserVO();
         }
         addUserName(userVO);
+        addResume(userVO);
         if(code.equals(redisTempleUtils.getValue(number,String.class))){
             if(number.contains(OrdinaryConstant.SYMBOL_1)){
                 userVO.setEmail(number);
@@ -92,6 +99,15 @@ public class UserServiceImpl implements UserService {
         return ResultVO.error("验证码已过期，请重新发送验证码！");
     }
 
+    private void addResume(UserVO userVO){
+        if(EmptyUtils.isEmpty(userVO)){
+            return;
+        }
+        ResumeVO resumeVO = new ResumeVO();
+        resumeVO.setUserCode(userVO.getUserCode());
+        resumeService.saveResume(resumeVO);
+    }
+
     /**
      * 没有登录名自动生成登录名
      * @param userVO
@@ -100,6 +116,7 @@ public class UserServiceImpl implements UserService {
         if(EmptyUtils.isEmpty(userVO)){
             userVO = new UserVO();
         }
+        userVO.setUserCode(getUserCodeByTime());
         if(EmptyUtils.isEmpty(userVO.getUserName())){
             int index = NumberEnum.ZERO.getValue();
             while(index<NumberEnum.TEN.getValue()){
@@ -134,6 +151,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @Transactional
     public ResultVO addUser(UserVO userVO) {
         if(EmptyUtils.isEmpty(userVO)){
             return ResultVO.error("用户信息不能为空");
@@ -175,6 +193,7 @@ public class UserServiceImpl implements UserService {
         }
         setBaseUser(userVO);
         userMapper.addUser(userVO);
+        addResume(userVO);
         return ResultVO.success(userVO);
     }
 
