@@ -30,7 +30,7 @@ public class ResumeVO extends BaseVO{
     @ApiModelProperty(value = "居住地 详细地址")
     private String residenceAddr;
     @ApiModelProperty(value = "工作经验")
-    private int experience;
+    private String experience;
     @ApiModelProperty(value = "学历")
     private String education;
     @ApiModelProperty(value = "工作状态")

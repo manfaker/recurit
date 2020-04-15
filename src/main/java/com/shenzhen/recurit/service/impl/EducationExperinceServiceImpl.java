@@ -1,8 +1,10 @@
 package com.shenzhen.recurit.service.impl;
 
-import com.shenzhen.recurit.dao.EducationExperinceMapper;
+import com.shenzhen.recurit.constant.InformationConstant;
+import com.shenzhen.recurit.dao.EducationExperienceMapper;
 import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.pojo.EducationExperiencesPojo;
+import com.shenzhen.recurit.service.DictionaryService;
 import com.shenzhen.recurit.service.EducationExperinceService;
 import com.shenzhen.recurit.service.ResumeService;
 import com.shenzhen.recurit.utils.EmptyUtils;
@@ -15,19 +17,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class EducationExperinceServiceImpl implements EducationExperinceService {
 
     @Resource
-    private EducationExperinceMapper educationExperinceMapper;
+    private EducationExperienceMapper educationExperinceMapper;
     @Resource
     private ResumeService resumeService;
+    @Resource
+    private DictionaryService dictionaryService;
 
     @Override
     @Transactional
     public ResultVO saveEducationExperince(EducationExperienceVO educationExperienceVO) {
-        setEducationExperince(educationExperienceVO,true);
+        setEducationExperinceInfo(educationExperienceVO,true);
         educationExperinceMapper.saveEducationExperince(educationExperienceVO);
         setResumeRecord();
         if(educationExperienceVO.getId()> NumberEnum.ZERO.getValue()){
@@ -44,7 +49,7 @@ public class EducationExperinceServiceImpl implements EducationExperinceService 
         }
     }
 
-    private void setEducationExperince(EducationExperienceVO educationExperienceVO,boolean flag){
+    private void setEducationExperinceInfo(EducationExperienceVO educationExperienceVO,boolean flag){
         if(EmptyUtils.isNotEmpty(educationExperienceVO)){
             UserVO user = ThreadLocalUtils.getUser();
             if(flag){
@@ -67,11 +72,28 @@ public class EducationExperinceServiceImpl implements EducationExperinceService 
     @Transactional
     public int updateEducationExperince(EducationExperienceVO educationExperienceVO) {
         setResumeRecord();
+        setEducationExperinceInfo(educationExperienceVO,false);
         return educationExperinceMapper.updateEducationExperince(educationExperienceVO);
+    }
+
+    private void setEducationExperince(EducationExperiencesPojo educationExperiencesPojo){
+        if(EmptyUtils.isNotEmpty(educationExperiencesPojo)){
+            if(EmptyUtils.isNotEmpty(educationExperiencesPojo.getExperience())){
+                educationExperiencesPojo.setExperienceDict(dictionaryService.getSignleByDictNumber(InformationConstant.EXPERIENCE,educationExperiencesPojo.getExperience()));
+            }
+        }
     }
 
     @Override
     public EducationExperiencesPojo getEducationExperinceById(int id) {
-        return educationExperinceMapper.getEducationExperinceById(id);
+        EducationExperiencesPojo educationExperiencesPojo = educationExperinceMapper.getEducationExperinceById(id);
+        setEducationExperince(educationExperiencesPojo);
+        return educationExperiencesPojo;
+    }
+
+    @Override
+    public List<EducationExperiencesPojo> getEducationExperinceUserCode(String userCode) {
+        educationExperinceMapper.getEducationExperinceUserCode(userCode);
+        return null;
     }
 }

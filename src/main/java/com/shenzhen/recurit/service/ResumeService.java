@@ -5,6 +5,7 @@ import com.shenzhen.recurit.pojo.UserPojo;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.ResumeVO;
 import com.shenzhen.recurit.vo.UserVO;
+import java.util.List;
 
 public interface ResumeService {
 
@@ -67,4 +68,6 @@ public interface ResumeService {
      * @return
      */
     int updateRecentTimeByUserCode(String userCode);
+
+    List<ResumePojo> getApplyResume();
 }

@@ -1,13 +1,15 @@
 package com.shenzhen.recurit.service.impl;
 
+import com.shenzhen.recurit.constant.InformationConstant;
 import com.shenzhen.recurit.dao.ResumeMapper;
 import com.shenzhen.recurit.enums.NumberEnum;
+import com.shenzhen.recurit.pojo.EducationExperiencesPojo;
 import com.shenzhen.recurit.pojo.ResumePojo;
 import com.shenzhen.recurit.pojo.UserPojo;
-import com.shenzhen.recurit.service.JobExperienceService;
-import com.shenzhen.recurit.service.ResumeService;
+import com.shenzhen.recurit.service.*;
 import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.utils.ThreadLocalUtils;
+import com.shenzhen.recurit.vo.DictionaryVO;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.ResumeVO;
 import com.shenzhen.recurit.vo.UserVO;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class ResumeServiceImpl implements ResumeService {
@@ -24,7 +27,13 @@ public class ResumeServiceImpl implements ResumeService {
     @Resource
     private ResumeMapper resumeMapper;
     @Resource
+    private DictionaryService dictionaryService;
+    @Resource
     private JobExperienceService jobExperienceService;
+    @Resource
+    private DesiredPositionService desiredPositionService;
+    @Resource
+    private EducationExperinceService educationExperinceService;
 
     @Override
     public int deleteById(int id) {
@@ -112,6 +121,8 @@ public class ResumeServiceImpl implements ResumeService {
             PropertyUtils.copyProperties(userPojo,userVO);
             userPojo.setResumePojo(getByUserCode(userVO.getUserCode()));
             userPojo.setListJobExperiences(jobExperienceService.getJobExperienceByUserCode(userVO.getUserCode()));
+            userPojo.setListDesiredPosition(desiredPositionService.getDesiredPositionuserCode(userVO.getUserCode()));
+            userPojo.setListEducationExperience(educationExperinceService.getEducationExperinceUserCode(userVO.getUserCode()));
             return userPojo;
         } catch (Exception e) {
             e.printStackTrace();
@@ -136,4 +147,32 @@ public class ResumeServiceImpl implements ResumeService {
         setResumentBaseInfo(resumeVO,false);
         return resumeMapper.updateRecentTimeByUserCode(resumeVO);
     }
+
+    @Override
+    public List<ResumePojo> getApplyResume() {
+        UserVO user = ThreadLocalUtils.getUser();
+        List<ResumePojo> listResume = resumeMapper.getApplyResume(user.getUserCode());
+        if(EmptyUtils.isNotEmpty(listResume)){
+            listResume.forEach(resumePojo -> {
+                setResume(resumePojo);
+            });
+        }
+        return listResume;
+    }
+
+    private void setResume(ResumePojo resume){
+        if(EmptyUtils.isNotEmpty(resume)){
+            if(EmptyUtils.isNotEmpty(resume.getEducation())){
+                resume.setEducationDict(dictionaryService.getSignleByDictNumber(InformationConstant.EDUCATION,resume.getEducation()));
+            }
+            if(EmptyUtils.isNotEmpty(resume.getExperience())){
+                resume.setExperienceDict(dictionaryService.getSignleByDictNumber(InformationConstant.EXPERIENCE,resume.getExperience()));
+            }
+            if(EmptyUtils.isNotEmpty(resume.getSalary()
+            )){
+                resume.setSalaryDict(dictionaryService.getSignleByDictNumber(InformationConstant.EDUCATION,resume.getSalary()));
+            }
+        }
+    }
+
 }

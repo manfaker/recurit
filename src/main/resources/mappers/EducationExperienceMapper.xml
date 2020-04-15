@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.shenzhen.recurit.dao.EducationExperinceMapper">
+<mapper namespace="com.shenzhen.recurit.dao.EducationExperienceMapper">
 
         <resultMap id="baseResultMap" type="com.shenzhen.recurit.pojo.EducationExperiencesPojo">
             <id column="id" property="id"/>
@@ -70,6 +70,10 @@
                 </set>
                  where id = #{id}
         </update>
+
+        <select id="getEducationExperinceUserCode" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_education_experience  where user_code = #{userCode}
+        </select>
 
 
 </mapper>

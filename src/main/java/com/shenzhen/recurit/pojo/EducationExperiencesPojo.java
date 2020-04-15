@@ -1,6 +1,7 @@
 package com.shenzhen.recurit.pojo;
 
 import com.shenzhen.recurit.vo.BaseVO;
+import com.shenzhen.recurit.vo.DictionaryVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -28,4 +29,6 @@ public class EducationExperiencesPojo extends BaseVO {
     private Date endTime;
     @ApiModelProperty(value = "学历")
     private String experience;
+    @ApiModelProperty(value = "学历信息")
+    private DictionaryVO experienceDict;
 }

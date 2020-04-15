@@ -116,6 +116,9 @@ public class UserServiceImpl implements UserService {
         if(EmptyUtils.isEmpty(userVO)){
             userVO = new UserVO();
         }
+        if(EmptyUtils.isNotEmpty(userVO.getRoleNum())&&"ROLE0001".equals(userVO.getRoleNum())){
+            userVO.setCompanyCode("SH120155452");
+        }
         userVO.setUserCode(getUserCodeByTime());
         if(EmptyUtils.isEmpty(userVO.getUserName())){
             int index = NumberEnum.ZERO.getValue();
@@ -203,6 +206,9 @@ public class UserServiceImpl implements UserService {
         }
         if(EmptyUtils.isNotEmpty(userVO.getPassword())){
             userVO.setPassword(EncryptBase64Utils.encryptBASE64(userVO.getPassword()));
+        }
+        if(EmptyUtils.isNotEmpty(userVO.getRoleNum())&&"ROLE0001".equals(userVO.getRoleNum())){
+            userVO.setCompanyCode("SH120155452");
         }
         userVO.setUserCode(getUserCodeByTime());
         userVO.setCreateDate(new Date());

@@ -4,6 +4,8 @@ import com.shenzhen.recurit.pojo.DesiredPositionPojo;
 import com.shenzhen.recurit.vo.DesiredPositionVO;
 import com.shenzhen.recurit.vo.ResultVO;
 
+import java.util.List;
+
 public interface DesiredPositionService {
 
     /**
@@ -19,6 +21,13 @@ public interface DesiredPositionService {
      * @return
      */
     int deleteDesiredPositionById(int id);
+
+    /**
+     * 根据userCode
+     * @param
+     * @return
+     */
+    List<DesiredPositionPojo> getDesiredPositionuserCode(String userCode);
 
     /**
      * 修改职位信息

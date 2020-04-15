@@ -4,6 +4,8 @@ import com.shenzhen.recurit.pojo.EducationExperiencesPojo;
 import com.shenzhen.recurit.vo.EducationExperienceVO;
 import com.shenzhen.recurit.vo.ResultVO;
 
+import java.util.List;
+
 public interface EducationExperinceService {
     /**
      * 保存教育经历
@@ -32,4 +34,11 @@ public interface EducationExperinceService {
      * @return
      */
     EducationExperiencesPojo getEducationExperinceById(int id);
+
+    /**
+     * 根据id查询个人经历
+     * @param userCode
+     * @return
+     */
+    List<EducationExperiencesPojo> getEducationExperinceUserCode(String  userCode);
 }

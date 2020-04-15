@@ -3,6 +3,8 @@ package com.shenzhen.recurit.dao;
 import com.shenzhen.recurit.pojo.ResumePojo;
 import com.shenzhen.recurit.vo.ResumeVO;
 
+import java.util.List;
+
 public interface ResumeMapper {
 
     /**
@@ -47,4 +49,6 @@ public interface ResumeMapper {
     ResumePojo getResumeAllByCondition(ResumeVO resumeVO);
 
     int updateRecentTimeByUserCode(ResumeVO resumeVO);
+
+    List<ResumePojo> getApplyResume(String userCode);
 }

@@ -65,4 +65,11 @@ public class ResumeController {
     public ResultVO getResumeAllByCondition(@RequestBody @ApiParam ResumeVO resumeVO){
         return ResultVO.success(resumeService.getResumeAllByCondition(resumeVO));
     }
+
+    @ApiOperation(value = "查看已经所有发布简历的人员")
+    @PermissionVerification
+    @GetMapping (value = "getApplyResume",produces={ MediaType.APPLICATION_JSON_UTF8_VALUE })
+    public ResultVO getApplyResume(){
+        return ResultVO.success(resumeService.getApplyResume());
+    }
 }

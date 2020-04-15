@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class DesiredPositionServiceImpl implements DesiredPositionService {
@@ -73,6 +74,17 @@ public class DesiredPositionServiceImpl implements DesiredPositionService {
     public int deleteDesiredPositionById(int id) {
         setResumeRecord();
         return desiredPositionMapper.deleteDesiredPositionById(id);
+    }
+
+    @Override
+    public List<DesiredPositionPojo> getDesiredPositionuserCode(String userCode) {
+        List<DesiredPositionPojo> listDesiredPosition = desiredPositionMapper.getDesiredPositionuserCode(userCode);
+        if(EmptyUtils.isNotEmpty(listDesiredPosition)){
+            listDesiredPosition.forEach(disired->{
+                setDesiredPosition(disired);
+            });
+        }
+        return listDesiredPosition;
     }
 
     @Override

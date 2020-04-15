@@ -58,5 +58,9 @@
                  where id = #{id}
         </update>
 
+        <select id="getDesiredPositionuserCode" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_desired_position  where user_code = #{userCode}
+        </select>
+
 
 </mapper>

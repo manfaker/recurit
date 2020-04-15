@@ -1,6 +1,7 @@
 package com.shenzhen.recurit.pojo;
 
 import com.shenzhen.recurit.vo.BaseVO;
+import com.shenzhen.recurit.vo.DictionaryVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -20,10 +21,13 @@ public class ResumePojo extends BaseVO {
     private String residenceCity;
     private String residenceCounty;
     private String residenceAddr;
-    private int experience;
+    private String experience;
+    private DictionaryVO experienceDict;
     private String education;
+    private DictionaryVO educationDict;
     private String jobStatus;
     private String salary;
+    private DictionaryVO salaryDict;
     private String city;
     private String profession;
     private Date admissionTime;
@@ -31,4 +35,9 @@ public class ResumePojo extends BaseVO {
     private String introduce;
     @ApiModelProperty(value = "工作年限")
     private int workingLife;
+    private String userName;
+    private int positionId;
+    private String phone;
+    private String positionName;
+
 }
