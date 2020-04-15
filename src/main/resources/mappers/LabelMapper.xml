@@ -17,6 +17,17 @@
             label_name,category,relation_id,create_date,update_date,creater,updater
         </sql>
 
+        <select id="getLabelsByIds" resultMap="baseResultMap">
+            select  id,<include refid="baseResult"/> from tab_label where id in
+                <foreach collection="labels" item="labelId" open="(" close=")" separator=",">
+                    #{labelId}
+                </foreach>
+        </select>
+
+        <select id="getLabelsByCategory" resultMap="baseResultMap">
+            select  id,<include refid="baseResult"/> from tab_label where category = #{category}
+        </select>
+
         <insert id="saveBatchLabel">
             insert into tab_label(<include refid="baseResult"/>)
                 values

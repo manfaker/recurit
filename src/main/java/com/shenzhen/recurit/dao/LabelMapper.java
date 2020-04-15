@@ -60,4 +60,17 @@ public interface LabelMapper {
      * @param listIds
      */
     int deleteBatchIds(@Param("listIds") List<Integer> listIds);
+
+    /**
+     * 批量获取label信息
+     * @return
+     */
+    List<LabelVO> getLabelsByIds(@Param("labels") List<Integer> labels);
+
+    /**
+     * 通过id获取label
+     * @param category
+     * @return
+     */
+    List<LabelVO> getLabelsByCategory(String category);
 }

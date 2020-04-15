@@ -231,12 +231,7 @@ public class PositionServiceImpl implements PositionService {
     }
 
     @Override
-    public List<PositionPojo> getRecentlyPositions() {
-        UserVO user = ThreadLocalUtils.getUser();
-        String userCode = OrdinaryConstant.IS_BLACK;
-        if(EmptyUtils.isNotEmpty(user)){
-            userCode = user.getUserCode();
-        }
+    public List<PositionPojo> getRecentlyPositions(String userCode) {
         List<PositionPojo> recentlyPositions = positionMapper.getRecentlyPositions(userCode);
         if(EmptyUtils.isNotEmpty(recentlyPositions)){
             recentlyPositions.forEach(position->{

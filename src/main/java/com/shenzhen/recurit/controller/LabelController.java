@@ -8,6 +8,8 @@ import com.shenzhen.recurit.service.LabelService;
 import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.vo.LabelVO;
 import com.shenzhen.recurit.vo.ResultVO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "label")
+@Api(tags = "标签")
 public class LabelController {
 
     @Resource
@@ -70,5 +73,13 @@ public class LabelController {
     public ResultVO queryByRelationId(int relationId,String category){
         return ResultVO.success(labelService.queryByRelationId(category,relationId));
     }
+
+    @GetMapping (value = "saveLabelToRedis")
+    @ApiOperation(value = "刷新根据类型修改缓存")
+    public ResultVO saveLabelToRedis(String category){
+        labelService.saveLabelToRedis(category);
+        return ResultVO.success();
+    }
+
 
 }

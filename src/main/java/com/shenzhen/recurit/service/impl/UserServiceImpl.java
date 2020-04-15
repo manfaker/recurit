@@ -547,11 +547,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public ResultVO updateOrSaveImage(UserVO userVO){
-        UserVO user = userMapper.getUserCode(userVO.getUserCode());
-        if(EmptyUtils.isEmpty(user)||EmptyUtils.isEmpty(user.getUserCode())){
-            return ResultVO.error("用户未登录，请先登录");
-        }
-        redisTempleUtils.setValue(user.getUserCode(),user.getImage());
+        redisTempleUtils.setValue(userVO.getUserCode(),userVO.getImage());
         return ResultVO.success();
     }
 

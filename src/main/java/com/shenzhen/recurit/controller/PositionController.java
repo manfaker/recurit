@@ -73,8 +73,9 @@ public class PositionController {
 
     @RequestMapping(value = "getRecentlyPositions",method = RequestMethod.GET)
     @ApiOperation(value = "最近浏览职位")
-    public Object getRecentlyPositions(){
-        return ResultVO.success(positionService.getRecentlyPositions());
+    @ApiImplicitParam(value = "用户code",name="userCode",required = false)
+    public Object getRecentlyPositions(String userCode){
+        return ResultVO.success(positionService.getRecentlyPositions(userCode));
     }
 
 

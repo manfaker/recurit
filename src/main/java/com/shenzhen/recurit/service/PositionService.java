@@ -61,5 +61,5 @@ public interface PositionService {
      */
     List<PositionPojo> getPopularPositions();
 
-    List<PositionPojo> getRecentlyPositions();
+    List<PositionPojo> getRecentlyPositions(String userCode);
 }

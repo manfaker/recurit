@@ -64,6 +64,17 @@ public interface LabelService {
      */
     int deleteBatchIds(List<Integer> listIds);
 
+    /**
+     * 根据id批量获取
+     * @param listIds
+     * @return
+     */
+    List<LabelVO> getLabelsByIds(List<Integer> listIds);
+
+    void saveLabelToRedis(String category);
+
+    List<LabelVO> getLabelsByCategory(String category);
+
 
 
 

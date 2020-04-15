@@ -63,10 +63,52 @@ public class LabelServiceImpl implements LabelService {
 
     @Override
     public int deleteBatchIds(List<Integer> listIds) {
+        List<LabelVO> listLabel = getLabelsByIds(listIds);
+        if(EmptyUtils.isNotEmpty(listLabel)){
+            listLabel.forEach(labelVO -> {
+                removeRedisLabel(labelVO);
+            });
+        }
         if(EmptyUtils.isNotEmpty(listIds)&&listIds.size()>NumberEnum.ZERO.getValue()){
             return labelMapper.deleteBatchIds(listIds);
         }
         return NumberEnum.ZERO.getValue();
+    }
+
+    @Override
+    public List<LabelVO> getLabelsByIds(List<Integer> listIds) {
+        if(EmptyUtils.isEmpty(listIds)||listIds.size()==NumberEnum.ZERO.getValue()){
+            return new ArrayList<>();
+        }
+        return labelMapper.getLabelsByIds(listIds);
+    }
+
+    @Override
+    public void saveLabelToRedis(String category) {
+        List<LabelVO> labels = getLabelsByCategory(category);
+        if(EmptyUtils.isNotEmpty(labels)){
+            labels.forEach(labelVO -> {
+                setLabelToRedis(labelVO);
+            });
+        }
+    }
+
+    @Override
+    public List<LabelVO> getLabelsByCategory(String category) {
+        return labelMapper.getLabelsByCategory(category);
+    }
+
+    private void setLabelToRedis(LabelVO labelVO){
+        if(EmptyUtils.isEmpty(labelVO)){
+            return;
+        }
+        String redisKey = labelVO.getCategory()+labelVO.getRelationId();
+        JSONObject jsonObject=redisTempleUtils.getValue(redisKey,JSONObject.class);
+        if(EmptyUtils.isEmpty(jsonObject)){
+            jsonObject = new JSONObject();
+        }
+        jsonObject.put(labelVO.getId()+OrdinaryConstant.IS_BLACK,JSON.toJSONString(labelVO));
+        redisTempleUtils.setValue(redisKey,jsonObject);
     }
 
     private void setLabelToResis(List<LabelVO> labels,String redisKey){
@@ -131,12 +173,17 @@ public class LabelServiceImpl implements LabelService {
     @Override
     public int deleteLabelById(int id) {
         LabelVO labelVO=labelMapper.getLabelById(id);
+        removeRedisLabel(labelVO);
+        return labelMapper.deleteLabelById(id);
+    }
+
+    private void removeRedisLabel(LabelVO labelVO){
         if(EmptyUtils.isNotEmpty(labelVO)){
             String redisKey = labelVO.getCategory()+labelVO.getRelationId();
             if(EmptyUtils.isNotEmpty(redisKey)){
                 JSONObject redisJson = redisTempleUtils.getValue(redisKey, JSONObject.class);
                 if(EmptyUtils.isNotEmpty(redisJson)){
-                    String key = id+OrdinaryConstant.IS_BLACK;
+                    String key = labelVO.getId()+OrdinaryConstant.IS_BLACK;
                     if(redisJson.containsKey(key)){
                         redisJson.remove(key);
                         redisTempleUtils.setValue(redisKey,redisJson);
@@ -144,7 +191,6 @@ public class LabelServiceImpl implements LabelService {
                 }
             }
         }
-        return labelMapper.deleteLabelById(id);
     }
 
     @Override
