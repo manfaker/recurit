@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzhen.recurit.dao.DesiredPositionMapper">
+
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.pojo.DesiredPositionPojo">
+            <id column="id" property="id"/>
+            <result column="user_code" property="userCode"/>
+            <result column="desired_position" property="desiredPosition"/>
+            <result column="salary" property="salary"/>
+            <result column="profession" property="profession"/>
+            <result column="city" property="city"/>
+            <result column="creater" property="creater"/>
+            <result column="updater" property="updater"/>
+            <result column="create_date" property="createDate"/>
+            <result column="update_date" property="updateDate"/>
+        </resultMap>
+
+        <sql id="baseResult">
+            user_code,desired_position,salary,profession,city,creater,updater,create_date,update_date
+        </sql>
+
+        <insert id="saveDesiredPosition" keyProperty="id" useGeneratedKeys="true" keyColumn="id">
+            insert into tab_desired_position(<include refid="baseResult"/>)
+                values(#{userCode},#{desiredPosition},#{salary},#{profession},
+                #{city},#{creater},#{updater},#{createDate},#{updateDate})
+        </insert>
+
+        <select id="getDesiredPosition" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_desired_position  where id = #{id}
+        </select>
+
+        <delete id="deleteDesiredPositionById" >
+            delete from  tab_desired_position where id = #{id}
+        </delete>
+
+
+        <update id="updateDesiredPosition">
+            update tab_desired_position
+                <set>
+                    <if test="userCode != null and userCode != ''">
+                        user_code = #{userCode},
+                    </if>
+                    <if test="profession != null and profession != ''">
+                        profession = #{profession},
+                    </if>
+                    <if test="salary != null and salary != ''">
+                        salary = #{salary},
+                    </if>
+                    <if test="desiredPosition != null and desiredPosition != ''">
+                        desired_position = #{desiredPosition},
+                    </if>
+                    <if test="city != null and city != ''">
+                        city = #{city},
+                    </if>
+                    updater = #{updater},
+                    update_date = #{updateDate}
+                </set>
+                 where id = #{id}
+        </update>
+
+
+</mapper>

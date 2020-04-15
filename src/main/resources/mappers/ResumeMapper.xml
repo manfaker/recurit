@@ -40,7 +40,7 @@
         </delete>
 
         <select id="getByUserCode" resultMap="baseResultMap">
-            select id,<include refid="baseResult"/> from  tab_resume where user_code = #{userCode}
+            select id,introduce,<include refid="baseResult"/> from  tab_resume where user_code = #{userCode}
         </select>
 
         <select id="getById" resultMap="baseResultMap">

@@ -11,10 +11,7 @@ import com.shenzhen.recurit.vo.PositionVO;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.UserVO;
 import io.swagger.annotations.*;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -65,13 +62,13 @@ public class PositionController {
         return ResultVO.success(positionService.getAllPositions(positionVO));
     }
 
-    @RequestMapping(value = "getPopularPositions",method = RequestMethod.GET)
+    @GetMapping(value = "getPopularPositions")
     @ApiOperation(value = "获取热门职位")
     public Object getPopularPositions(){
         return ResultVO.success(positionService.getPopularPositions());
     }
 
-    @RequestMapping(value = "getRecentlyPositions",method = RequestMethod.GET)
+    @GetMapping (value = "getRecentlyPositions")
     @ApiOperation(value = "最近浏览职位")
     @ApiImplicitParam(value = "用户code",name="userCode",required = false)
     public Object getRecentlyPositions(String userCode){
