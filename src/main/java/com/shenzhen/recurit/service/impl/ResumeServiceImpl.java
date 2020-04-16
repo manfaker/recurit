@@ -98,6 +98,14 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
+    public void initResumenTemplate(ResumeVO resumeVO) {
+        //setResumentBaseInfo(resumeVO,false);
+        resumeVO.setCreateDate(new Date());
+        resumeVO.setUpdateDate(new Date());
+        resumeMapper.addResume(resumeVO);
+    }
+
+    @Override
     public int updateResume(ResumeVO resumeVO) {
         setResumentBaseInfo(resumeVO,false);
          return resumeMapper.updateResume(resumeVO);

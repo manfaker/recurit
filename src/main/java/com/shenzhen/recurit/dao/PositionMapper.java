@@ -63,4 +63,12 @@ public interface PositionMapper {
      * @return
      */
     List<PositionPojo> getRecentlyPositions(@Param("userCode") String userCode);
+
+    /**
+     *
+     * @return
+     */
+    int statisticsAllPositions();
+
+    List<PositionPojo> getBulletinBoardPosition(@Param("pageNo") int pageNo, @Param("pageSize") int pageSize);
 }

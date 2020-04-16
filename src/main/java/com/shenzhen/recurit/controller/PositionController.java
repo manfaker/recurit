@@ -75,5 +75,11 @@ public class PositionController {
         return ResultVO.success(positionService.getRecentlyPositions(userCode));
     }
 
+    @GetMapping (value = "getBulletinBoardPosition")
+    @ApiOperation(value = "公告栏信息")
+    public Object getBulletinBoardPosition(){
+        return ResultVO.success(positionService.getBulletinBoardPosition());
+    }
+
 
 }

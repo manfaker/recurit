@@ -62,4 +62,13 @@ public interface PositionService {
     List<PositionPojo> getPopularPositions();
 
     List<PositionPojo> getRecentlyPositions(String userCode);
+
+    List<PositionPojo> getBulletinBoardPosition();
+
+    /**
+     * 获取所有职业信息
+     * @param
+     * @return
+     */
+    int statisticsAllPositions();
 }

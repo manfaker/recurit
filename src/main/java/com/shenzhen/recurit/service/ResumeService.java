@@ -30,6 +30,12 @@ public interface ResumeService {
     void addResume(ResumeVO resumeVO);
 
     /**
+     * 添加简历信息
+     * @param resumeVO
+     */
+    void initResumenTemplate(ResumeVO resumeVO);
+
+    /**
      * 修改简历信息，根据简历id
      * @param resumeVO
      */

@@ -240,4 +240,31 @@ public class PositionServiceImpl implements PositionService {
         }
         return recentlyPositions;
     }
+
+    @Override
+    public List<PositionPojo> getBulletinBoardPosition() {
+        int sumPosition = statisticsAllPositions();
+        List<PositionPojo> listPosition = new ArrayList<>();
+        int pageNo = NumberEnum.ZERO.getValue();
+        int pageSize = NumberEnum.ZERO.getValue();
+        if(sumPosition>=5){
+            int mathRandon = (int)Math.random()*100+1;
+            pageSize =4;
+            if(mathRandon+NumberEnum.FOUR.getValue()>sumPosition){
+                pageNo = sumPosition-4;
+            }else if(mathRandon<4){
+                pageNo=0;
+            }else{
+                pageNo=mathRandon;
+            }
+        }
+        return positionMapper.getBulletinBoardPosition(pageNo,pageSize);
+    }
+
+    @Override
+    public int statisticsAllPositions() {
+        return positionMapper.statisticsAllPositions();
+    }
+
+
 }

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -93,7 +94,14 @@ public class EducationExperinceServiceImpl implements EducationExperinceService 
 
     @Override
     public List<EducationExperiencesPojo> getEducationExperinceUserCode(String userCode) {
-        educationExperinceMapper.getEducationExperinceUserCode(userCode);
-        return null;
+        List<EducationExperiencesPojo> listEducation =educationExperinceMapper.getEducationExperinceUserCode(userCode);
+        if(EmptyUtils.isNotEmpty(listEducation)){
+            listEducation.forEach(educationExperiencesPojo -> {
+                setEducationExperince(educationExperiencesPojo);
+            });
+        }else{
+            listEducation=new ArrayList<>();
+        }
+        return listEducation;
     }
 }

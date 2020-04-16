@@ -105,7 +105,7 @@ public class UserServiceImpl implements UserService {
         }
         ResumeVO resumeVO = new ResumeVO();
         resumeVO.setUserCode(userVO.getUserCode());
-        resumeService.saveResume(resumeVO);
+        resumeService.initResumenTemplate(resumeVO);
     }
 
     /**
@@ -579,5 +579,6 @@ public class UserServiceImpl implements UserService {
     public  UserVO getUserCode(String userCode){
         return userMapper.getUserCode(userCode);
     }
+
 
 }

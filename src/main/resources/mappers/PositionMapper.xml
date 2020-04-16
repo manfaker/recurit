@@ -51,7 +51,7 @@
 
         <select id="getByCompanyCode" resultMap="baseResultMap">
             select id,status,<include refid="baseResult"/> from tab_position
-                where company_code = #{companyCode} and  user_code = #{userCode} and status = 1
+                where company_code = #{companyCode} and  user_code = #{userCode} and status = 1 order by update_date desc
         </select>
 
         <select id="getByPositionId" resultMap="baseResultMap">
@@ -180,5 +180,22 @@
         ORDER BY
             t.max_time DESC
         ) LIMIT 4
+    </select>
+
+    <select id="statisticsAllPositions" resultType="int">
+        select count(1) from tab_position where status =1
+    </select>
+
+    <select id="getBulletinBoardPosition" resultMap="baseResultMap">
+        select p.id,u.real_name user_real_name,p.position_name from tab_position p
+         left join tab_user u on p.user_code = p.user_code where p.status =1
+            <choose>
+                <when test="pageNo >0 and pageSize >0">
+                   and LIMIT #{pageNo},#{pagesize}
+                </when>
+                <otherwise>
+                    and 1=1
+                </otherwise>
+            </choose>
     </select>
 </mapper>
