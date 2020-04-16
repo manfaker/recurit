@@ -2,7 +2,9 @@ package com.shenzhen.recurit.controller;
 
 import com.shenzhen.recurit.Interface.PermissionVerification;
 import com.shenzhen.recurit.enums.NumberEnum;
+import com.shenzhen.recurit.pojo.UserPojo;
 import com.shenzhen.recurit.service.ResumeService;
+import com.shenzhen.recurit.utils.word.WordUtil;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.ResumeVO;
 import io.swagger.annotations.Api;
@@ -13,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("resume")
@@ -66,10 +69,17 @@ public class ResumeController {
         return ResultVO.success(resumeService.getResumeAllByCondition(resumeVO));
     }
 
-    @ApiOperation(value = "查看已经所有发布简历的人员")
+    @ApiOperation(value = "查看已经所有投递简历的人员")
     @PermissionVerification
     @GetMapping (value = "getApplyResume",produces={ MediaType.APPLICATION_JSON_UTF8_VALUE })
     public ResultVO getApplyResume(){
         return ResultVO.success(resumeService.getApplyResume());
+    }
+
+    @GetMapping (value = "downloadResume")
+    @ApiOperation(value = "下载简历")
+    public void downloadResume(HttpServletResponse response, String userCode){
+        UserPojo userPojo = resumeService.getResumeInfoByUserCode(userCode);
+        WordUtil.downloadResume(response,userPojo);
     }
 }

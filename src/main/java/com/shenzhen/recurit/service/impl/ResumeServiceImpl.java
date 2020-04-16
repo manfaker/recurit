@@ -27,6 +27,8 @@ public class ResumeServiceImpl implements ResumeService {
     @Resource
     private ResumeMapper resumeMapper;
     @Resource
+    private UserService userService;
+    @Resource
     private DictionaryService dictionaryService;
     @Resource
     private JobExperienceService jobExperienceService;
@@ -57,7 +59,7 @@ public class ResumeServiceImpl implements ResumeService {
             resumeVO.setCreater(userVO.getUserName());
             resumeVO.setCreateDate(new Date());
         }
-        resumeVO.setWorkingLife(getCalculationAge(resumeVO.getGraduationTime()));
+        //resumeVO.setWorkingLife(getCalculationAge(resumeVO.getGraduationTime()));
         resumeVO.setUpdater(userVO.getUserName());
         resumeVO.setUpdateDate(new Date());
     }
@@ -125,16 +127,26 @@ public class ResumeServiceImpl implements ResumeService {
     public UserPojo getByCurrUser() {
         UserVO userVO = ThreadLocalUtils.getUser();
         UserPojo userPojo = new UserPojo();
+        setUserPojo(userVO,userPojo);
+        return userPojo;
+    }
+
+    private void setUserPojo(UserVO userVO,UserPojo userPojo){
         try {
             PropertyUtils.copyProperties(userPojo,userVO);
             userPojo.setResumePojo(getByUserCode(userVO.getUserCode()));
             userPojo.setListJobExperiences(jobExperienceService.getJobExperienceByUserCode(userVO.getUserCode()));
             userPojo.setListDesiredPosition(desiredPositionService.getDesiredPositionuserCode(userVO.getUserCode()));
             userPojo.setListEducationExperience(educationExperinceService.getEducationExperinceUserCode(userVO.getUserCode()));
-            return userPojo;
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public UserPojo getResumeInfoByUserCode(String userCode){
+        UserVO userVO = userService.getUserCode(userCode);
+        UserPojo userPojo = new UserPojo();
+        setUserPojo(userVO,userPojo);
         return userPojo;
     }
 

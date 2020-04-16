@@ -129,11 +129,7 @@ public class UserController {
         return userService.updateOrSaveImage(userVO);
     }
 
-    @GetMapping (value = "downloadResume")
-    @ApiOperation(value = "下载简历")
-    public void downloadResume(HttpServletResponse response){
-        WordUtil.downloadResume(response);
-    }
+
 
     @ApiOperation(value = "发送简历")
     @GetMapping (value = "sendResume")

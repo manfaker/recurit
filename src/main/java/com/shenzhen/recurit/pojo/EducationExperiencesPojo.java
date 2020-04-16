@@ -31,4 +31,6 @@ public class EducationExperiencesPojo extends BaseVO {
     private String experience;
     @ApiModelProperty(value = "学历信息")
     private DictionaryVO experienceDict;
+    @ApiModelProperty(value = "学历信息")
+    private String stuTime;
 }

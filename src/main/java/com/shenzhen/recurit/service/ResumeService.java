@@ -76,4 +76,6 @@ public interface ResumeService {
     int updateRecentTimeByUserCode(String userCode);
 
     List<ResumePojo> getApplyResume();
+
+    UserPojo getResumeInfoByUserCode(String userCode);
 }

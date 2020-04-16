@@ -24,4 +24,5 @@ public class JobExperiencePojo extends BaseVO {
     private String content;
     private String achievement;
     private List<LabelVO> listLabel;
+    private String projectTime;
 }

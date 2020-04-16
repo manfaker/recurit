@@ -2,6 +2,7 @@ package com.shenzhen.recurit.utils;
 
 import com.shenzhen.recurit.constant.InformationConstant;
 import com.shenzhen.recurit.enums.ReturnEnum;
+import com.shenzhen.recurit.pojo.UserPojo;
 import com.shenzhen.recurit.utils.word.WordUtil;
 import com.shenzhen.recurit.vo.ResultVO;
 
@@ -71,14 +72,14 @@ public class EmailUtils {
         }
     }
 
-    private static void setResumeMessage(MimeMessage message,String userName, String accept){
+    private static void setResumeMessage(MimeMessage message,String userName, String accept,UserPojo userPojo){
         InternetAddress form;
         InternetAddress to;
         File resumeFiel = null;
         try {
             String docName = InformationConstant.TEMPLATE+System.currentTimeMillis()+InformationConstant.RESUME_DOCX;
             String docPath = WordUtil.path+ File.separator+InformationConstant.TEMPLATE +File.separator+docName;
-            WordUtil.createResume(docPath);
+            WordUtil.createResume(docPath,userPojo);
             resumeFiel = new File(docPath);
             form = new InternetAddress(userName);
             // 设置收件人的邮箱
@@ -117,10 +118,10 @@ public class EmailUtils {
         }
     }
 
-    public static void sendResume(String email){
+    public static void sendResume(String email , UserPojo userPojo){
         MimeMessage message=getMessage();
         final String userName = EncryptBase64Utils.decryptBASE64(InformationConstant.spring_mail_username);
-        setResumeMessage(message,userName,email);
+        setResumeMessage(message,userName,email,userPojo);
     }
 
 }
