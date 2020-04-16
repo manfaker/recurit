@@ -49,7 +49,7 @@ public class JobExperienceController {
         if(result> NumberEnum.ZERO.getValue()){
             return  ResultVO.success(jobExperienceService.getJobExperienceById(jobExperienceVO.getId()));
         }
-        return  ResultVO.success(jobExperienceVO);
+        return  ResultVO.error(jobExperienceVO);
     }
 
 }

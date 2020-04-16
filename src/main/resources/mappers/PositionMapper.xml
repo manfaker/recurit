@@ -153,7 +153,8 @@
     </select>
 
     <select id="getPopularPositions" resultMap="baseResultMap">
-        select id,status,<include refid="baseResult"/> from tab_position where status=1
+        select t.id,t.status,<include refid="baseResultSql"/>,t.company_name from tab_position t
+        left join tab_company c on t.company_code = c.company_code where status=1
         and id in (SELECT
 	        t.position_id
         FROM
@@ -163,7 +164,8 @@
     </select>
 
     <select id="getRecentlyPositions" resultMap="baseResultMap">
-        select id,status,<include refid="baseResult"/> from tab_position where status=1
+        select t.id,t.status,<include refid="baseResultSql"/>,t.company_name from tab_position t
+        left join tab_company c on t.company_code = c.company_code where status=1
         and id in
             ( SELECT
         t.position_id
@@ -188,7 +190,7 @@
 
     <select id="getBulletinBoardPosition" resultMap="baseResultMap">
         select p.id,u.real_name user_real_name,p.position_name from tab_position p
-         left join tab_user u on p.user_code = p.user_code where p.status =1
+         left join tab_user u on u.user_code = p.user_code where p.status =1
             <choose>
                 <when test="pageNo >0 and pageSize >0">
                    and LIMIT #{pageNo},#{pagesize}

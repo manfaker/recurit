@@ -138,7 +138,11 @@ public class JobExperienceServiceImpl implements JobExperienceService {
             List<String> listStr = Arrays.asList(labels.split(OrdinaryConstant.SYMBOL_4));
             getAssembleLabels(listStr,listLabel,jobExperiencePojo);
             labelService.saveBatchLabel(listLabel);
+        }else{
+            labelService.deleteLabelByRelationId(InformationConstant.JOB_EXPERIENCE,jobExperiencePojo.getId());
         }
+
+
     }
     private void getAssembleLabels(List<String> listStr, List<LabelVO> listLabel, JobExperiencePojo jobExperiencePojo){
         if(EmptyUtils.isEmpty(listStr)||listStr.isEmpty()){

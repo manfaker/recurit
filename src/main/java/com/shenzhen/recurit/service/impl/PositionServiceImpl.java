@@ -74,6 +74,8 @@ public class PositionServiceImpl implements PositionService {
             List<String> listStr = Arrays.asList(labels.split(OrdinaryConstant.SYMBOL_4));
             getAssembleLabels(listStr,listLabel,position);
             List<LabelVO> labelList = labelService.saveBatchLabel(listLabel);
+        }else{
+            labelService.deleteLabelByRelationId(InformationConstant.POSITION,position.getId());
         }
     }
 
@@ -244,7 +246,6 @@ public class PositionServiceImpl implements PositionService {
     @Override
     public List<PositionPojo> getBulletinBoardPosition() {
         int sumPosition = statisticsAllPositions();
-        List<PositionPojo> listPosition = new ArrayList<>();
         int pageNo = NumberEnum.ZERO.getValue();
         int pageSize = NumberEnum.ZERO.getValue();
         if(sumPosition>=5){

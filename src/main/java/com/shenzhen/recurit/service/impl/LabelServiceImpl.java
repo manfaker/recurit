@@ -28,28 +28,30 @@ public class LabelServiceImpl implements LabelService {
     private RedisTempleUtils redisTempleUtils;
     @Override
     public List<LabelVO> saveBatchLabel(List<LabelVO> listLabel) {
-        if(EmptyUtils.isEmpty(listLabel)||listLabel.isEmpty()){
+        if(EmptyUtils.isEmpty(listLabel)){
             return null;
         }
         String category = listLabel.get(NumberEnum.ZERO.getValue()).getCategory();
         int relationId = listLabel.get(NumberEnum.ZERO.getValue()).getRelationId();
+        List<LabelVO> listSame=new ArrayList<>();
         String redisKey = category+relationId;
         List<LabelVO> currLabels = labelMapper.getLabelByCategory(category, relationId);
         if(EmptyUtils.isNotEmpty(currLabels)){
             for(int index=listLabel.size()-NumberEnum.ONE.getValue();index>=NumberEnum.ZERO.getValue();index--){
                 if(currLabels.contains(listLabel.get(index))){
+                    listSame.add(listLabel.get(index));
                     listLabel.remove(index);
                 }
             }
             List<Integer> listIds = new ArrayList<>();
             for(LabelVO labelVO :currLabels){
-                if(!listLabel.contains(labelVO)){
+                if(!listSame.contains(labelVO)){
                     listIds.add(labelVO.getId());
                 }
             }
             deleteBatchIds(listIds);
         }else{
-            labelMapper.deleteLabelByCategory(category,relationId);
+            deleteLabelByRelationId(category,relationId);
         }
         setAllOperaterAndDate(listLabel,true);
         List<LabelVO> labels = new ArrayList<>();
