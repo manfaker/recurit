@@ -40,7 +40,8 @@ public class ResumePojo extends BaseVO {
     private String phone;
     private String positionName;
     private String email;
-    private String isChecked;
+    private  int isChecked;
+    private int isAccept;
 
 
 

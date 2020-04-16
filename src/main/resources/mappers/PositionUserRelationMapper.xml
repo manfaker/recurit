@@ -14,10 +14,11 @@
             <result column="update_date" property="updateDate"/>
             <result column="creater" property="creater"/>
             <result column="updater" property="updater"/>
+            <result column="is_accept" property="isAccept"/>
         </resultMap>
 
         <sql id="baseResult">
-            position_id,user_code,status,follow,apply,is_checked,create_date,update_date,creater,updater
+            position_id,user_code,status,follow,apply,is_checked,create_date,update_date,creater,updater,is_accept
         </sql>
 
         <insert id="saveBatchRelation">
@@ -26,7 +27,7 @@
             <foreach collection="relations" item="relation" separator=",">
                 (#{relation.positionId},#{relation.userCode},1,#{relation.follow}
                     ,#{relation.apply},1
-                ,#{relation.createDate},#{relation.updateDate},#{relation.creater},#{relation.updater})
+                ,#{relation.createDate},#{relation.updateDate},#{relation.creater},#{relation.updater},#{relation.isAccept})
             </foreach>
         </insert>
 
@@ -63,6 +64,9 @@
                     <if test="isChecked != null and isChecked != 0">
                         is_checked = #{isChecked},
                     </if>
+                    <if test="isAccept != null and isAccept != 0">
+                        is_accept = #{isAccept},
+                    </if>
                     updater=#{updater},
                     update_date=#{updateDate}
                 </set>
@@ -78,7 +82,7 @@
         insert into tab_position_user_relation(<include refid="baseResult"/>)
         values
             (#{positionId},#{userCode},1,#{follow},#{apply},1
-            ,#{createDate},#{updateDate},#{creater},#{updater})
+            ,#{createDate},#{updateDate},#{creater},#{updater},#{isAccept})
     </insert>
 
 </mapper>

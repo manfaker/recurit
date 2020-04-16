@@ -137,7 +137,11 @@ public class PositionUserRelationServiceImpl implements PositionUserRelationServ
             return ResultVO.error("职位信息不能为空");
         }
         UserVO user = ThreadLocalUtils.getUser();
-        PositionUserRelationVO relation = positionUserRelationMapper.getRelationByPositionIdAndUserCode(positionUserRelationVO.getPositionId(), user.getUserCode());
+        String userCode = user.getUserCode();
+        if("ROLE0001".equals(user.getRoleNum())){
+            userCode=positionUserRelationVO.getUserCode();
+        }
+        PositionUserRelationVO relation = positionUserRelationMapper.getRelationByPositionIdAndUserCode(positionUserRelationVO.getPositionId(), userCode);
         if(EmptyUtils.isNotEmpty(relation)){
             positionUserRelationVO.setId(relation.getId());
             setRelationBaseInfo(positionUserRelationVO,false);

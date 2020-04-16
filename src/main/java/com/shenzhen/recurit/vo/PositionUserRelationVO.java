@@ -24,4 +24,6 @@ public class PositionUserRelationVO extends BaseVO{
     private int status;
     @ApiModelProperty(value = "多个职位信息id,以逗号分隔")
     private String positionIds;
+    @ApiModelProperty(value = "是否接受")
+    private int isAccept;
 }
