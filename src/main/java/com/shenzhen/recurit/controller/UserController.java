@@ -1,27 +1,18 @@
 package com.shenzhen.recurit.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.shenzhen.recurit.constant.InformationConstant;
-import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.enums.ReturnEnum;
 import com.shenzhen.recurit.service.UserService;
 import com.shenzhen.recurit.utils.EmailUtils;
 import com.shenzhen.recurit.utils.EmptyUtils;
-import com.shenzhen.recurit.utils.EncryptBase64Utils;
-import com.shenzhen.recurit.utils.word.WordUtil;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.UserVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.catalina.User;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
 
 @RestController
 @RequestMapping(value = "user")
@@ -134,6 +125,6 @@ public class UserController {
     @ApiOperation(value = "发送简历")
     @GetMapping (value = "sendResume")
     public void sendResume(){
-        EmailUtils.sendResume("954118485@qq.com");
+        EmailUtils.sendResume("954118485@qq.com",null);
     }
 }

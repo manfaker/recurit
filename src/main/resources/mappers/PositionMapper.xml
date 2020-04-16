@@ -153,9 +153,9 @@
     </select>
 
     <select id="getPopularPositions" resultMap="baseResultMap">
-        select t.id,t.status,<include refid="baseResultSql"/>,t.company_name from tab_position t
-        left join tab_company c on t.company_code = c.company_code where status=1
-        and id in (SELECT
+        select t.id,t.status,<include refid="baseResultSql"/>,c.company_name from tab_position t
+        left join tab_company c on t.company_code = c.company_code where t.status=1
+        and t.id in (SELECT
 	        t.position_id
         FROM
 	    ( SELECT position_id, count( 1 ) position_num FROM tab_browse_record GROUP BY position_id ) t
@@ -164,9 +164,9 @@
     </select>
 
     <select id="getRecentlyPositions" resultMap="baseResultMap">
-        select t.id,t.status,<include refid="baseResultSql"/>,t.company_name from tab_position t
-        left join tab_company c on t.company_code = c.company_code where status=1
-        and id in
+        select t.id,t.status,<include refid="baseResultSql"/>,c.company_name from tab_position t
+        left join tab_company c on t.company_code = c.company_code where t.status=1
+        and t.id in
             ( SELECT
         t.position_id
         FROM

@@ -3,7 +3,6 @@ package com.shenzhen.recurit.service.impl;
 import com.shenzhen.recurit.constant.OrdinaryConstant;
 import com.shenzhen.recurit.dao.PositionUserRelationMapper;
 import com.shenzhen.recurit.enums.NumberEnum;
-import com.shenzhen.recurit.pojo.PositionPojo;
 import com.shenzhen.recurit.pojo.UserPojo;
 import com.shenzhen.recurit.service.*;
 import com.shenzhen.recurit.utils.EmailUtils;
