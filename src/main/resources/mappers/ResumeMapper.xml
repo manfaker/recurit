@@ -31,12 +31,13 @@
             <result column="position_id" property="positionId"/>
             <result column="phone" property="phone"/>
             <result column="position_name" property="positionName"/>
+            <result column="email" property="email"/>
         </resultMap>
 
         <sql id="baseResult">
             user_code,domicile_province,domicile_city,domicile_county,domicile_addr,residence_province,residence_city,
                 residence_county,residence_addr,experience,education,job_status,salary,city,profession,admission_time,
-                graduation_time,introduce,creater,updater,create_date,update_date,working_life
+                graduation_time,introduce,creater,updater,create_date,update_date,working_life,phone,email
         </sql>
 
         <delete id="deleteById">
@@ -56,7 +57,8 @@
                 values (#{userCode},#{domicileProvince},#{domicileCity},#{domicileCounty},#{domicileAddr},
                 #{residenceProvince},#{residenceCity},#{residenceCounty},#{residenceAddr},#{experience},
                 #{education},#{jobStatus},#{salary},#{city},#{profession},#{admissionTime},
-                #{graduationTime},#{introduce},#{creater},#{updater},#{createDate},#{updateDate},#{workingLife})
+                #{graduationTime},#{introduce},#{creater},#{updater},#{createDate},#{updateDate},#{workingLife}
+                ,#{phone},#{email})
         </insert>
 
         <update id="updateResume">
@@ -119,6 +121,12 @@
                 <if test="workingLife !=null and workingLife != 0 ">
                     working_life = #{workingLife},
                 </if>
+                <if test="phone!=null and phone != ''">
+                    phone = #{phone},
+                </if>
+                <if test="email!=null and email != ''">
+                    email = #{email},
+                </if>
                 updater = #{updater},
                 update_date = #{updateDate}
             </set>
@@ -139,7 +147,7 @@
         <select id="getApplyResume" resultMap="baseResultMap">
             SELECT
                 u.user_name,
-                u.phone,
+                t.phone,
                 t.working_life,
                 t.experience,
                 t.education,

@@ -49,4 +49,8 @@ public class ResumeVO extends BaseVO{
     private String introduce;
     @ApiModelProperty(value = "工作年限")
     private int workingLife;
+    @ApiModelProperty(value = "电话号码")
+    private String phone;
+    @ApiModelProperty(value = "邮箱")
+    private String email;
 }

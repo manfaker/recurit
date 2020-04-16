@@ -39,5 +39,8 @@ public class ResumePojo extends BaseVO {
     private int positionId;
     private String phone;
     private String positionName;
+    private String email;
+
+
 
 }
