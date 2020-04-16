@@ -78,4 +78,6 @@ public interface ResumeService {
     List<ResumePojo> getApplyResume();
 
     UserPojo getResumeInfoByUserCode(String userCode);
+
+    ResultVO sendResumeEmail(String userCode);
 }

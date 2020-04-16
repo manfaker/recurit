@@ -82,4 +82,12 @@ public class ResumeController {
         UserPojo userPojo = resumeService.getResumeInfoByUserCode(userCode);
         WordUtil.downloadResume(response,userPojo);
     }
+
+    @GetMapping (value = "sendResumeEmail")
+    @ApiOperation(value = "投递简历到hr邮箱")
+    public ResultVO sendResumeEmail(String userCode){
+        return resumeService.sendResumeEmail(userCode);
+    }
+
+
 }

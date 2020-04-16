@@ -32,6 +32,7 @@
             <result column="phone" property="phone"/>
             <result column="position_name" property="positionName"/>
             <result column="email" property="email"/>
+            <result column="is_checked" property="isChecked"/>
         </resultMap>
 
         <sql id="baseResult">
@@ -154,7 +155,8 @@
                 t.job_status,
                 t.introduce,
                 r.position_id,
-                r.position_name
+                r.position_name,
+                r.is_checked
             FROM
                 (
                 SELECT
@@ -162,12 +164,13 @@
                     p.position_name,
                     r.user_code,
                     r.follow,
-                    r.apply
+                    r.apply,
+                    r.is_checked
                 FROM
                     tab_position_user_relation r
                     LEFT JOIN tab_position p ON r.position_id = p.id
                 WHERE
-                p.status =1 and r.user_code = #{userCode}
+                p.status =1 and p.user_code = #{userCode}
                 AND r.apply = 2
                 ) r left join tab_resume t on t.user_code = r.user_code
                 left join tab_user u on u.user_code = r.user_code

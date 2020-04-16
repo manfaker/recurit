@@ -7,6 +7,7 @@ import com.shenzhen.recurit.pojo.EducationExperiencesPojo;
 import com.shenzhen.recurit.pojo.ResumePojo;
 import com.shenzhen.recurit.pojo.UserPojo;
 import com.shenzhen.recurit.service.*;
+import com.shenzhen.recurit.utils.EmailUtils;
 import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.utils.ThreadLocalUtils;
 import com.shenzhen.recurit.vo.DictionaryVO;
@@ -195,4 +196,16 @@ public class ResumeServiceImpl implements ResumeService {
         }
     }
 
+
+    public ResultVO sendResumeEmail(String userCode){
+        UserVO userVO = ThreadLocalUtils.getUser();
+        UserPojo userPojo = getResumeInfoByUserCode(userCode);
+        if(EmptyUtils.isNotEmpty(userVO.getEmail())){
+            EmailUtils.sendResume(userVO.getEmail(),userPojo);
+            return ResultVO.success("邮件已发送，请注意查收");
+        }else{
+            return ResultVO.success("邮件发送失败，请跟新邮箱");
+        }
+
+    }
 }

@@ -155,12 +155,5 @@ public class PositionUserRelationServiceImpl implements PositionUserRelationServ
 
     }
     
-    public ResultVO sendResumeEmail(String userCode){
-        UserVO userVO = ThreadLocalUtils.getUser();
-        UserPojo userPojo = resumeService.getResumeInfoByUserCode(userCode);
-        if(EmptyUtils.isNotEmpty(userVO.getEmail())){
-            EmailUtils.sendResume(userVO.getEmail(),userPojo);
-        }
-       return ResultVO.success();
-    }
+
 }
