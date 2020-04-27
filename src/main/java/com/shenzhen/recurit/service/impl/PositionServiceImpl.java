@@ -2,6 +2,8 @@ package com.shenzhen.recurit.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.shenzhen.recurit.constant.InformationConstant;
 import com.shenzhen.recurit.constant.OrdinaryConstant;
 import com.shenzhen.recurit.dao.PositionMapper;
@@ -149,14 +151,16 @@ public class PositionServiceImpl implements PositionService {
     }
 
     @Override
-    public List<PositionPojo> getByCompanyCode(String companyCode,String userCode) {
+    public PageInfo<PositionPojo> getByCompanyCode(String companyCode,String userCode,int pageNum,int pageSize) {
+        PageHelper.startPage(pageNum,pageSize);
         List<PositionPojo> listPosition = positionMapper.getByCompanyCode(companyCode,userCode);
         if(EmptyUtils.isNotEmpty(listPosition)&&!listPosition.isEmpty()){
             listPosition.forEach(position->{
                 setInfoToPosition(position);
             });
         }
-        return listPosition;
+        PageInfo<PositionPojo> pageInfo = new PageInfo<>(listPosition);
+        return pageInfo;
     }
 
     private void setInfoToPosition(PositionPojo position){
@@ -209,16 +213,18 @@ public class PositionServiceImpl implements PositionService {
     }
 
     @Override
-    public List<PositionPojo> getAllPositions(PositionVO positionVO){
+    public PageInfo<PositionPojo> getAllPositions(PositionVO positionVO,int pageNum,int pageSize){
         String userCode = null;
         positionVO.setUserCode(ThreadLocalUtils.getUser().getUserCode());
+        PageHelper.offsetPage((pageNum-NumberEnum.ONE.getValue())*pageSize,pageSize);
         List<PositionPojo> listPostion = positionMapper.getAllPositions(positionVO);
         if(EmptyUtils.isNotEmpty(listPostion)&&listPostion.size()>NumberEnum.ZERO.getValue()){
             listPostion.forEach(position->{
                 setInfoToPosition(position);
             });
         }
-        return listPostion;
+        PageInfo<PositionPojo> pageInfo = new PageInfo<>(listPostion);
+        return pageInfo;
     }
 
     @Override

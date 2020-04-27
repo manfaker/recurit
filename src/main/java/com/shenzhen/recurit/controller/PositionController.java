@@ -3,6 +3,7 @@ package com.shenzhen.recurit.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.shenzhen.recurit.Interface.PermissionVerification;
+import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.service.PositionService;
 import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.utils.ThreadLocalUtils;
@@ -42,11 +43,21 @@ public class PositionController {
         return positionService.updatePosition(positionVO);
     }
 
+    @ApiOperation(value = "获取个人发布职位信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "初始页",name = "pageNum" ,required = false),
+            @ApiImplicitParam(value = "初始页",name = "pageSize" ,required = false)
+    })
     @RequestMapping(value = "getByCompanyCode",method = RequestMethod.GET)
     @PermissionVerification
-    public Object getByCompanyCode(){
+    public Object getByCompanyCode(Integer pageNum, Integer pageSize){
+        if(EmptyUtils.isEmpty(pageNum)||EmptyUtils.isEmpty(pageSize)||
+                pageNum==NumberEnum.ZERO.getValue()||pageSize==NumberEnum.ZERO.getValue()){
+            pageNum =NumberEnum.ONE.getValue();
+            pageSize=NumberEnum.TWENTY.getValue();
+        }
         UserVO userVO = ThreadLocalUtils.getUser();
-        return ResultVO.success(positionService.getByCompanyCode(userVO.getCompanyCode(),userVO.getUserCode()));
+        return ResultVO.success(positionService.getByCompanyCode(userVO.getCompanyCode(),userVO.getUserCode(),pageNum,pageSize));
     }
 
     @RequestMapping(value = "getByPositionId",method = RequestMethod.GET)
@@ -57,9 +68,18 @@ public class PositionController {
 
     @RequestMapping(value = "getAllPositions",method = RequestMethod.POST)
     @PermissionVerification
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "初始页",name = "pageNum" ,required = false),
+            @ApiImplicitParam(value = "初始页",name = "pageSize" ,required = false)
+    })
     @ApiOperation(value = "获取所有的或者已关注或者申请过的所有职位信息")
-    public Object getAllPositions(@RequestBody @ApiParam PositionVO positionVO){
-        return ResultVO.success(positionService.getAllPositions(positionVO));
+    public Object getAllPositions(Integer pageNum, Integer pageSize,@RequestBody @ApiParam PositionVO positionVO ){
+        if(EmptyUtils.isEmpty(pageNum)||EmptyUtils.isEmpty(pageSize)||
+                pageNum==NumberEnum.ZERO.getValue()||pageSize==NumberEnum.ZERO.getValue()){
+            pageNum =NumberEnum.ONE.getValue();
+            pageSize=NumberEnum.TWENTY.getValue();
+        }
+        return ResultVO.success(positionService.getAllPositions(positionVO,pageNum,pageSize));
     }
 
     @GetMapping(value = "getPopularPositions")

@@ -31,7 +31,7 @@ public interface DictionaryMapper {
      * @param dictNum
      * @return
      */
-    DictionaryVO getDictByNum(String dictNum);
+    DictionaryVO getDictByNum(@Param("dictNum") String dictNum);
 
     /**
      * 通过category 获取所有类型的数据

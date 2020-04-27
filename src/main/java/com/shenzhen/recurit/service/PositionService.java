@@ -1,5 +1,6 @@
 package com.shenzhen.recurit.service;
 
+import com.github.pagehelper.PageInfo;
 import com.shenzhen.recurit.pojo.PositionPojo;
 import com.shenzhen.recurit.vo.PositionVO;
 import com.shenzhen.recurit.vo.ResultVO;
@@ -34,7 +35,7 @@ public interface PositionService {
      * 根据公司id查找职位信息
      * @param companyCode
      */
-    List<PositionPojo> getByCompanyCode(String companyCode,String userCode);
+    PageInfo<PositionPojo> getByCompanyCode(String companyCode,String userCode,int pageNum,int pageSize);
 
     /**
      * 修改职位信息
@@ -53,7 +54,7 @@ public interface PositionService {
      * 获取所有的简历信息
      * @return
      */
-    List<PositionPojo> getAllPositions(PositionVO positionVO);
+    PageInfo<PositionPojo> getAllPositions(PositionVO positionVO, int pageNum, int pageSize);
 
     /**
      *
