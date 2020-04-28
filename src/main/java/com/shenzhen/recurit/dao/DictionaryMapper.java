@@ -72,4 +72,11 @@ public interface DictionaryMapper {
      * @param dictNum
      */
     int deleteByDictNum(String dictNum);
+
+    /**
+     * 递归查询
+     * @return
+     */
+    List<DictionaryVO> getTreeByCategory();
+
 }

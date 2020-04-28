@@ -212,4 +212,61 @@ public class DictionaryServiceImpl implements DictionaryService {
             }
         }
     }
+
+    @Override
+    public List<DictionaryVO> getTreeByCategory(String category) {
+        List<DictionaryVO> listDict = dictionaryMapper.getTreeByCategory();
+        Map<String,List<DictionaryVO>> mapDict = new HashMap<>();
+        dictListToMap(listDict,mapDict);
+        return mapToTreeList(mapDict,category);
+    }
+
+    private List<DictionaryVO> mapToTreeList(Map<String,List<DictionaryVO>> mapDict,String category){
+        List<DictionaryVO> listDict =new ArrayList<>();
+        List<DictionaryVO> listDictionary=null;
+        if(EmptyUtils.isNotEmpty(category)&&mapDict.containsKey(category)){
+            listDictionary = mapDict.get(category);
+            if(EmptyUtils.isNotEmpty(listDictionary)){
+                listDictionary.forEach(dictionaryVO -> {
+                    addChilren(dictionaryVO,mapDict);
+                });
+            }
+        }
+        if(EmptyUtils.isEmpty(listDictionary)){
+            listDictionary = new ArrayList<>();
+        }
+        return listDictionary;
+    }
+
+    private void addChilren(DictionaryVO dictionaryVO,Map<String,List<DictionaryVO>> mapDict){
+        List<DictionaryVO> listDict;
+        if(EmptyUtils.isNotEmpty(dictionaryVO.getDictNum())&&mapDict.containsKey(dictionaryVO.getDictNum())){
+            listDict = mapDict.get(dictionaryVO.getDictNum());
+        }else{
+            listDict = new ArrayList<>();
+        }
+        if(EmptyUtils.isNotEmpty(listDict)){
+            listDict.forEach(dict->{
+                addChilren(dict,mapDict);
+            });
+        }
+        dictionaryVO.setChildren(listDict);
+    }
+
+    private void dictListToMap(List<DictionaryVO> listDict,Map<String,List<DictionaryVO>> mapDict){
+        if(EmptyUtils.isNotEmpty(listDict)){
+            listDict.forEach(dictionaryVO -> {
+                if(EmptyUtils.isNotEmpty(dictionaryVO.getSuperNum())){
+                    List<DictionaryVO> listDictionary ;
+                    if(mapDict.containsKey(dictionaryVO.getSuperNum())){
+                        listDictionary=mapDict.get(dictionaryVO.getSuperNum());
+                    }else{
+                        listDictionary = new ArrayList<>();
+                    }
+                    listDictionary.add(dictionaryVO);
+                    mapDict.put(dictionaryVO.getSuperNum(),listDictionary);
+                }
+            });
+        }
+    }
 }

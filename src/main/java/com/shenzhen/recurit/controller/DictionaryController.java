@@ -85,10 +85,20 @@ public class DictionaryController {
         return ResultVO.success(resultVO);
     }
 
-    @RequestMapping(value="refreshAllDict",method = RequestMethod.GET)
+    @GetMapping(value="refreshAllDict")
+    @ApiOperation(value = "刷新所有数据字典")
     public Object refreshAllDict(){
         dictionaryService.refreshAllDict();
         return ResultVO.success("刷新完毕");
+    }
+
+    @GetMapping(value="getTreeByCategory")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "类型",name = "category",required = true),
+    })
+    @ApiOperation(value = "获取树形数据字典")
+    public Object getTreeByCategory(String dictNum){
+        return ResultVO.success(dictionaryService.getTreeByCategory(dictNum));
     }
 
 }

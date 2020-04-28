@@ -73,4 +73,7 @@
             delete from tab_dictionary where dict_num = #{dictNum}
         </delete>
 
+        <select id="getTreeByCategory" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/>  from tab_dictionary where trim(super_num) != '' order by dict_num
+        </select>
 </mapper>

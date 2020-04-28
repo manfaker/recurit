@@ -74,4 +74,6 @@ public interface DictionaryService {
     void saveBatch(List<DictionaryVO> listDict);
 
     void removeDict(String category, String dictNum);
+
+    List<DictionaryVO> getTreeByCategory(String dictNum);
 }
