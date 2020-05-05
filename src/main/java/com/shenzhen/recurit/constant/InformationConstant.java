@@ -75,7 +75,12 @@ public interface InformationConstant {
     String RESUME_FTL = "resume.ftl";   //简历模板
 
     //字符级别
+    String DATA_TYPE = "json";
     String UTF_8 = "UTF-8";
+
+    //阿里和腾讯
+    String ALIPAY ="ALIPAY";
+    String WECHAT ="WECHAT";
 
 
 

@@ -24,27 +24,28 @@ public class PhoneUtils {
         }
     }
 
+    private static void setProperty(){
+        System.setProperty(InformationConstant.DEFAULT_CONNECT_TIME_OUT, InformationConstant.TIME_OUT);
+        System.setProperty(InformationConstant.DEFAULT_READ_TIME_OUT, InformationConstant.TIME_OUT);
+    }
+
     /**
      * 阿里云短信服务配置
      * @param mobile
      * @return
      */
     public static ResultVO getVerifyCode(String mobile) {
-
         /**
          * 进行正则关系校验
          */
-
         if (EmptyUtils.isEmpty(mobile)) {
             return ResultVO.error("手机号码不能为空");
         }
         /**
          * 短信验证---阿里大于工具
          */
-
         // 设置超时时间-可自行调整
-        System.setProperty(InformationConstant.DEFAULT_CONNECT_TIME_OUT, InformationConstant.TIME_OUT);
-        System.setProperty(InformationConstant.DEFAULT_READ_TIME_OUT, InformationConstant.TIME_OUT);
+        setProperty();
         // 初始化ascClient需要的几个参数
         final String product = InformationConstant.PRODUCT;// 短信API产品名称（短信产品名固定，无需修改）
         final String domain = InformationConstant.DOMAIN;// 短信API产品域名（接口地址固定，无需修改）
@@ -63,7 +64,6 @@ public class PhoneUtils {
         }
         //获取验证码
         code = getCode();
-
         IAcsClient acsClient = new DefaultAcsClient(profile);
         // 组装请求对象
         SendSmsRequest request = new SendSmsRequest();
