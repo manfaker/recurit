@@ -6,6 +6,8 @@ import com.shenzhen.recurit.constant.InformationConstant;
 import com.shenzhen.recurit.service.PayService;
 import com.shenzhen.recurit.utils.VaribaleUtils;
 import com.shenzhen.recurit.vo.ResultVO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -17,11 +19,14 @@ import java.util.Map;
 @Service
 public class PayServiceImpl implements PayService {
 
+    private static Logger logger = LoggerFactory.getLogger(PayServiceImpl.class);
+
     @Resource
     private VaribaleUtils varibaleUtils;
 
     @Override
     public ResultVO alipayCallBackReturn(HttpServletRequest request) {
+        logger.info("我支付成功了，我是同步接口");
         Map<String,String> paramsMap = new HashMap<String, String>();
         Map parameterMap = request.getParameterMap();
         for(Iterator<String> iter = parameterMap.keySet().iterator(); iter.hasNext();){
@@ -51,6 +56,7 @@ public class PayServiceImpl implements PayService {
 
     @Override
     public ResultVO alipayAsyncReturn() {
+        logger.info("我支付成功了，我是异步接口");
         return null;
     }
 

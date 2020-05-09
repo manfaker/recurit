@@ -6,19 +6,18 @@ import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
-import com.alipay.api.domain.AlipayTradePrecreateModel;
-import com.alipay.api.request.*;
+import com.alipay.api.request.AlipayTradeCloseRequest;
+import com.alipay.api.request.AlipayTradeCreateRequest;
+import com.alipay.api.request.AlipayTradePrecreateRequest;
+import com.alipay.api.request.AlipayTradeQueryRequest;
+import com.alipay.api.response.AlipayTradeCloseResponse;
 import com.alipay.api.response.AlipayTradeCreateResponse;
-import com.alipay.api.response.AlipayTradePagePayResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.shenzhen.recurit.constant.InformationConstant;
-import com.shenzhen.recurit.constant.OrdinaryConstant;
 import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.vo.OrderInfoVO;
 import com.shenzhen.recurit.vo.ResultVO;
-
-import java.text.DecimalFormat;
 
 public class ApplyConfigUtils {
 
@@ -30,10 +29,68 @@ public class ApplyConfigUtils {
             }
         }
 
+    /**
+     * 支付接口
+     * @param category
+     * @param orderInfoVO
+     * @return
+     */
         public static ResultVO payOrderNo(String category, OrderInfoVO orderInfoVO){
             init();
             if(InformationConstant.ALIPAY.equals(category)){
                 return alipayPay(orderInfoVO);
+            }else{
+                return null;
+            }
+        }
+
+    /**
+     * 生成二维码
+     * @param category
+     * @param orderInfoVO
+     * @return
+     */
+        public static ResultVO preCreate(String category, OrderInfoVO orderInfoVO){
+            init();
+            if(InformationConstant.ALIPAY.equals(category)){
+                return alipyPreCreate(orderInfoVO);
+            }else{
+                return null;
+            }
+        }
+    /**
+     * 关单
+     * @param category
+     * @param orderInfoVO
+     * @return
+     */
+    public static ResultVO closeTrade(String category, OrderInfoVO orderInfoVO){
+        init();
+        if(InformationConstant.ALIPAY.equals(category)){
+            return closeTrade(orderInfoVO);
+        }else{
+            return null;
+        }
+    }
+
+    public static Object refund(String category, OrderInfoVO orderInfoVO) {
+        init();
+        if(InformationConstant.ALIPAY.equals(category)){
+            return refund(orderInfoVO);
+        }else{
+            return null;
+        }
+    }
+    /**
+     * 查询交易信息
+     * @param category
+     * @param orderInfoVO
+     * @return
+     */
+        public static ResultVO alipayQuery(String category, OrderInfoVO orderInfoVO){
+            init();
+            if(InformationConstant.ALIPAY.equals(category)){
+                return alipayQuery(orderInfoVO);
             }else{
                 return null;
             }
@@ -51,8 +108,32 @@ public class ApplyConfigUtils {
                     varibaleUtils.getSignType());
         }
 
-        public static ResultVO preCreate(OrderInfoVO orderInfoVO){
-            init();
+
+    public static ResultVO refund(OrderInfoVO orderInfoVO){
+        AlipayClient alipayClient = applipayClient();
+        AlipayTradeCloseRequest  request = new AlipayTradeCloseRequest();
+        request.setBizContent(getBizContent(orderInfoVO));
+        AlipayTradeCloseResponse response = null;
+        try {
+            response = alipayClient.execute(request);
+        } catch (AlipayApiException e) {
+            e.printStackTrace();
+        }
+        return ResultVO.success(response);
+    }
+
+    public static ResultVO closeTrade(OrderInfoVO orderInfoVO){ AlipayClient alipayClient = applipayClient();
+    AlipayTradeCloseRequest  request = new AlipayTradeCloseRequest();
+    request.setBizContent(getBizContent(orderInfoVO));
+    AlipayTradeCloseResponse response = null;
+    try {
+        response = alipayClient.execute(request);
+    } catch (AlipayApiException e) {
+        e.printStackTrace();
+    }
+    return ResultVO.success(response); }
+
+        public static ResultVO alipyPreCreate(OrderInfoVO orderInfoVO){
             AlipayClient alipayClient = applipayClient();
             AlipayTradePrecreateRequest request = new AlipayTradePrecreateRequest();
             request.setBizContent(getBizContent(orderInfoVO));
@@ -70,8 +151,9 @@ public class ApplyConfigUtils {
         private static ResultVO alipayPay( OrderInfoVO orderInfoVO){
             AlipayClient alipayClient = applipayClient();
             AlipayTradeCreateRequest  payRequest = new AlipayTradeCreateRequest  ();
-            String bizContent = getBizContent(orderInfoVO);
-            payRequest.setBizContent(bizContent);
+            payRequest.setNotifyUrl(varibaleUtils.getNotifyUrl());
+            payRequest.setReturnUrl(varibaleUtils.getReturnUrl());
+            payRequest.setBizContent(getBizContent(orderInfoVO));
             payRequest.setReturnUrl(varibaleUtils.getReturnUrl());
             //在公共参数中设置回跳和通知地址
             payRequest.setNotifyUrl(varibaleUtils.getNotifyUrl());
@@ -108,7 +190,7 @@ public class ApplyConfigUtils {
             return ResultVO.error();
         }
         if(EmptyUtils.isNotEmpty(response)){
-            return ResultVO.success();
+            return ResultVO.success(response);
         }else{
             return ResultVO.error();
         }
@@ -126,4 +208,6 @@ public class ApplyConfigUtils {
             //bizContentJson.put("passback_params","merchantBizType%3d3C%26merchantBizNo%3d2016010101111");
             return JSON.toJSONString(bizContentJson);
         }
+
+
 }

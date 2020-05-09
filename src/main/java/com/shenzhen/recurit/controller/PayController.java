@@ -39,16 +39,29 @@ public class PayController {
     }
 
     @ApiOperation("查询支付信息情况")
-    @PostMapping(value = "query/orderNo")
+    @PostMapping(value = "query/getInfoByOrderNo")
     public Object getInfoByOrderNo(@RequestBody @ApiParam OrderInfoVO orderInfoVO){
-        return ApplyConfigUtils.payOrderNo(InformationConstant.ALIPAY, orderInfoVO);
+        return ApplyConfigUtils.alipayQuery(InformationConstant.ALIPAY, orderInfoVO);
     }
 
-    @ApiOperation("生成二维码")
+    @ApiOperation("支付宝生成二维码")
     @PostMapping(value = "create/qRcode")
     public Object preCreateQRcode(@RequestBody @ApiParam OrderInfoVO orderInfoVO){
-        return ApplyConfigUtils.preCreate( orderInfoVO);
+        return ApplyConfigUtils.preCreate( InformationConstant.ALIPAY,orderInfoVO);
     }
+
+    @ApiOperation("支付宝关单")
+    @PutMapping(value = "closeTrade")
+    public Object closeTrade(@RequestBody @ApiParam OrderInfoVO orderInfoVO){
+        return ApplyConfigUtils.closeTrade( InformationConstant.ALIPAY,orderInfoVO);
+    }
+
+    @ApiOperation("支付宝退款")
+    @PutMapping(value = "refund")
+    public Object refund(@RequestBody @ApiParam OrderInfoVO orderInfoVO){
+        return ApplyConfigUtils.refund( InformationConstant.ALIPAY,orderInfoVO);
+    }
+
 
 
 

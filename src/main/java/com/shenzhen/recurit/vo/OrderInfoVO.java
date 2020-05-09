@@ -27,5 +27,10 @@ public class OrderInfoVO  extends BaseVO{
     private String subject;
     @ApiModelProperty(value = "描述")
     private String body;
+    @ApiModelProperty(value = "退款金额")
+    private String refundAmount;
+    @ApiModelProperty(value = "退款场景")
+    private String bizType;
+
 
 }

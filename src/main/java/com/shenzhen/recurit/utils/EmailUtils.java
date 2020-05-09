@@ -16,25 +16,35 @@ import java.util.Properties;
 
 public class EmailUtils {
 
+    private static VaribaleUtils varibaleUtils=null;
+
+    private static void init(){
+        if(EmptyUtils.isEmpty(varibaleUtils)){
+            varibaleUtils=SpringUtils.getBean(VaribaleUtils.class);
+        }
+    }
+
+
     public static ResultVO sendEmail(String accept){
         String code = PhoneUtils.getCode();
         MimeMessage message=getMessage();
-        final String userName = EncryptBase64Utils.decryptBASE64(InformationConstant.spring_mail_username);
+        final String userName = EncryptBase64Utils.decryptBASE64(varibaleUtils.getMailName());
         setCodeMessage(message,userName,accept,code);
         return ResultVO.success(ReturnEnum.SUCCESS.getValue(),code);
     }
 
     public static MimeMessage getMessage(){
         // 创建Properties 类用于记录邮箱的一些属性
+        init();
         Properties props = new Properties();
-        final String userName = EncryptBase64Utils.decryptBASE64(InformationConstant.spring_mail_username);
-        final String password = EncryptBase64Utils.decryptBASE64(InformationConstant.spring_mail_password);
+        final String userName = EncryptBase64Utils.decryptBASE64(varibaleUtils.getMailName());
+        final String password = EncryptBase64Utils.decryptBASE64(varibaleUtils.getMailPassword());
         // 表示SMTP发送邮件，必须进行身份验证
-        props.put("mail.smtp.auth", InformationConstant.spring_mail_smtp_auth);
+        props.put("mail.smtp.auth", varibaleUtils.getMailAuth());
         //此处填写SMTP服务器
-        props.put("mail.smtp.host", InformationConstant.SPRING_MAIL_HOST);
+        props.put("mail.smtp.host", varibaleUtils.getMailHost());
         //端口号，QQ邮箱端口587
-        props.put("mail.smtp.port", InformationConstant.spring_mail_port);
+        props.put("mail.smtp.port", varibaleUtils.getMailPort());
         // 此处填写，写信人的账号
         props.put("mail.user",userName);
 
@@ -63,9 +73,9 @@ public class EmailUtils {
             message.setFrom(form);
             message.setRecipient(Message.RecipientType.TO, to);
             // 设置邮件标题
-            message.setSubject("测试邮件");
+            message.setSubject("上海仁格人力资源有限公司");
             // 设置邮件的内容体
-            message.setContent("尊敬的用户您好：\t\n 您的验证码是"+code+",请于5分钟类完成注册否则会失效！", "text/html;charset=UTF-8");
+            message.setContent("感谢您使用上海仁格人力资源招聘网站: \t\n 您的验证码是"+code+",请于5分钟类完成注册否则会失效！", "text/html;charset=UTF-8");
             Transport.send(message);
         }catch (MessagingException messagingException){
             messagingException.printStackTrace();
@@ -120,7 +130,7 @@ public class EmailUtils {
 
     public static void sendResume(String email , UserPojo userPojo){
         MimeMessage message=getMessage();
-        final String userName = EncryptBase64Utils.decryptBASE64(InformationConstant.spring_mail_username);
+        final String userName = EncryptBase64Utils.decryptBASE64(varibaleUtils.getMailName());
         setResumeMessage(message,userName,email,userPojo);
     }
 

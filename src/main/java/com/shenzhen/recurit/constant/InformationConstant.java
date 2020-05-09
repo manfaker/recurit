@@ -22,10 +22,12 @@ public interface InformationConstant {
 
     //邮箱验证部分配置
     String SPRING_MAIL_HOST = "smtp.qq.com";
-    String spring_mail_username = "MTA1MDQ4NDczMEBxcS5jb20=";
-    String spring_mail_password = "cHJvcXJ2cnB4bWxmYmZhaQ==";//不是密码，是授权码
-    String spring_mail_port = "587";
-    String spring_mail_smtp_auth = "true";
+    String SPRING_MAIL_USERNAME = "MTA1MDQ4NDczMEBxcS5jb20=";
+    String SPRING_MAIL_PASSWORD = "cHJvcXJ2cnB4bWxmYmZhaQ==";//不是密码，是授权码
+    //pop3 dxeufokhgqycbjeg
+    //imap kvfypmvpurwxcagf
+    String SPRING_MAIL_PORT = "587";
+    String SPRING_MAIL_SMTP_AUTH = "true";
     String NUMBER = "number";
     String CODE = "code";
     String ROLE_NUM = "roleNum";

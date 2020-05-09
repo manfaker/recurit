@@ -10,15 +10,9 @@ public class EncryptBase64Utils {
 
     public static void main(String[] args) {
         //测试加密解密
-        String str = encryptBASE64("LTAI4FgEZ19NGXpfQU8ksggy");
+        String str = encryptBASE64("acriypvmidgtbdcf");
         System.out.println("加密后：" + str);
         System.out.println("解密后：" +decryptBASE64(str));
-        String str1 = encryptBASE64("vbC3xQDOhEcKo4vWD97jaE68hUXIqO");
-        System.out.println("加密后：" + str1);
-        System.out.println("解密后：" +decryptBASE64(str1));
-        String str2 = encryptBASE64("SMS_183260274");
-        System.out.println("加密后：" + str2);
-        System.out.println("解密后：" +decryptBASE64(str2));
     }
     /**
      * 解密

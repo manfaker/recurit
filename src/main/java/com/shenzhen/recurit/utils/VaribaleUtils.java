@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 @PropertySource(value = "classpath:${variable.dev.path}")
 @Data
 public class VaribaleUtils {
+    //支付宝
     @Value("${apply.config.appId}")
     private String appId;
     @Value("${merchant.private.key}")
@@ -23,4 +24,15 @@ public class VaribaleUtils {
     private String signType;
     @Value("${gete.way.url}")
     private String geteWayUrl;
+    //邮箱
+    @Value("${spring_mail_username}")
+    private String mailName;
+    @Value("${spring_mail_password}")
+    private String mailPassword;
+    @Value("${spring_mail_port}")
+    private String mailPort;
+    @Value("${spring.mail.host}")
+    private String mailHost;
+    @Value("${spring_mail_smtp_auth}")
+    private String mailAuth;
 }
