@@ -113,7 +113,6 @@ public class EmailUtils {
             // 设置要发送附件的文件路径
             DataSource source = new FileDataSource(resumeFiel);
             messageBodyPart.setDataHandler(new DataHandler(source));
-
             // messageBodyPart.setFileName(filename);
             // 处理附件名称中文（附带文件路径）乱码问题
             messageBodyPart.setFileName(MimeUtility.encodeText(resumeFiel.getName()));

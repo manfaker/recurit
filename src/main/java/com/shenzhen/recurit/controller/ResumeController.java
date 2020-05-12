@@ -89,5 +89,11 @@ public class ResumeController {
         return resumeService.sendResumeEmail(userCode);
     }
 
+    @GetMapping (value = "getResumeByUserCode")
+    @ApiOperation(value = "根据userCode获取简历信息")
+    public ResultVO getResumeByUserCode(String userCode){
+        UserPojo userPojo = resumeService.getResumeInfoByUserCode(userCode);
+        return ResultVO.success(userPojo);
+    }
 
 }

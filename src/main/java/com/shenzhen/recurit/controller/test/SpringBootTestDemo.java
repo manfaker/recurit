@@ -57,8 +57,8 @@ public class SpringBootTestDemo {
         ConnectionFactory connectionFactory=getConnectFactory();
         //2 创建Connection
         String queueName = "directQueue";
-        String exchangeName = "direct.exchange";
-        String routingKey = "test.direct";
+        String exchangeName = "directxchange";
+        String routingKey = "testDirect";
         Connection connection = null;
         try {
             connection = connectionFactory.newConnection();
@@ -69,10 +69,10 @@ public class SpringBootTestDemo {
             channel.queueBind(queueName,exchangeName,routingKey);
             AMQP.BasicProperties.Builder builder = new AMQP.BasicProperties.Builder();
             builder.deliveryMode(2);
-            builder.expiration("180000");
+            builder.expiration("6000");
             AMQP.BasicProperties  properties = builder.build();
             //5 发送
-            String msg = "Hello World RabbitMQ 4  Direct Exchange Message 111 ... ";
+            String msg = "Hello World RabbitMQ 4  Direct Exchange Message 3333 ... ";
             channel.basicPublish(exchangeName, routingKey , properties , msg.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
