@@ -426,9 +426,10 @@ public class UserServiceImpl implements UserService {
             if(EmptyUtils.isEmpty(password)){
                 return ResultVO.error("密码不能为空！");
             }
-            UserVO currUser = userMapper.getUserByName(userName);
+           // UserVO currUser = userMapper.getUserByName(userName);
+            UserVO currUser = userMapper.getUserByNameOrEmailOrPhone(userName);
             if(EmptyUtils.isEmpty(currUser)){
-                return ResultVO.error("用户不存在，请先注册");
+                return ResultVO.error(userName+"用户不存在，请先注册");
             }
             userVO = userMapper.getUserByNameAndPass(userName,EncryptBase64Utils.encryptBASE64(password));
             if(EmptyUtils.isEmpty(userVO)||EmptyUtils.isEmpty(userVO.getUserName())){
@@ -436,7 +437,7 @@ public class UserServiceImpl implements UserService {
             }
             category = InformationConstant.USERNAME;
         }else{
-            if(jsonObject.containsKey("number")&&jsonObject.containsKey("code")){
+            if(jsonObject.containsKey("number")){
                 String number = jsonObject.getString("number");
                 String code = jsonObject.getString("code");
                 if(EmptyUtils.isEmpty(number)){

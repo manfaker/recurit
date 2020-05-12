@@ -58,4 +58,6 @@ public interface UserMapper {
      * @return
      */
     UserVO getUserCode(String userCode);
+
+    UserVO getUserByNameOrEmailOrPhone(String userName);
 }

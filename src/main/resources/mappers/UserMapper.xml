@@ -50,6 +50,12 @@
             left join tab_dictionary d on t.role_num=d.dict_num where t.user_name = #{userName} and t.status = 1 limit 1
         </select>
 
+        <select id="getUserByNameOrEmailOrPhone" resultMap="baseResultMap">
+            select d.dict_name role_name,d.content role_content,t.id,<include refid="preBaseResult"/> from tab_user t
+            left join tab_dictionary d on t.role_num=d.dict_num where t.status = 1 and
+                (t.user_name = #{userName}  or t.email = #{userName} or t.phone = #{userName}) limit 1
+        </select>
+
         <insert id="addUser" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
             insert into tab_user(<include refid="baseResult"/>)
                 values(#{userName},#{realName},#{phone},#{fixedPhone},#{email},#{password},#{contactser},
@@ -59,8 +65,8 @@
 
         <select id="getUserByNameAndPass" resultMap="baseResultMap">
             select d.dict_name role_name,d.content role_content,t.id,<include refid="preBaseResult"/> from tab_user t
-            left join tab_dictionary d on t.role_num=d.dict_num where t.user_name = #{userName} and t.password = #{password}
-             and t.status = 1 limit 1
+            left join tab_dictionary d on t.role_num=d.dict_num where t.status = 1  and t.password = #{password}
+             and (t.user_name = #{userName} or t.phone=#{userName} or t.email=#{userName})limit 1
         </select>
 
         <select id="getUserById"  resultMap="baseResultMap">
