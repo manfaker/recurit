@@ -197,15 +197,10 @@ public class ApplyConfigUtils {
     }
 
         private static String getBizContent(OrderInfoVO orderInfoVO){
-            JSONObject bizContentJson = new JSONObject();
-            if(orderInfoVO.getTotalAmount()> NumberEnum.ZERO.getValue()){
-                double money = orderInfoVO.getTotalAmount()*0.01;
-                bizContentJson.put("total_amount",money);
+            JSONObject bizContentJson=JSONAndEntityConvertUtils.entityToIndexJSONObject(orderInfoVO,true);
+            if(bizContentJson.containsKey("status")){
+                bizContentJson.remove("status");
             }
-            bizContentJson.put("out_trade_no",orderInfoVO.getOutTradeNo());
-            bizContentJson.put("subject","iphone20");
-            bizContentJson.put("body","ssssiphone20ssss");
-            //bizContentJson.put("passback_params","merchantBizType%3d3C%26merchantBizNo%3d2016010101111");
             return JSON.toJSONString(bizContentJson);
         }
 

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzhen.recurit.dao.AddressMapper">
+
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.pojo.AddressPojo">
+            <id column="id" property="id"/>
+            <result column="location" property="location"/>
+            <result column="address_level" property="addressLevel"/>
+            <result column="address_name" property="addressName"/>
+            <result column="address_num" property="addressNum"/>
+            <result column="parent_num" property="parentNum"/>
+            <result column="address_postal" property="addressPostal"/>
+            <result column="abbreviation" property="abbreviation"/>
+        </resultMap>
+
+        <sql id="baseResult">
+            location,address_level,address_name,address_num,parent_num,address_postal,
+                abbreviation,creater,updater,create_date,update_date
+        </sql>
+
+        <select id="getAddressByLevel" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_address where address_level = #{addressLevel}
+        </select>
+
+        <select id="getAddressParentNum" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_address where parent_num = #{parentNum}
+        </select>
+
+        <select id="getAddressById" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_address where id = #{id}
+        </select>
+    
+        <insert id="addAddress" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
+            insert into tab_address(<include refid="baseResult"/>)
+                values(#{location},#{addressLevel},#{addressName},#{addressNum},#{parentNum},#{addressPostal},
+            #{abbreviation},#{creater},#{updater},#{createDate},#{updateDate})
+        </insert>
+
+        <update id="updateAddress">
+            update tab_address
+            <set>
+                <if test="location != null and location != ''">
+                    location = #{location},
+                </if>
+                <if test="addressLevel != null and addressLevel != ''">
+                    address_level = #{addressLevel},
+                </if>
+                <if test="addressName != null and addressName != ''">
+                    address_name = #{addressName},
+                </if>
+                <if test="addressNum != null and addressNum != ''">
+                    address_num = #{addressNum},
+                </if>
+                <if test="parentNum != null and parentNum != ''">
+                    parent_num = #{parentNum},
+                </if>
+                <if test="addressPostal != null and addressPostal != ''">
+                    address_postal = #{addressPostal},
+                </if>
+                <if test="abbreviation != null and abbreviation != ''">
+                    abbreviation = #{abbreviation},
+                </if>
+                updater = #{updater},
+                update_date = #{updateDate}
+
+            </set>
+        </update>
+
+
+</mapper>

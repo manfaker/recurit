@@ -91,6 +91,14 @@ public class UserServiceImpl implements UserService {
             }
             ResultVO resultVO = addUser(userVO);
             if(resultVO.getCode()==200){
+                String category;
+                if(number.contains(OrdinaryConstant.SYMBOL_1)){
+                    category = InformationConstant.EMAIL;
+                }else{
+                    category = InformationConstant.PHONE;
+                }
+                String entryName = saveUserToRedis(userVO,category);
+                userVO.setEntryCode(entryName);
                 return ResultVO.success("注册成功");
             }else{
                 return resultVO;
