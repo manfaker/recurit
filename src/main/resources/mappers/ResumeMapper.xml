@@ -149,6 +149,7 @@
         <select id="getApplyResume" resultMap="baseResultMap">
             SELECT
                 u.user_name,
+                u.real_name,
                 t.phone,
                 t.working_life,
                 t.experience,

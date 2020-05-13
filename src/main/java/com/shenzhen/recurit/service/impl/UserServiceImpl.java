@@ -116,6 +116,9 @@ public class UserServiceImpl implements UserService {
         if(EmptyUtils.isEmpty(userVO)){
             userVO = new UserVO();
         }
+        /**
+         * 目前未增加公司，默认绑定公司
+         */
         if(EmptyUtils.isNotEmpty(userVO.getRoleNum())&&"ROLE0001".equals(userVO.getRoleNum())){
             userVO.setCompanyCode("SH120155452");
         }

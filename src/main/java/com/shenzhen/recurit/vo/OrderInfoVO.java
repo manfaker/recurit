@@ -14,7 +14,7 @@ public class OrderInfoVO  extends BaseVO{
     @ApiModelProperty(value = "支付金额")
     private long   price;
     @ApiModelProperty(value = "支付状态 1 未支付，2已支付，3订单流程已走完")
-    private int payStatus;
+    private long payStatus;
     @ApiModelProperty(value = "打折金额")
     private long totalAmount;
     @ApiModelProperty(value = "总金额")
@@ -28,7 +28,7 @@ public class OrderInfoVO  extends BaseVO{
     @ApiModelProperty(value = "描述")
     private String body;
     @ApiModelProperty(value = "退款金额")
-    private String refundAmount;
+    private long refundAmount;
     @ApiModelProperty(value = "退款场景")
     private String bizType;
 
