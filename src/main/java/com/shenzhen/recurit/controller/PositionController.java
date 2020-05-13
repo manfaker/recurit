@@ -82,6 +82,22 @@ public class PositionController {
         return ResultVO.success(positionService.getAllPositions(positionVO,pageNum,pageSize));
     }
 
+    @RequestMapping(value = "getNewAllPositions",method = RequestMethod.POST)
+    @PermissionVerification
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "初始页",name = "pageNum" ,required = false),
+            @ApiImplicitParam(value = "初始页",name = "pageSize" ,required = false)
+    })
+    @ApiOperation(value = "获取求职页面的所有职位信息")
+    public Object getNewAllPositions(Integer pageNum, Integer pageSize,@RequestBody @ApiParam PositionVO positionVO ){
+        if(EmptyUtils.isEmpty(pageNum)||EmptyUtils.isEmpty(pageSize)||
+                pageNum==NumberEnum.ZERO.getValue()||pageSize==NumberEnum.ZERO.getValue()){
+            pageNum =NumberEnum.ONE.getValue();
+            pageSize=NumberEnum.TWENTY.getValue();
+        }
+        return ResultVO.success(positionService.getNewAllPositions(positionVO,pageNum,pageSize));
+    }
+
     @GetMapping(value = "getPopularPositions")
     @ApiOperation(value = "获取热门职位")
     public Object getPopularPositions(){

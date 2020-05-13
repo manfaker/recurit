@@ -190,6 +190,27 @@ public class PositionServiceImpl implements PositionService {
         }
     }
 
+    private void setNewInfoToPosition(PositionPojo position){
+        if(EmptyUtils.isNotEmpty(position)){
+            if(EmptyUtils.isNotEmpty(position.getSalary())){
+                position.setSalaryDict(dictionaryService.getSignleByDictNumber(InformationConstant.SALARY,position.getSalary()));
+            }
+            if(EmptyUtils.isNotEmpty(position.getEducation())){
+                position.setAcademicDegreeDict(dictionaryService.getSignleByDictNumber(InformationConstant.EDUCATION,position.getEducation()));
+            }
+            if(EmptyUtils.isNotEmpty(position.getExperience())){
+                position.setExperienceDict(dictionaryService.getSignleByDictNumber(InformationConstant.EXPERIENCE,position.getExperience()));
+            }
+            if(EmptyUtils.isNotEmpty(position.getFinancing())){
+                position.setFinancingDict(dictionaryService.getSignleByDictNumber(InformationConstant.FINANCING,position.getFinancing()));
+            }
+            if(EmptyUtils.isNotEmpty(position.getScale())){
+                position.setScaleDict(dictionaryService.getSignleByDictNumber(InformationConstant.SCALE,position.getScale()));
+            }
+            position.setListLabel(labelService.queryByRelationId(InformationConstant.POSITION,position.getId()));
+        }
+    }
+
     @Transactional
     @Override
     public ResultVO updatePosition(PositionVO position){
@@ -221,6 +242,19 @@ public class PositionServiceImpl implements PositionService {
         if(EmptyUtils.isNotEmpty(listPostion)&&listPostion.size()>NumberEnum.ZERO.getValue()){
             listPostion.forEach(position->{
                 setInfoToPosition(position);
+            });
+        }
+        PageInfo<PositionPojo> pageInfo = new PageInfo<>(listPostion);
+        return pageInfo;
+    }
+
+    @Override
+    public PageInfo<PositionPojo> getNewAllPositions(PositionVO positionVO, Integer pageNum, Integer pageSize) {
+        PageHelper.offsetPage((pageNum-NumberEnum.ONE.getValue())*pageSize,pageSize);
+        List<PositionPojo> listPostion = positionMapper.getNewAllPositions(positionVO);
+        if(EmptyUtils.isNotEmpty(listPostion)&&listPostion.size()>NumberEnum.ZERO.getValue()){
+            listPostion.forEach(position->{
+                setNewInfoToPosition(position);
             });
         }
         PageInfo<PositionPojo> pageInfo = new PageInfo<>(listPostion);
@@ -272,6 +306,8 @@ public class PositionServiceImpl implements PositionService {
     public int statisticsAllPositions() {
         return positionMapper.statisticsAllPositions();
     }
+
+
 
 
 }

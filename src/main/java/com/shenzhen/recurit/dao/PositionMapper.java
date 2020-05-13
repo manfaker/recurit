@@ -71,4 +71,6 @@ public interface PositionMapper {
     int statisticsAllPositions();
 
     List<PositionPojo> getBulletinBoardPosition(@Param("pageNo") int pageNo, @Param("pageSize") int pageSize);
+
+    List<PositionPojo> getNewAllPositions(PositionVO positionVO);
 }

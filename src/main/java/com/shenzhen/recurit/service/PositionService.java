@@ -72,4 +72,9 @@ public interface PositionService {
      * @return
      */
     int statisticsAllPositions();
+    /**
+     * 获取求职页面的所有职位信息
+     * @return
+     */
+    PageInfo<PositionPojo> getNewAllPositions(PositionVO positionVO, Integer pageNum, Integer pageSize);
 }

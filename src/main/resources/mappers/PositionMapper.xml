@@ -200,4 +200,36 @@
                 </otherwise>
             </choose>
     </select>
+
+    <select id="getNewAllPositions" resultMap="baseResultMap">
+        select t.id,t.status,<include refid="baseResultSql"/>,
+        c.company_name,u.id user_id,u.real_name user_real_name,
+        c.financing, c.scale from
+        tab_position t
+        left join (select company_code,company_name,financing,scale from tab_company where status =1) c on t.company_code = c.company_code
+        left join (select user_code,id,real_name from tab_user where status =1 ) u on u.user_code=t.user_code
+        where t.status = 1
+        <if test="education != null and education != ''">
+            and t.education = #{education}
+        </if>
+        <if test="experience != null and experience != ''">
+            and t.experience = #{experience}
+        </if>
+        <if test="salary != null and salary != ''">
+            and t.salary = #{salary}
+        </if>
+        <if test="financing != null and financing != ''">
+            and c.financing = #{financing}
+        </if>
+        <if test="scale != null and scale != ''">
+            and c.scale = #{scale}
+        </if>
+        <if test="positionName != null and positionName != ''">
+            and (instr(t.position_name,#{positionName})>0
+            or instr(c.company_name,#{positionName})>0
+            or t.id in (select distinct relation_id from tab_label
+            where category = 'position' and instr(label_name,#{positionName})>0))
+        </if>
+        order by t.update_date desc
+    </select>
 </mapper>
