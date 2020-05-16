@@ -42,6 +42,10 @@ public class ResumePojo extends BaseVO {
     private String email;
     private  int isChecked;
     private int isAccept;
+    @ApiModelProperty(value = "总简历数")
+    private  int resumeSum;
+    @ApiModelProperty(value = "未查看简历数")
+    private  int noCheckedSum;
 
 
 

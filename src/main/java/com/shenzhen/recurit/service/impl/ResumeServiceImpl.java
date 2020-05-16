@@ -208,4 +208,13 @@ public class ResumeServiceImpl implements ResumeService {
         }
 
     }
+
+    @Override
+    public ResumePojo getCheckedPeoples(String userCode) {
+        if(EmptyUtils.isEmpty(userCode)){
+            return new ResumePojo();
+        }
+        ResumePojo resumePojo = resumeMapper.getCheckedPeoples(userCode);
+        return resumePojo;
+    }
 }

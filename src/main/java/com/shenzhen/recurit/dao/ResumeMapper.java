@@ -51,4 +51,6 @@ public interface ResumeMapper {
     int updateRecentTimeByUserCode(ResumeVO resumeVO);
 
     List<ResumePojo> getApplyResume(String userCode);
+
+    ResumePojo getCheckedPeoples(String userCode);
 }

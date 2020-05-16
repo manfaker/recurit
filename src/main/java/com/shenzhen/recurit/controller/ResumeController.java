@@ -4,6 +4,7 @@ import com.shenzhen.recurit.Interface.PermissionVerification;
 import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.pojo.UserPojo;
 import com.shenzhen.recurit.service.ResumeService;
+import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.utils.word.WordUtil;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.ResumeVO;
@@ -74,6 +75,14 @@ public class ResumeController {
     @GetMapping (value = "getApplyResume",produces={ MediaType.APPLICATION_JSON_UTF8_VALUE })
     public ResultVO getApplyResume(){
         return ResultVO.success(resumeService.getApplyResume());
+    }
+
+    @ApiOperation(value = "查看投递简历的人数")
+    @GetMapping (value = "getCheckedPeoples",produces={ MediaType.APPLICATION_JSON_UTF8_VALUE })
+    @ApiImplicitParam(value = "用户编码" ,name = "userCode",required = false)
+    public ResultVO getCheckedPeoples(String userCode){
+        return ResultVO.success(resumeService.getCheckedPeoples(userCode));
+
     }
 
     @GetMapping (value = "downloadResume")

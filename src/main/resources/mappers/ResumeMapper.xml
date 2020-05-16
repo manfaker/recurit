@@ -36,6 +36,12 @@
             <result column="is_accept" property="isAccept"/>
         </resultMap>
 
+        <resultMap id="countBaseResultMap" type="com.shenzhen.recurit.pojo.ResumePojo">
+            <id column="id" property="id"/>
+            <result column="resume_sum" property="resumeSum"/>
+            <result column="no_checked_sum" property="noCheckedSum"/>
+        </resultMap>
+
         <sql id="baseResult">
             user_code,domicile_province,domicile_city,domicile_county,domicile_addr,residence_province,residence_city,
                 residence_county,residence_addr,experience,education,job_status,salary,city,profession,admission_time,
@@ -179,6 +185,14 @@
                 AND r.apply = 2
                 ) r left join tab_resume t on t.user_code = r.user_code
                 left join tab_user u on u.user_code = r.user_code
+        </select>
+    
+        <select id="getCheckedPeoples" resultMap="countBaseResultMap">
+            SELECT
+                ( SELECT COUNT( 1 ) FROM tab_position_user_relation WHERE position_id IN ( SELECT id FROM tab_position WHERE user_code = #{userCode} ) ) resume_sum,
+                ( SELECT COUNT( 1 ) FROM tab_position_user_relation WHERE is_checked != 2 AND position_id IN ( SELECT id FROM tab_position WHERE user_code = #{userCode} ) ) no_checked_sum
+            FROM
+            DUAL
         </select>
 
 </mapper>
