@@ -61,7 +61,6 @@ public class PositionController {
     }
 
     @RequestMapping(value = "getByPositionId",method = RequestMethod.GET)
-    @PermissionVerification
     public Object getByPositionId(int id){
         return ResultVO.success(positionService.getByPositionId(id));
     }

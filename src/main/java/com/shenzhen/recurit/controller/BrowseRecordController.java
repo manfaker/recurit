@@ -24,7 +24,6 @@ public class BrowseRecordController {
     private BrowseRecordService browseRecordService;
     
     @PostMapping(value = "saveBrowseRecord")
-    @PermissionVerification
     @ApiOperation(value = "保存记录")
     public ResultVO saveBrowseRecord(@RequestBody @ApiParam BrowseRecordVO browseRecordVO){
         BrowseRecordVO browseRecord = browseRecordService.saveBrowseRecord(browseRecordVO);

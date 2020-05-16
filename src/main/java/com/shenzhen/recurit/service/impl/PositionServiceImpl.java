@@ -266,7 +266,7 @@ public class PositionServiceImpl implements PositionService {
         List<PositionPojo> listPosition = positionMapper.getPopularPositions();
         if(EmptyUtils.isNotEmpty(listPosition)){
             listPosition.forEach(position->{
-                setInfoToPosition(position);
+                setNewInfoToPosition(position);
             });
         }
         return listPosition;

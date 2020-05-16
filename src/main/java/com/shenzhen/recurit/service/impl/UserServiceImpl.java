@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
                 }
                 String entryName = saveUserToRedis(userVO,category);
                 userVO.setEntryCode(entryName);
-                return ResultVO.success("注册成功");
+                return ResultVO.success(userVO);
             }else{
                 return resultVO;
             }
