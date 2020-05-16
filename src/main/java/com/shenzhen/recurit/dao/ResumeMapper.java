@@ -52,5 +52,5 @@ public interface ResumeMapper {
 
     List<ResumePojo> getApplyResume(String userCode);
 
-    ResumePojo getCheckedPeoples(String userCode);
+    ResumePojo getCheckedResumes(String userCode);
 }

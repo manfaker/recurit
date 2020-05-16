@@ -81,5 +81,5 @@ public interface ResumeService {
 
     ResultVO sendResumeEmail(String userCode);
 
-    ResumePojo getCheckedPeoples(String userCode);
+    ResumePojo getCheckedResumes(String userCode);
 }

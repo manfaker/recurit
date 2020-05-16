@@ -78,10 +78,10 @@ public class ResumeController {
     }
 
     @ApiOperation(value = "查看投递简历的人数")
-    @GetMapping (value = "getCheckedPeoples",produces={ MediaType.APPLICATION_JSON_UTF8_VALUE })
+    @GetMapping (value = "getCheckedResumes",produces={ MediaType.APPLICATION_JSON_UTF8_VALUE })
     @ApiImplicitParam(value = "用户编码" ,name = "userCode",required = false)
-    public ResultVO getCheckedPeoples(String userCode){
-        return ResultVO.success(resumeService.getCheckedPeoples(userCode));
+    public ResultVO getCheckedResumes(String userCode){
+        return ResultVO.success(resumeService.getCheckedResumes(userCode));
 
     }
 
