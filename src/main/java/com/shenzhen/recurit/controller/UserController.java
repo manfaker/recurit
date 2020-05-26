@@ -5,11 +5,10 @@ import com.shenzhen.recurit.enums.ReturnEnum;
 import com.shenzhen.recurit.service.UserService;
 import com.shenzhen.recurit.utils.EmailUtils;
 import com.shenzhen.recurit.utils.EmptyUtils;
+import com.shenzhen.recurit.utils.RedisTempleUtils;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.UserVO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -126,5 +125,15 @@ public class UserController {
     @GetMapping (value = "sendResume")
     public void sendResume(){
         EmailUtils.sendResume("954118485@qq.com",null);
+    }
+
+    @ApiOperation(value = "验证")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "手机" ,name="phone",required = true),
+            @ApiImplicitParam(value = "验证码" ,name="code",required = true)
+    })
+    @GetMapping (value = "verificateIphone")
+    public Object verificateIphone(String phone,String code){
+        return userService.verificateIphone(phone,code);
     }
 }

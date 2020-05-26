@@ -22,5 +22,7 @@ public class DocumentVO extends BaseVO{
     private String suffix;
     @ApiModelProperty(value = "类型")
     private String category;
+    @ApiModelProperty(value = "类型")
+    private int status;
 
 }

@@ -51,7 +51,6 @@ public class FileUtils {
         String timeName=category+System.currentTimeMillis();
         documentVO.setOldName(fileName);
         documentVO.setDocumentName(timeName);
-        documentVO.setUrl(url);
         documentVO.setCategory(category);
         documentVO.setSuffix(suffix);
         documentVO.setDocumentSize(file.getSize());
@@ -59,6 +58,7 @@ public class FileUtils {
         if(!filePath.exists()){
             filePath.mkdirs();
         }
+        documentVO.setUrl(filePath.getPath());
         String currPath = filePath+File.separator+timeName+OrdinaryConstant.SYMBOL_5+suffix;
         File currFile = new File(currPath);
         try {

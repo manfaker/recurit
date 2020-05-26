@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 public interface DocumentMapper {
     
-    DocumentPojo saveDocument(DocumentVO documentVO);
+    void saveDocument(DocumentVO documentVO);
 
     int updateDocument(DocumentVO documentVO);
 

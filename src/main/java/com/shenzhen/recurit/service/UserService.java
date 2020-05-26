@@ -94,5 +94,11 @@ public interface UserService {
     UserVO getUserCode(String userCode);
 
 
-
+    /**
+     * 手机号码验证
+     * @param phone
+     * @param code
+     * @return
+     */
+    Object verificateIphone(String phone, String code);
 }

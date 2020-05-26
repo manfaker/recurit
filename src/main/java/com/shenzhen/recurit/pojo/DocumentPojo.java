@@ -23,5 +23,7 @@ public class DocumentPojo extends BaseVO {
     private String suffix;
     @ApiModelProperty(value = "类型")
     private String category;
+    @ApiModelProperty(value = "状态 1 正常 2删除")
+    private String status;
 
 }

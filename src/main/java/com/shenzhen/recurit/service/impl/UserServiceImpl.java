@@ -592,5 +592,21 @@ public class UserServiceImpl implements UserService {
         return userMapper.getUserCode(userCode);
     }
 
+    @Override
+    public Object verificateIphone(String phone, String code) {
+        if(EmptyUtils.isEmpty(code)){
+            return ResultVO.error("验证码不能为空");
+        }
+        if(!isMobileNO(phone)){
+            return ResultVO.error("手机号码有误");
+        }
+        String value = redisTempleUtils.getValue(phone, String.class);
+        if(code.equals(value)){
+            return ResultVO.success("验证成功",true);
+        }else{
+            return ResultVO.success("验证码错误",false);
+        }
+    }
+
 
 }
