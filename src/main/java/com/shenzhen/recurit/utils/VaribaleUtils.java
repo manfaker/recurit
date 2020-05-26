@@ -35,4 +35,7 @@ public class VaribaleUtils {
     private String mailHost;
     @Value("${spring_mail_smtp_auth}")
     private String mailAuth;
+
+    @Value("${document.url}")
+    private String documentUrl;
 }

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzhen.recurit.dao.DocumentMapper">
+
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.pojo.DocumentPojo">
+            <id column="id" property="id"/>
+            <result column="old_name" property="oldName"/>
+            <result column="document_name" property="documentName"/>
+            <result column="document_size" property="documentSize"/>
+            <result column="url" property="url"/>
+            <result column="suffix" property="suffix"/>
+            <result column="status" property="status"/>
+            <result column="category" property="category"/>
+            <result column="create_date" property="createDate"/>
+            <result column="update_date" property="updateDate"/>
+            <result column="creater" property="creater"/>
+            <result column="updater" property="updater"/>
+        </resultMap>
+
+        <sql id="baseResult">
+            old_name,document_name,document_size,url,suffix,category,create_date,update_date,creater,updater
+        </sql>
+
+        <insert id="saveDocument" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+            insert into tab_document(<include refid="baseResult"/>)
+                values(#{oldName},#{documentName},#{documentSize},#{url},
+                        #{suffix},#{category},#{createDate},#{updateDate},
+                        #{creater},#{updater})
+        </insert>
+
+        <update id="updateDocument">
+            update tab_document
+                <set>
+                    <if test=" oldName != null and oldName != '' ">
+                        old_name = #{oldName},
+                    </if>
+                    <if test=" documentName != null and documentName != '' ">
+                        document_name = #{documentName},
+                    </if>
+                    <if test=" documentSize != null and documentSize != 0 ">
+                        document_size = #{documentSize},
+                    </if>
+                    <if test=" url != null and url != '' ">
+                        url = #{url},
+                    </if>
+                    <if test=" suffix != null and suffix != '' ">
+                        suffix = #{suffix},
+                    </if>
+                    <if test=" category != null and category != '' ">
+                        category = #{category},
+                    </if>
+                        update_date= #{updateDate},
+                        updater=#{updater}
+                </set>
+                where id = #{id}
+        </update>
+
+        <delete id="deleteDocument">
+            update  tab_document set status = 2 where id = #{id}
+        </delete>
+
+        <select id="getDocument" resultMap="baseResultMap">
+            select <include refid="baseResult"/>,id,status from tab_document where id=#{id} and status = #{status}
+        </select>
+
+
+
+
+</mapper>
