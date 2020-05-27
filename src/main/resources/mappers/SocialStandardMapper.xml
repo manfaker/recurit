@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzhen.recurit.dao.SocialStandardMapper">
+
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.pojo.SocialStandardPojo">
+            <id column="id" property="id"/>
+            <result column="city" property="city"/>
+            <result column="low_cardinality" property="lowCardinality"/>
+            <result column="hight_cardinality" property="hightCardinality"/>
+            <result column="enterprise_pension" property="enterprisePension"/>
+            <result column="person_pension" property="personPension"/>
+            <result column="enterprise_medical" property="enterpriseMedical"/>
+            <result column="person_medical" property="personMedical"/>
+            <result column="enterprise_unemployment" property="enterpriseUnemployment"/>
+            <result column="person_unemployment" property="personUnemployment"/>
+            <result column="enterprise_injury" property="enterpriseInjury"/>
+            <result column="person_injury" property="personInjury"/>
+            <result column="enterprise_childbirth" property="enterpriseChildbirth"/>
+            <result column="person_childbirth" property="personChildbirth"/>
+            <result column="disability_insurance" property="disabilityInsurance"/>
+            <result column="create_date" property="createDate"/>
+            <result column="update_date" property="updateDate"/>
+            <result column="creater" property="creater"/>
+            <result column="updater" property="updater"/>
+        </resultMap>
+
+        <sql id="baseResult">
+            city,low_cardinality,hight_cardinality,
+            enterprise_pension,person_pension,enterprise_medical,person_medical,
+            enterprise_unemployment,person_unemployment,enterprise_injury,person_injury,
+            enterprise_childbirth,person_childbirth,disability_insurance,
+            create_date,update_date,creater,updater
+        </sql>
+
+        <insert id="saveSocialStandard" keyColumn="id" useGeneratedKeys="true" keyProperty="id">
+            insert into tab_social_standard(<include refid="baseResult"/>)
+                values(#{city},#{lowCardinality},#{hightCardinality},
+                #{enterprisePension},#{personPension},#{enterpriseMedical},#{personMedical},
+                #{enterpriseUnemployment},#{personUnemployment},#{enterpriseInjury},#{personInjury},
+                #{enterpriseChildbirth},#{personChildbirth},#{disabilityInsurance},
+                #{createDate},#{updateDate},#{creater},#{updater})
+        </insert>
+    
+        <select id="getAllSocialStandard" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_social_standard
+        </select>
+
+        <select id="getSocialStandardById" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_social_standard where id=#{id}
+        </select>
+
+</mapper>

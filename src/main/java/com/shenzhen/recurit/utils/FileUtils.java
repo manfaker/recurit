@@ -55,6 +55,7 @@ public class FileUtils {
         documentVO.setSuffix(suffix);
         documentVO.setDocumentSize(file.getSize());
         File filePath= new File(url);
+        logger.info("url:"+url);
         if(!filePath.exists()){
             filePath.mkdirs();
         }
@@ -65,6 +66,7 @@ public class FileUtils {
             file.transferTo(currFile);
             return documentService.saveDocument(documentVO);
         } catch (IOException e) {
+            e.printStackTrace();
             logger.error("文件不存在，或者异常");
             return null;
         }
