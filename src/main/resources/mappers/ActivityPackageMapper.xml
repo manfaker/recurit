@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzhen.recurit.dao.ActivityPackageMapper">
+
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.pojo.ActivityPackagePojo">
+            <id column="id" property="id"/>
+            <result column="price" property="price"/>
+            <result column="service_period" property="servicePeriod"/>
+            <result column="discount" property="discount"/>
+            <result column="group_price" property="groupPrice"/>
+            <result column="enterprise_price" property="enterprisePrice"/>
+            <result column="promote_price" property="promotePrice"/>
+            <result column="create_date" property="createDate"/>
+            <result column="update_date" property="updateDate"/>
+            <result column="creater" property="creater"/>
+            <result column="updater" property="updater"/>
+        </resultMap>
+
+        <sql id="baseResult">
+            price,service_period,discount,group_price,enterprise_price,promote_price,
+            create_date,update_date,creater,updater
+        </sql>
+
+        <insert id="saveActivityPackage" keyColumn="id" useGeneratedKeys="true" keyProperty="id">
+            insert into tab_activity_package(<include refid="baseResult"/>)
+                values(#{price},#{servicePeriod},#{discount},
+                #{groupPrice},#{enterprisePrice},#{promotePrice},
+                #{createDate},#{updateDate},#{creater},#{updater})
+        </insert>
+    
+        <select id="getAllActivityPackage" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_activity_package
+        </select>
+
+        <select id="getActivityPackageById" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_activity_package where id=#{id}
+        </select>
+
+</mapper>

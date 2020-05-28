@@ -29,7 +29,8 @@ public class MvcInterceptorConfig extends WebMvcConfigurationSupport {
                 //test 和 user 类不进行拦截
                 .excludePathPatterns("/test/**","/user/**","/pay/alipay/**"
                                         ,"/position/getPopularPositions","/position/getNewAllPositions"
-                                        ,"/resume/getCheckedPeoples","social/standard/getAllSocialStandard")
+                                        ,"/resume/getCheckedPeoples","social/standard/getAllSocialStandard"
+                                        ,"/activity/package/getAllActivityPackage")
                 // swagger-ui
                 .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**");
         super.addInterceptors(registry);

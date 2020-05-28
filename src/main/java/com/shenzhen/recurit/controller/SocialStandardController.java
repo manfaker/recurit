@@ -8,6 +8,7 @@ import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.SocialSecurityInfoVO;
 import com.shenzhen.recurit.vo.SocialStandardVO;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,7 @@ public class SocialStandardController {
 
     @PostMapping(value = "saveSocialStandard")
     @PermissionVerification
+    @ApiOperation(value = "保存区域社保比例")
     public Object saveSocialStandard(@RequestBody @ApiParam SocialStandardVO socialStandardVO){
         SocialStandardPojo socialStandardPojo = socialStandardService.saveSocialStandard(socialStandardVO);
         if(EmptyUtils.isNotEmpty(socialStandardPojo)){
@@ -34,6 +36,7 @@ public class SocialStandardController {
     }
 
     @GetMapping (value = "getAllSocialStandard")
+    @ApiOperation(value = "获取所有的区域社保比例")
     public Object getAllSocialStandard(){
         List<SocialStandardPojo> listSocialStand = socialStandardService.getAllSocialStandard();
         return ResultVO.success(listSocialStand);
