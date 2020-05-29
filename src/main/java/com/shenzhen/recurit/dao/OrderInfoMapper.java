@@ -1,13 +1,13 @@
-package com.shenzhen.recurit.service;
+package com.shenzhen.recurit.dao;
 
 import com.shenzhen.recurit.pojo.OrderInfoPojo;
 import com.shenzhen.recurit.vo.OrderInfoVO;
-import com.shenzhen.recurit.vo.ResultVO;
 
 import java.util.List;
 
-public interface OrderInfoService {
-    OrderInfoPojo saveOrderInfo(OrderInfoVO orderInfoVO);
+public interface OrderInfoMapper {
+
+    void saveOrderInfo(OrderInfoVO orderInfoVO);
 
     int updateOrderInfo(OrderInfoVO orderInfoVO);
 

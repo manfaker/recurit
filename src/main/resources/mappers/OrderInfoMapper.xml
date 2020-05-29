@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzhen.recurit.dao.OrderInfoMapper">
+
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.pojo.OrderInfoPojo">
+            <id column="id" property="id"/>
+            <result column="out_trade_no" property="outTradeNo"/>
+            <result column="trade_no" property="tradeNo"/>
+            <result column="price" property="price"/>
+            <result column="pay_status" property="payStatus"/>
+            <result column="total_amount" property="totalAmount"/>
+            <result column="discountablemount" property="discountablemount"/>
+            <result column="discount" property="discount"/>
+            <result column="status" property="status"/>
+            <result column="subject" property="subject"/>
+            <result column="body" property="body"/>
+            <result column="biz_type" property="bizType"/>
+            <result column="refund_amount" property="refundAmount"/>
+            <result column="user_code" property="userCode"/>
+            <result column="create_date" property="createDate"/>
+            <result column="update_date" property="updateDate"/>
+            <result column="creater" property="creater"/>
+            <result column="updater" property="updater"/>
+        </resultMap>
+
+        <sql id="baseResult">
+            out_trade_no,trade_no,price,pay_status,total_amount,discountablemount,discount,
+            subject,body,biz_type,refund_amount,
+            create_date,update_date,creater,updater,user_code
+        </sql>
+
+        <insert id="saveOrderInfo" keyColumn="id" useGeneratedKeys="true" keyProperty="id">
+            insert into tab_order_info(<include refid="baseResult"/>)
+                values(#{outTradeNo},#{tradeNo},#{price},#{payStatus},#{totalAmount},#{discountablemount},#{discount}
+            ,#{subject},#{body},#{bizType},#{refundAmount},
+            #{createDate},#{updateDate},#{creater},#{updater},#{userCode})
+        </insert>
+
+        <update id="updateOrderInfo">
+            update tab_order_info
+            <set>
+                <if test="outTradeNo != null and outTradeNo != ''">
+                    out_trade_no=#{outTradeNo}
+                </if>
+                <if test="tradeNo != null and tradeNo != ''">
+                    trade_no=#{tradeNo}
+                </if>
+
+                <if test="price != null and price != 0">
+                    price=#{price}
+                </if>
+                <if test="payStatus != null and payStatus != 0">
+                    pay_status=#{payStatus}
+                </if>
+                <if test="totalAmount != null and totalAmount != 0">
+                    total_amount=#{totalAmount}
+                </if>
+                <if test="discountablemount != null and discountablemount != 0">
+                    discountablemount=#{discountablemount}
+                </if>
+                <if test="discount != null and discount != 0">
+                    discount=#{discount}
+                </if>
+                <if test="subject != null and subject != ''">
+                    subject=#{subject}
+                </if>
+                <if test="body != null and body != ''">
+                    body=#{body}
+                </if>
+                <if test="bizType != null and bizType != ''">
+                    biz_type=#{bizType}
+                </if>
+                <if test="refundAmount != null and refundAmount != 0">
+                    refund_amount=#{refundAmount}
+                </if>
+            </set>
+            update_date=#{updateDate},
+            updater=#{updater}
+        </update>
+    
+        <select id="getAllOrderInfo" resultMap="baseResultMap">
+            select id,status,<include refid="baseResult"/> from tab_order_info  where status = 1
+        </select>
+
+        <select id="getOrderInfo" resultMap="baseResultMap">
+            select id,status,<include refid="baseResult"/> from tab_order_info where id=#{id} and status = 1
+        </select>
+
+        <update id="deleteOrderInfo">
+            update tab_order_info set status =2 where id = #{id}
+        </update>
+
+</mapper>

@@ -1,12 +1,13 @@
-package com.shenzhen.recurit.vo;
+package com.shenzhen.recurit.pojo;
 
+import com.shenzhen.recurit.vo.BaseVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @ApiModel(value = "订单信息")
 @Data
-public class OrderInfoVO  extends BaseVO{
+public class OrderInfoPojo  extends BaseVO {
     @ApiModelProperty(value = "主键")
     private int id;
     @ApiModelProperty(value = "支付订单编号")
