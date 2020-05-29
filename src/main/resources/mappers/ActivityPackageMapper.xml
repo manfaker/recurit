@@ -14,18 +14,19 @@
             <result column="update_date" property="updateDate"/>
             <result column="creater" property="creater"/>
             <result column="updater" property="updater"/>
+            <result column="amount" property="amount"/>
         </resultMap>
 
         <sql id="baseResult">
             price,service_period,discount,group_price,enterprise_price,promote_price,
-            create_date,update_date,creater,updater
+            create_date,update_date,creater,updater,amount
         </sql>
 
         <insert id="saveActivityPackage" keyColumn="id" useGeneratedKeys="true" keyProperty="id">
             insert into tab_activity_package(<include refid="baseResult"/>)
                 values(#{price},#{servicePeriod},#{discount},
                 #{groupPrice},#{enterprisePrice},#{promotePrice},
-                #{createDate},#{updateDate},#{creater},#{updater})
+                #{createDate},#{updateDate},#{creater},#{updater},#{amount})
         </insert>
     
         <select id="getAllActivityPackage" resultMap="baseResultMap">

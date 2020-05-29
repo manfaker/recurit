@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzhen.recurit.dao.SocialSecurityInfoMapper">
+
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.pojo.SocialSecurityInfoPojo">
+            <id column="id" property="id"/>
+            <result column="city_id" property="cityId"/>
+            <result column="apply_name" property="applyName"/>
+            <result column="id_card" property="idCard"/>
+            <result column="positive_id_card" property="positiveIdCard"/>
+            <result column="reverse_id_card" property="reverseIdCard"/>
+            <result column="phone" property="phone"/>
+            <result column="domicile" property="domicile"/>
+            <result column="nature_regist" property="natureRegist"/>
+            <result column="cardinality" property="cardinality"/>
+            <result column="social_security_date" property="socialSecurityDate"/>
+            <result column="fee_package" property="feePackage"/>
+            <result column="create_date" property="createDate"/>
+            <result column="update_date" property="updateDate"/>
+            <result column="creater" property="creater"/>
+            <result column="updater" property="updater"/>
+            <result column="amount" property="amount"/>
+        </resultMap>
+
+        <sql id="baseResult">
+            city_id,apply_name,id_card,positive_id_card,reverse_id_card,phone,
+            domicile,nature_regist,cardinality,social_security_date,fee_package,
+            create_date,update_date,creater,updater
+        </sql>
+
+        <insert id="saveSocialSecurityInfo" keyColumn="id" useGeneratedKeys="true" keyProperty="id">
+            insert into tab_social_security_info(<include refid="baseResult"/>)
+                values(#{cityId},#{applyName},#{idCard},
+                #{positiveIdCard},#{reverseIdCard},#{phone},
+                #{domicile},#{natureRegist},#{cardinality},
+                #{socialSecurityDate},#{feePackage},
+                #{createDate},#{updateDate},#{creater},#{updater})
+        </insert>
+    
+        <update id="updateSocialSecuritInfo">
+            update tab_social_security_info
+                <set>
+
+                    <if test="cityId != null and cityId != 0">
+                        city_id = #{cityId},
+                    </if>
+                    <if test="applyName != null and applyName != ''">
+                        apply_name = #{applyName},
+                    </if>
+                    <if test="idCard != null and idCard != ''">
+                        id_card = #{idCard},
+                    </if>
+                    <if test="positiveIdCard != null and positiveIdCard != 0">
+                        positive_id_card = #{positiveIdCard},
+                    </if>
+                    <if test="reverseIdCard != null and reverseIdCard != 0">
+                        reverse_id_card = #{reverseIdCard},
+                    </if>
+                    <if test="phone != null and phone != ''">
+                        phone = #{phone},
+                    </if>
+                    <if test="domicile != null and domicile != ''">
+                        domicile = #{domicile},
+                    </if>
+                    <if test="natureRegist != null and natureRegist != ''">
+                        nature_regist = #{natureRegist},
+                    </if>
+                    <if test="cardinality != null and cardinality != 0">
+                        cardinality = #{cardinality},
+                    </if>
+                    <if test="socialSecurityDate != null">
+                        social_security_date = #{socialSecurityDate},
+                    </if>
+                    <if test="feePackage != null and feePackage != 0">
+                        fee_package = #{feePackage},
+                    </if>
+                    update_date=#{updateDate},
+                    updater=#{updater}
+                </set>
+        </update>
+
+        <select id="getSocialSecuritInfoById" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_social_security_info where id=#{id}
+        </select>
+
+</mapper>

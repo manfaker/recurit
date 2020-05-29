@@ -14,7 +14,7 @@ public class SocialSecurityInfoPojo extends BaseVO {
     @ApiModelProperty(value = "主键")
     private int id;
     @ApiModelProperty(value = "社保所在城市")
-    private String cityId;
+    private int cityId;
     @ApiModelProperty(value = "申请人姓名")
     private String applyName;
     @ApiModelProperty(value = "身份证号码")

@@ -17,8 +17,10 @@ public class ActivityPackageVO extends BaseVO{
     private int discount;
     @ApiModelProperty(value = "团体价格")
     private int groupPrice;
-    @ApiModelProperty(value = "公司价格+")
+    @ApiModelProperty(value = "企业价格")
     private int enterprisePrice;
-    @ApiModelProperty(value = "广价")
+    @ApiModelProperty(value = "推广价")
     private int promotePrice;
+    @ApiModelProperty(value = "期数")
+    private int amount;
 }
