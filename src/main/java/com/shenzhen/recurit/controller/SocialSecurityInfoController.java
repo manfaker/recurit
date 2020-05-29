@@ -44,7 +44,7 @@ public class SocialSecurityInfoController {
         return ResultVO.success(result);
     }
 
-    @PostMapping(value = "getSocialSecuritInfoById")
+    @GetMapping(value = "getSocialSecuritInfoById")
     @PermissionVerification
     @ApiImplicitParam(value = "id" ,name = "id",required = true)
     @ApiOperation(value = "修改社保信息")

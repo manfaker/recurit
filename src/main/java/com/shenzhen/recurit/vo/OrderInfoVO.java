@@ -13,7 +13,7 @@ public class OrderInfoVO  extends BaseVO{
     private String tradeNo;
     @ApiModelProperty(value = "支付金额")
     private long   price;
-    @ApiModelProperty(value = "支付状态 1 未支付，2已支付，3订单流程已走完")
+    @ApiModelProperty(value = "支付状态 1 未支付，2已支付，3订单流程已走完，4退款")
     private long payStatus;
     @ApiModelProperty(value = "打折金额")
     private long totalAmount;

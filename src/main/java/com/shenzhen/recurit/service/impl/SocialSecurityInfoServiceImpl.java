@@ -63,7 +63,7 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
         pensionJson.put("proportion",socialStandardPojo.getEnterprisePension());
         pensionJson.put("enterprisePension",enterprisePension);
         pensionJson.put("personProportion",socialStandardPojo.getPersonPension());
-        pensionJson.put("enterprisePension",personPension);
+        pensionJson.put("personPension",personPension);
         pensionJson.put("subtotal",countPension);
         socilArray.add(pensionJson);
         JSONObject medicalJson = new JSONObject();
@@ -74,7 +74,7 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
         medicalJson.put("proportion",socialStandardPojo.getEnterpriseMedical());
         medicalJson.put("enterprisePension",enterpriseMedical);
         medicalJson.put("personProportion",socialStandardPojo.getPersonMedical());
-        medicalJson.put("enterprisePension",personMedical);
+        medicalJson.put("personPension",personMedical);
         medicalJson.put("subtotal",countMedical);
         socilArray.add(medicalJson);
         JSONObject unemploymentJson = new JSONObject();
@@ -85,7 +85,7 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
         unemploymentJson.put("proportion",socialStandardPojo.getEnterpriseUnemployment());
         unemploymentJson.put("enterprisePension",enterpriseUnemployment);
         unemploymentJson.put("personProportion",socialStandardPojo.getPersonUnemployment());
-        unemploymentJson.put("enterprisePension",personUnemployment);
+        unemploymentJson.put("personPension",personUnemployment);
         unemploymentJson.put("subtotal",countUnemployment);
         socilArray.add(unemploymentJson);
         JSONObject injuryJson = new JSONObject();
@@ -96,7 +96,7 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
         injuryJson.put("proportion",socialStandardPojo.getEnterpriseInjury());
         injuryJson.put("enterprisePension",enterpriseInjury);
         injuryJson.put("personProportion",socialStandardPojo.getPersonInjury());
-        injuryJson.put("enterprisePension",personInjury);
+        injuryJson.put("personPension",personInjury);
         injuryJson.put("subtotal",countInjury);
         socilArray.add(injuryJson);
         JSONObject childbirthJson = new JSONObject();
@@ -107,7 +107,7 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
         childbirthJson.put("proportion",socialStandardPojo.getEnterpriseChildbirth());
         childbirthJson.put("enterprisePension",enterpriseChildbirth);
         childbirthJson.put("personProportion",socialStandardPojo.getPersonChildbirth());
-        childbirthJson.put("enterprisePension",personChildbirth);
+        childbirthJson.put("personPension",personChildbirth);
         childbirthJson.put("subtotal",countChildbirth);
         socilArray.add(childbirthJson);
         JSONObject insuranceJson = new JSONObject();
@@ -118,7 +118,7 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
         insuranceJson.put("proportion",socialStandardPojo.getDisabilityInsurance());
         insuranceJson.put("enterprisePension",enterpriseInsurance);
         insuranceJson.put("personProportion",0);
-        insuranceJson.put("enterprisePension",personInsurance);
+        insuranceJson.put("personPension",personInsurance);
         insuranceJson.put("subtotal",countInsurance);
         socilArray.add(insuranceJson);
         socilObject.put("socialSecurity",socilArray);
