@@ -83,4 +83,11 @@ public interface SocialSecurityInfoService {
      * @return
      */
     List<SocialSecurityInfoPojo> getAllSecuritInfoByOrderInfoId(int orderInfoId);
+
+    /**
+     * 根据订单获取所有绑定的社保信息
+     * @param idCard
+     * @return
+     */
+    List<SocialSecurityInfoPojo> getAllSecuritInfoByIdCard(String idCard);
 }

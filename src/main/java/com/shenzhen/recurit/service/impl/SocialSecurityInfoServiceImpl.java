@@ -279,5 +279,11 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
         return socialSecurityInfoMapper.getAllSecuritInfoByOrderInfoId(orderInfoId);
     }
 
+    @Override
+    public List<SocialSecurityInfoPojo> getAllSecuritInfoByIdCard(String idCard) {
+        return socialSecurityInfoMapper.getAllSecuritInfoByIdCard(idCard);
+    }
+
+
 
 }

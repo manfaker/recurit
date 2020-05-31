@@ -3,6 +3,7 @@ package com.shenzhen.recurit.controller;
 import com.shenzhen.recurit.Interface.PermissionVerification;
 import com.shenzhen.recurit.pojo.SocialSecurityInfoPojo;
 import com.shenzhen.recurit.service.SocialSecurityInfoService;
+import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.SocialSecurityInfoVO;
 import io.swagger.annotations.Api;
@@ -34,6 +35,15 @@ public class SocialSecurityInfoController {
     @PermissionVerification
     @ApiOperation(value = "保存社保信息")
     public ResultVO saveSocialSecuritInfo(@RequestBody @ApiParam SocialSecurityInfoVO socialSecurityInfoVO){
+        String idCard = socialSecurityInfoVO.getIdCard();
+        List<SocialSecurityInfoPojo> listSocialInfo = socialSecurityInfoService.getAllSecuritInfoByIdCard(idCard);
+        if(EmptyUtils.isNotEmpty(listSocialInfo)){
+            for(SocialSecurityInfoPojo socialInfo: listSocialInfo){
+                if(socialInfo.getSocialSecurityDate().compareTo(socialSecurityInfoVO.getSocialSecurityDate())!=-1&&socialSecurityInfoVO.getSocialSecurityDate().compareTo(socialInfo.getSocialSecurityEndDate())!=-1){
+                    return ResultVO.error("当前时间段已有添加社保，请重新选择社保代缴开始日期");
+                }
+            }
+        }
         SocialSecurityInfoPojo socialSecurityInfoPojo = socialSecurityInfoService.saveSocialSecuritInfo(socialSecurityInfoVO);
         return ResultVO.success(socialSecurityInfoPojo);
     }

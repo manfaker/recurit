@@ -129,5 +129,9 @@
             select id,status,<include refid="baseResult"/> from tab_social_security_info where   order_info_id = #{orderInfoId} and status =1
         </select>
 
+        <select id="getAllSecuritInfoByIdCard" resultMap="baseResultMap">
+            select id,status,<include refid="baseResult"/> from tab_social_security_info where   id_card = #{idCard} and status =1
+        </select>
+
 
 </mapper>

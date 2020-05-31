@@ -27,4 +27,6 @@ public interface SocialSecurityInfoMapper {
     int batchRemoveOrderInfoIds(@Param("ids") List<Integer> ids);
 
     List<SocialSecurityInfoPojo> getAllSecuritInfoByOrderInfoId(int orderInfoId);
+
+    List<SocialSecurityInfoPojo> getAllSecuritInfoByIdCard(String idCard);
 }
