@@ -15,6 +15,8 @@
             <result column="cardinality" property="cardinality"/>
             <result column="social_security_date" property="socialSecurityDate"/>
             <result column="fee_package" property="feePackage"/>
+            <result column="status" property="status"/>
+            <result column="order_info_id" property="orderInfoId"/>
             <result column="create_date" property="createDate"/>
             <result column="update_date" property="updateDate"/>
             <result column="creater" property="creater"/>
@@ -25,7 +27,7 @@
         <sql id="baseResult">
             city_id,apply_name,id_card,positive_id_card,reverse_id_card,phone,
             domicile,nature_regist,cardinality,social_security_date,fee_package,
-            create_date,update_date,creater,updater
+            create_date,update_date,creater,updater,order_info_id
         </sql>
 
         <insert id="saveSocialSecurityInfo" keyColumn="id" useGeneratedKeys="true" keyProperty="id">
@@ -34,7 +36,7 @@
                 #{positiveIdCard},#{reverseIdCard},#{phone},
                 #{domicile},#{natureRegist},#{cardinality},
                 #{socialSecurityDate},#{feePackage},
-                #{createDate},#{updateDate},#{creater},#{updater})
+                #{createDate},#{updateDate},#{creater},#{updater},#{orderInfoId})
         </insert>
     
         <update id="updateSocialSecuritInfo">
@@ -74,13 +76,58 @@
                     <if test="feePackage != null and feePackage != 0">
                         fee_package = #{feePackage},
                     </if>
+                    <if test="orderInfoId != null and orderInfoId != 0">
+                        order_info_id = #{orderInfoId},
+                    </if>
                     update_date=#{updateDate},
                     updater=#{updater}
                 </set>
         </update>
 
         <select id="getSocialSecuritInfoById" resultMap="baseResultMap">
-            select id,<include refid="baseResult"/> from tab_social_security_info where id=#{id}
+            select id,status,<include refid="baseResult"/> from tab_social_security_info where id=#{id} and status =1
         </select>
+
+        <update id="deleteSecuritInfoById">
+            update tab_social_security_info set status=2 where id=#{id}
+        </update>
+
+        <select id="getAllSocialSecuritInfoByIds" resultMap="baseResultMap">
+            select id,status,<include refid="baseResult"/> from tab_social_security_info where  status =1
+                id in
+                <foreach collection="ids" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+        </select>
+
+        <update id="batchUpdateSocialSecuritInfo">
+            update tab_social_security_info set order_info_id =#{orderInfoId}
+            where id in
+            <foreach collection="ids" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </update>
+
+        <update id="deleteByOrderInfoId">
+            update tab_social_security_info set status=2 where order_info_id=#{orderInfoId}
+        </update>
+
+        <select id="getAllSecuritInfo"  resultMap="baseResultMap">
+            select id,status,<include refid="baseResult"/> from tab_social_security_info where  user_code=#{userCode}
+                and status =1 and 1 > order_info_id
+        </select>
+
+        <update id="batchRemoveOrderInfoIds">
+            update tab_social_security_info set order_info_id=0
+            where id in
+            <foreach collection="ids" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </update>
+
+        <select id="getAllSecuritInfoByOrderInfoId"  resultMap="baseResultMap">
+            select id,status,<include refid="baseResult"/> from tab_social_security_info where   order_info_id = #{orderInfoId} and status =1
+        </select>
+
 
 </mapper>

@@ -195,5 +195,47 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
         return socialSecurityInfoMapper.getSocialSecuritInfoById(id);
     }
 
+    @Override
+    public int deleteSecuritInfoById(int id) {
+        return socialSecurityInfoMapper.deleteSecuritInfoById(id);
+    }
+
+    @Override
+    public List<SocialSecurityInfoPojo> getAllSocialSecuritInfoByIds(List<Integer> ids) {
+        if(EmptyUtils.isEmpty(ids)||ids.size()==NumberEnum.ZERO.getValue()){
+            return null;
+        }
+        return socialSecurityInfoMapper.getAllSocialSecuritInfoByIds(ids);
+    }
+
+    @Override
+    public int batchUpdateSocialSecuritInfo(List<Integer> ids,int orderInfoId) {
+        if(EmptyUtils.isEmpty(ids)||ids.size()==NumberEnum.ZERO.getValue()){
+            return 0;
+        }
+        return socialSecurityInfoMapper.batchUpdateSocialSecuritInfo(ids, orderInfoId);
+    }
+
+    @Override
+    public int deleteByOrderInfoId(int orderInfoId) {
+        return socialSecurityInfoMapper.deleteByOrderInfoId(orderInfoId);
+    }
+
+    @Override
+    public int batchRemoveOrderInfoIds(List<Integer> ids) {
+        return socialSecurityInfoMapper.batchRemoveOrderInfoIds(ids);
+    }
+
+    @Override
+    public List<SocialSecurityInfoPojo> getAllSecuritInfo() {
+        UserVO user = ThreadLocalUtils.getUser();
+        return socialSecurityInfoMapper.getAllSecuritInfo(user.getUserCode());
+    }
+
+    @Override
+    public List<SocialSecurityInfoPojo> getAllSecuritInfoByOrderInfoId(int orderInfoId) {
+        return socialSecurityInfoMapper.getAllSecuritInfoByOrderInfoId(orderInfoId);
+    }
+
 
 }

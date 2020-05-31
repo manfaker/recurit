@@ -35,6 +35,8 @@ public class OrderInfoVO  extends BaseVO{
     private String bizType;
     @ApiModelProperty(value = "用户信息")
     private String userCode;
+    @ApiModelProperty(value = "社保ids以逗号隔开")
+    private String socialInfoIds;
 
 
 }

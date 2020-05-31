@@ -9,9 +9,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 @Api(tags = {"社保"})
@@ -52,4 +54,22 @@ public class SocialSecurityInfoController {
         SocialSecurityInfoPojo socialSecurityInfoPojo = socialSecurityInfoService.getSocialSecuritInfoById(id);
         return ResultVO.success(socialSecurityInfoPojo);
     }
+
+    @DeleteMapping(value = "deleteSecuritInfoById")
+    @PermissionVerification
+    @ApiImplicitParam(value = "id" ,name = "id",required = true)
+    @ApiOperation(value = "删除社保信息")
+    public ResultVO deleteSecuritInfoById( int id){
+        int result = socialSecurityInfoService.deleteSecuritInfoById(id);
+        return ResultVO.success(result);
+    }
+
+    @DeleteMapping(value = "getAllSecuritInfo")
+    @PermissionVerification
+    @ApiOperation(value = "获取购物车中所有的社保信息")
+    public ResultVO getAllSecuritInfo( ){
+        List<SocialSecurityInfoPojo> listSocialSecurit = socialSecurityInfoService.getAllSecuritInfo();
+        return ResultVO.success(listSocialSecurit);
+    }
+    
 }
