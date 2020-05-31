@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @ApiModel(value = "个人社保")
@@ -34,9 +35,11 @@ public class SocialSecurityInfoPojo extends BaseVO {
     @ApiModelProperty(value = "参保日期")
     private Date socialSecurityDate;
     @ApiModelProperty(value = "套餐")
-    private int feePackage;
+    private List<ActivityPackagePojo> listPackage;
     @ApiModelProperty(value = "1 正常 2 删除")
     private int status;
     @ApiModelProperty(value = "订单id")
     private int orderInfoId;
+    @ApiModelProperty(value = "参保结束日期")
+    private Date socialSecurityEndDate;
 }

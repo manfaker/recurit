@@ -11,4 +11,11 @@ public interface ActivityPackageService {
     List<ActivityPackagePojo> getAllActivityPackage();
 
     ActivityPackagePojo getActivityPackageById(int id);
+
+    /**
+     * 根据ids获取所有套餐
+     * @param ids
+     * @return
+     */
+    List<ActivityPackagePojo> getAllActivityPackageByIds(List<Integer> ids);
 }

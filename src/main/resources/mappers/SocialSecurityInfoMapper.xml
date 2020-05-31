@@ -14,7 +14,7 @@
             <result column="nature_regist" property="natureRegist"/>
             <result column="cardinality" property="cardinality"/>
             <result column="social_security_date" property="socialSecurityDate"/>
-            <result column="fee_package" property="feePackage"/>
+            <result column="fee_package_ids" property="feePackageIds"/>
             <result column="status" property="status"/>
             <result column="order_info_id" property="orderInfoId"/>
             <result column="create_date" property="createDate"/>
@@ -26,7 +26,7 @@
 
         <sql id="baseResult">
             city_id,apply_name,id_card,positive_id_card,reverse_id_card,phone,
-            domicile,nature_regist,cardinality,social_security_date,fee_package,
+            domicile,nature_regist,cardinality,social_security_date,fee_package_ids,
             create_date,update_date,creater,updater,order_info_id
         </sql>
 
@@ -35,7 +35,7 @@
                 values(#{cityId},#{applyName},#{idCard},
                 #{positiveIdCard},#{reverseIdCard},#{phone},
                 #{domicile},#{natureRegist},#{cardinality},
-                #{socialSecurityDate},#{feePackage},
+                #{socialSecurityDate},#{feePackageIds},
                 #{createDate},#{updateDate},#{creater},#{updater},#{orderInfoId})
         </insert>
     
@@ -73,8 +73,8 @@
                     <if test="socialSecurityDate != null">
                         social_security_date = #{socialSecurityDate},
                     </if>
-                    <if test="feePackage != null and feePackage != 0">
-                        fee_package = #{feePackage},
+                    <if test="feePackageIds != null and feePackageIds != ''">
+                        fee_package_ids = #{feePackageIds},
                     </if>
                     <if test="orderInfoId != null and orderInfoId != 0">
                         order_info_id = #{orderInfoId},

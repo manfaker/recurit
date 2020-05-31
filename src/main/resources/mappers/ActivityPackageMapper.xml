@@ -37,4 +37,12 @@
             select id,<include refid="baseResult"/> from tab_activity_package where id=#{id}
         </select>
 
+        <select id="getAllActivityPackageByIds"  resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_activity_package
+            where id in
+                <foreach collection="ids" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+        </select>
+
 </mapper>

@@ -33,7 +33,7 @@ public class SocialSecurityInfoVO extends BaseVO {
     @ApiModelProperty(value = "参保日期")
     private Date socialSecurityDate;
     @ApiModelProperty(value = "套餐")
-    private int feePackage;
+    private String feePackageIds;
     @ApiModelProperty(value = "1 正常 2 删除")
     private int status;
     @ApiModelProperty(value = "订单id")

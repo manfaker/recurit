@@ -3,6 +3,7 @@ package com.shenzhen.recurit.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.shenzhen.recurit.constant.OrdinaryConstant;
 import com.shenzhen.recurit.dao.SocialSecurityInfoMapper;
 import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.pojo.ActivityPackagePojo;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.xml.crypto.Data;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -37,7 +39,7 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
         JSONObject jsonObject = JSON.parseObject(jsonData);
         //社保比例 id  套餐 id 基数
         int standardId = jsonObject.getInteger("standardId");
-        int packageId = jsonObject.getInteger("packageId");
+        String packageIds = jsonObject.getString("packageIds");
         int cardinality = jsonObject.getInteger("cardinality");
         JSONObject socilObject = new JSONObject();
         SocialStandardPojo socialStandardPojo = socialStandardService.getSocialStandardById(standardId);
@@ -48,12 +50,26 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
                 return ResultVO.error("社保基数应该在"+socialStandardPojo.getLowCardinality()+"-"+socialStandardPojo.getHightCardinality()+"之间");
             }
         }
-        ActivityPackagePojo activityPackage = activityPackageService.getActivityPackageById(packageId);
-        calculateProjectPrice(socialStandardPojo,cardinality,socilObject,activityPackage);
+        List<Integer> listPackageId = strToList(packageIds);
+        List<ActivityPackagePojo> listPackage = activityPackageService.getAllActivityPackageByIds(listPackageId);
+        calculateProjectPrice(socialStandardPojo,cardinality,socilObject,listPackage);
         return ResultVO.success(socilObject);
     }
 
-    private void calculateProjectPrice(SocialStandardPojo socialStandardPojo,int cardinality,JSONObject socilObject,ActivityPackagePojo activityPackage){
+    private List<Integer> strToList(String packageIds){
+        if(EmptyUtils.isEmpty(packageIds)){
+            return null;
+        }
+        List<Integer> listPackageId = new ArrayList<>();
+        for(String packageId:packageIds.split(OrdinaryConstant.SYMBOL_4)){
+            if(EmptyUtils.isNotEmpty(packageId)){
+                listPackageId.add(Integer.valueOf(packageId));
+            }
+        }
+        return listPackageId;
+    }
+
+    private void calculateProjectPrice(SocialStandardPojo socialStandardPojo,int cardinality,JSONObject socilObject,List<ActivityPackagePojo> listPackage){
         JSONArray socilArray = new JSONArray();
         JSONObject pensionJson = new JSONObject();
         int enterprisePension = cardinality*socialStandardPojo.getEnterprisePension()/10000;
@@ -129,42 +145,68 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
         countJson.put("enterpriseCount",enterpriseCount);
         countJson.put("personCountEnterprise",personCountEnterprise);
         socilObject.put("socialCount",countJson);
-        socilObject.put("socilMoney",(enterpriseCount+personCountEnterprise)*activityPackage.getAmount());
-        int serviceFee = getServiceFee(activityPackage,false,false);
+        int countMont = getAllMonth(listPackage);
+        socilObject.put("socilMoney",(enterpriseCount+personCountEnterprise)*countMont);
+        JSONArray jsonArray  = new JSONArray();
+        int serviceFee = getServiceFee(listPackage,false,false,jsonArray);
+        socilObject.put("package",jsonArray);
         socilObject.put("serviceFee",serviceFee);
-        socilObject.put("totalCount",(enterpriseCount+personCountEnterprise)*activityPackage.getAmount()+serviceFee);
+        socilObject.put("totalCount",(enterpriseCount+personCountEnterprise)*countMont+serviceFee);
+    }
+
+    private int getAllMonth(List<ActivityPackagePojo> listPackage){
+        if(EmptyUtils.isEmpty(listPackage)||listPackage.size()==NumberEnum.ZERO.getValue()){
+            return NumberEnum.ZERO.getValue();
+        }
+        int countMonth=NumberEnum.ZERO.getValue();
+        for(ActivityPackagePojo packagePojo:listPackage){
+            countMonth=countMonth+packagePojo.getAmount();
+        }
+        return countMonth;
+
     }
 
     /**
      *
-     * @param activityPackage
+     * @param listPackage
      * @param flag  是否是团队，企业购买
      * @param isGroup 是否是团队
      * @return
      */
-    private int getServiceFee(ActivityPackagePojo activityPackage,boolean flag,boolean isGroup){
-        if(EmptyUtils.isEmpty(activityPackage)){
+    private int getServiceFee(List<ActivityPackagePojo> listPackage,boolean flag,boolean isGroup,JSONArray jsonArray){
+        if(EmptyUtils.isEmpty(listPackage)){
             return NumberEnum.ZERO.getValue();
         }
-        int serviceFee=activityPackage.getAmount();
-        if(flag){
-            if(isGroup){
-                if(activityPackage.getGroupPrice()>0){
-                    serviceFee=activityPackage.getGroupPrice();
-                }
-            }else{
-                if(activityPackage.getEnterprisePrice()>0){
-                    serviceFee=activityPackage.getEnterprisePrice();
+        int countPrice = NumberEnum.ZERO.getValue();
+        for(ActivityPackagePojo activityPackage :listPackage ){
+            JSONObject jsonObject = new JSONObject();
+            int serviceFee=activityPackage.getAmount();
+            if(flag){
+                if(isGroup){
+                    if(activityPackage.getGroupPrice()>0){
+                        serviceFee=activityPackage.getGroupPrice();
+                    }
+                }else{
+                    if(activityPackage.getEnterprisePrice()>0){
+                        serviceFee=activityPackage.getEnterprisePrice();
+                    }
                 }
             }
+            if(activityPackage.getDiscount()>0){
+                serviceFee = serviceFee*activityPackage.getDiscount()/100;
+            }
+            if(activityPackage.getPromotePrice()>0){
+                serviceFee = serviceFee*activityPackage.getPromotePrice()/100;
+            }
+
+            jsonObject.put("id",activityPackage.getId());
+            jsonObject.put("packageName",activityPackage.getServicePeriod());
+            jsonObject.put("serviceFee",serviceFee);
+            countPrice=countPrice+serviceFee;
+            jsonArray.add(jsonObject);
         }
-        if(activityPackage.getDiscount()>0){
-            serviceFee = serviceFee*activityPackage.getDiscount()/100;
-        }
-        if(activityPackage.getPromotePrice()>0){
-            serviceFee = serviceFee*activityPackage.getPromotePrice()/100;
-        }
-        return serviceFee;
+
+        return countPrice;
     }
 
     @Override

@@ -1,8 +1,10 @@
 package com.shenzhen.recurit.service.impl;
 
 import com.shenzhen.recurit.dao.ActivityPackageMapper;
+import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.pojo.ActivityPackagePojo;
 import com.shenzhen.recurit.service.ActivityPackageService;
+import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.utils.ThreadLocalUtils;
 import com.shenzhen.recurit.vo.ActivityPackageVO;
 import com.shenzhen.recurit.vo.UserVO;
@@ -43,5 +45,13 @@ public class ActivityPackageServiceImpl implements ActivityPackageService {
     @Override
     public ActivityPackagePojo getActivityPackageById(int id) {
         return activityPackageMapper.getActivityPackageById(id);
+    }
+
+    @Override
+    public List<ActivityPackagePojo> getAllActivityPackageByIds(List<Integer> ids) {
+        if(EmptyUtils.isEmpty(ids)||ids.size()== NumberEnum.ZERO.getValue()){
+            return null;
+        }
+        return activityPackageMapper.getAllActivityPackageByIds(ids);
     }
 }
