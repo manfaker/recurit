@@ -11,7 +11,7 @@ public interface OrderInfoMapper {
 
     int updateOrderInfo(OrderInfoVO orderInfoVO);
 
-    List<OrderInfoPojo> getAllOrderInfo();
+    List<OrderInfoPojo> getAllOrderInfo(String payStatus);
 
     OrderInfoPojo getOrderInfo(int id);
 

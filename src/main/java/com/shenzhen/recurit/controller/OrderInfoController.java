@@ -54,8 +54,8 @@ public class OrderInfoController {
     @GetMapping(value = "getAllOrderInfo")
     @PermissionVerification
     @ApiOperation(value = "查询所有的订单信息")
-    public ResultVO getAllOrderInfo(){
-        List<OrderInfoPojo> listAllOrderInfo = orderInfoService.getAllOrderInfo();
+    public ResultVO getAllOrderInfo(String payStatus){
+        List<OrderInfoPojo> listAllOrderInfo = orderInfoService.getAllOrderInfo(payStatus);
         return ResultVO.success(listAllOrderInfo);
     }
 

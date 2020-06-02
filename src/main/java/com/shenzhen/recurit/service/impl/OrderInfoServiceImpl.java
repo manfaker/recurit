@@ -106,8 +106,8 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
 
     @Override
-    public List<OrderInfoPojo> getAllOrderInfo() {
-        List<OrderInfoPojo> listOrderInfo = orderInfoMapper.getAllOrderInfo();
+    public List<OrderInfoPojo> getAllOrderInfo(String payStatus) {
+        List<OrderInfoPojo> listOrderInfo = orderInfoMapper.getAllOrderInfo(payStatus);
         return listOrderInfo;
     }
 
