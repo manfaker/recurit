@@ -18,7 +18,7 @@ public interface SocialSecurityInfoMapper {
 
     List<SocialSecurityInfoPojo> getAllSocialSecuritInfoByIds(@Param("ids") List<Integer> ids);
 
-    int batchUpdateSocialSecuritInfo(@Param("ids") List<Integer> ids,@Param("ids") int orderInfoId);
+    int batchUpdateSocialSecuritInfo(@Param("ids") List<Integer> ids,@Param("orderInfoId") int orderInfoId);
 
     int deleteByOrderInfoId(int orderInfoId);
 

@@ -17,13 +17,13 @@ import com.shenzhen.recurit.utils.ThreadLocalUtils;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.SocialSecurityInfoVO;
 import com.shenzhen.recurit.vo.UserVO;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.xml.crypto.Data;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService {
@@ -39,7 +39,7 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
         JSONObject jsonObject = JSON.parseObject(jsonData);
         //社保比例 id  套餐 id 基数
         int standardId = jsonObject.getInteger("standardId");
-        String packageIds = jsonObject.getString("packageIds");
+        String packageIds = jsonObject.getString("feePackageIds");
         int cardinality = jsonObject.getInteger("cardinality");
         JSONObject socilObject = new JSONObject();
         SocialStandardPojo socialStandardPojo = socialStandardService.getSocialStandardById(standardId);
@@ -50,26 +50,29 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
                 return ResultVO.error("社保基数应该在"+socialStandardPojo.getLowCardinality()+"-"+socialStandardPojo.getHightCardinality()+"之间");
             }
         }
-        List<Integer> listPackageId = strToList(packageIds);
+        List<Integer> listPackageId = new ArrayList<>();
+        Map<Integer, Integer> mapAmount = new HashMap<>();
+        addJsonToCollection(packageIds,mapAmount,listPackageId);
         List<ActivityPackagePojo> listPackage = activityPackageService.getAllActivityPackageByIds(listPackageId);
-        calculateProjectPrice(socialStandardPojo,cardinality,socilObject,listPackage);
+        calculateProjectPrice(socialStandardPojo,cardinality,socilObject,listPackage,mapAmount);
         return ResultVO.success(socilObject);
     }
 
-    private List<Integer> strToList(String packageIds){
+    private void addJsonToCollection(String packageIds,Map<Integer, Integer> mapAmount,List<Integer> listPackageId){
         if(EmptyUtils.isEmpty(packageIds)){
-            return null;
+            return;
         }
-        List<Integer> listPackageId = new ArrayList<>();
-        for(String packageId:packageIds.split(OrdinaryConstant.SYMBOL_4)){
-            if(EmptyUtils.isNotEmpty(packageId)){
-                listPackageId.add(Integer.valueOf(packageId));
-            }
+        JSONArray jsonArray = JSON.parseArray(packageIds);
+        for(int index=NumberEnum.ZERO.getValue();index<jsonArray.size();index++){
+            JSONObject jsonObject = jsonArray.getJSONObject(index);
+            int packageId = jsonObject.getInteger("packageId");
+            int amount = jsonObject.getInteger("amount");
+            mapAmount.put(packageId,amount);
+            listPackageId.add(packageId);
         }
-        return listPackageId;
     }
 
-    private void calculateProjectPrice(SocialStandardPojo socialStandardPojo,int cardinality,JSONObject socilObject,List<ActivityPackagePojo> listPackage){
+    private void calculateProjectPrice(SocialStandardPojo socialStandardPojo,int cardinality,JSONObject socilObject,List<ActivityPackagePojo> listPackage,Map<Integer, Integer> mapAmount){
         JSONArray socilArray = new JSONArray();
         JSONObject pensionJson = new JSONObject();
         int enterprisePension = cardinality*socialStandardPojo.getEnterprisePension()/10000;
@@ -145,7 +148,7 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
         countJson.put("enterpriseCount",enterpriseCount);
         countJson.put("personCountEnterprise",personCountEnterprise);
         socilObject.put("socialCount",countJson);
-        int countMont = getAllMonth(listPackage);
+        int countMont = getAllMonth(listPackage,mapAmount);
         socilObject.put("socilMoney",(enterpriseCount+personCountEnterprise)*countMont);
         JSONArray jsonArray  = new JSONArray();
         int serviceFee = getServiceFee(listPackage,false,false,jsonArray);
@@ -154,13 +157,13 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
         socilObject.put("totalCount",(enterpriseCount+personCountEnterprise)*countMont+serviceFee);
     }
 
-    private int getAllMonth(List<ActivityPackagePojo> listPackage){
+    private int getAllMonth(List<ActivityPackagePojo> listPackage,Map<Integer, Integer> mapAmount){
         if(EmptyUtils.isEmpty(listPackage)||listPackage.size()==NumberEnum.ZERO.getValue()){
             return NumberEnum.ZERO.getValue();
         }
         int countMonth=NumberEnum.ZERO.getValue();
         for(ActivityPackagePojo packagePojo:listPackage){
-            countMonth=countMonth+packagePojo.getAmount();
+            countMonth=countMonth+packagePojo.getAmount()*mapAmount.get(packagePojo.getId());
         }
         return countMonth;
 
@@ -212,8 +215,26 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
     @Override
     public SocialSecurityInfoPojo saveSocialSecuritInfo(SocialSecurityInfoVO socialSecurityInfoVO) {
         setSocialSecurityInfo(socialSecurityInfoVO,true);
+        setSocialSecurityEndDate(socialSecurityInfoVO);
         socialSecurityInfoMapper.saveSocialSecurityInfo(socialSecurityInfoVO);
         return getSocialSecuritInfoById(socialSecurityInfoVO.getId());
+    }
+
+    private void setSocialSecurityEndDate(SocialSecurityInfoVO socialSecurityInfoVO){
+        if(EmptyUtils.isNotEmpty(socialSecurityInfoVO.getFeePackageIds())&&EmptyUtils.isNotEmpty(socialSecurityInfoVO.getSocialSecurityDate())){
+            List<Integer> listPackageId = new ArrayList<>();
+            Map<Integer, Integer> mapAmount = new HashMap<>();
+            addJsonToCollection(socialSecurityInfoVO.getFeePackageIds(),mapAmount,listPackageId);
+            /**
+             * 计算到期日期
+             */
+            List<ActivityPackagePojo> listPackage = activityPackageService.getAllActivityPackageByIds(listPackageId);
+            int countMont = getAllMonth(listPackage,mapAmount);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(socialSecurityInfoVO.getSocialSecurityDate());
+            calendar.add(Calendar.MONTH,countMont);
+            socialSecurityInfoVO.setSocialSecurityEndDate(calendar.getTime());
+        }
     }
 
     private void setSocialSecurityInfo (SocialSecurityInfoVO socialSecurityInfoVO,boolean flag){
@@ -229,6 +250,7 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
     @Override
     public int updateSocialSecuritInfo(SocialSecurityInfoVO socialSecurityInfoVO) {
         setSocialSecurityInfo(socialSecurityInfoVO,false);
+        setSocialSecurityEndDate(socialSecurityInfoVO);
         return socialSecurityInfoMapper.updateSocialSecuritInfo(socialSecurityInfoVO);
     }
 

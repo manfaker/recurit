@@ -81,5 +81,5 @@ public class SocialSecurityInfoController {
         List<SocialSecurityInfoPojo> listSocialSecurit = socialSecurityInfoService.getAllSecuritInfo();
         return ResultVO.success(listSocialSecurit);
     }
-    
+
 }

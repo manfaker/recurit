@@ -37,6 +37,8 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         return getOrderInfo(orderInfoVO.getId());
     }
 
+
+
     private List<Integer> strToList(String socialInfoIds){
         if(EmptyUtils.isEmpty(socialInfoIds)){
             return null;
@@ -54,11 +56,17 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     private void setOrderInfo(OrderInfoVO orderInfoVO,boolean flag){
         UserVO user = ThreadLocalUtils.getUser();
         if(flag){
+            orderInfoVO.setTradeNo(getTradeNo("ORDER",user));
+            orderInfoVO.setOutTradeNo(getTradeNo("ZFB",user));
             orderInfoVO.setCreateDate(new Date());
             orderInfoVO.setCreater(user.getUserName());
         }
         orderInfoVO.setUpdateDate(new Date());
         orderInfoVO.setUpdater(user.getUserName());
+    }
+
+    private String getTradeNo(String pre,UserVO userVO){
+        return  pre+"_"+userVO.getUserCode()+"_"+System.currentTimeMillis();
     }
 
     @Override

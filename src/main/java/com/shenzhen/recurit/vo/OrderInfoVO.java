@@ -17,9 +17,9 @@ public class OrderInfoVO  extends BaseVO{
     private int   price;
     @ApiModelProperty(value = "支付状态 1 未支付，2已支付，3订单流程已走完，4退款")
     private int payStatus;
-    @ApiModelProperty(value = "打折金额")
-    private int totalAmount;
     @ApiModelProperty(value = "总金额")
+    private int totalAmount;
+    @ApiModelProperty(value = "打折金额")
     private int discountablemount;
     @ApiModelProperty(value = "折扣")
     private int discount;

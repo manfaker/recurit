@@ -1,8 +1,11 @@
 package com.shenzhen.recurit.controller;
 
 import com.shenzhen.recurit.Interface.PermissionVerification;
+import com.shenzhen.recurit.constant.InformationConstant;
 import com.shenzhen.recurit.pojo.OrderInfoPojo;
 import com.shenzhen.recurit.service.OrderInfoService;
+import com.shenzhen.recurit.utils.ApplyConfigUtils;
+import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.vo.OrderInfoVO;
 import com.shenzhen.recurit.vo.ResultVO;
 import io.swagger.annotations.Api;
@@ -26,6 +29,9 @@ public class OrderInfoController {
     @ApiOperation(value = "保存订单信息")
     public ResultVO saveOrderInfo(@RequestBody @ApiParam OrderInfoVO orderInfoVO){
         OrderInfoPojo orderInfoPojo= orderInfoService.saveOrderInfo(orderInfoVO);
+        if(EmptyUtils.isNotEmpty(orderInfoPojo)){
+            return ApplyConfigUtils.preCreate( InformationConstant.ALIPAY,orderInfoVO);
+        }
         return ResultVO.success(orderInfoPojo);
     }
 

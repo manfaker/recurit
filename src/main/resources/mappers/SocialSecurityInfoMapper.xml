@@ -14,6 +14,7 @@
             <result column="nature_regist" property="natureRegist"/>
             <result column="cardinality" property="cardinality"/>
             <result column="social_security_date" property="socialSecurityDate"/>
+            <result column="social_security_end_date" property="socialSecurityEndDate"/>
             <result column="fee_package_ids" property="feePackageIds"/>
             <result column="status" property="status"/>
             <result column="order_info_id" property="orderInfoId"/>
@@ -27,7 +28,7 @@
         <sql id="baseResult">
             city_id,apply_name,id_card,positive_id_card,reverse_id_card,phone,
             domicile,nature_regist,cardinality,social_security_date,fee_package_ids,
-            create_date,update_date,creater,updater,order_info_id
+            create_date,update_date,creater,updater,order_info_id,social_security_end_date
         </sql>
 
         <insert id="saveSocialSecurityInfo" keyColumn="id" useGeneratedKeys="true" keyProperty="id">
@@ -36,7 +37,7 @@
                 #{positiveIdCard},#{reverseIdCard},#{phone},
                 #{domicile},#{natureRegist},#{cardinality},
                 #{socialSecurityDate},#{feePackageIds},
-                #{createDate},#{updateDate},#{creater},#{updater},#{orderInfoId})
+                #{createDate},#{updateDate},#{creater},#{updater},#{orderInfoId},#{socialSecurityEndDate})
         </insert>
     
         <update id="updateSocialSecuritInfo">
@@ -78,6 +79,9 @@
                     </if>
                     <if test="orderInfoId != null and orderInfoId != 0">
                         order_info_id = #{orderInfoId},
+                    </if>
+                    <if test="socialSecurityEndDate != null">
+                        social_security_end_date = #{socialSecurityEndDate},
                     </if>
                     update_date=#{updateDate},
                     updater=#{updater}

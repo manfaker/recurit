@@ -89,7 +89,7 @@ public class JSONAndEntityConvertUtils<T> {
             String apha = String.valueOf(ch);
             Matcher matcher = pattern.matcher(apha);
             if(matcher.matches()){
-                stringBuilder.append(OrdinaryConstant.SYMBOL_3).append(apha);
+                stringBuilder.append(OrdinaryConstant.SYMBOL_3).append(apha.toLowerCase());
             }else{
                 stringBuilder.append(apha);
             }

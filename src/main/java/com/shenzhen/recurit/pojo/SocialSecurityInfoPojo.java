@@ -34,7 +34,7 @@ public class SocialSecurityInfoPojo extends BaseVO {
     private int cardinality;
     @ApiModelProperty(value = "参保日期")
     private Date socialSecurityDate;
-    @ApiModelProperty(value = "套餐")
+    @ApiModelProperty(value = "套餐Object")
     private List<ActivityPackagePojo> listPackage;
     @ApiModelProperty(value = "1 正常 2 删除")
     private int status;
@@ -42,4 +42,6 @@ public class SocialSecurityInfoPojo extends BaseVO {
     private int orderInfoId;
     @ApiModelProperty(value = "参保结束日期")
     private Date socialSecurityEndDate;
+    @ApiModelProperty(value = "套餐")
+    private String feePackageIds;
 }

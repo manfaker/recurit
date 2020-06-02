@@ -136,6 +136,8 @@ public class ApplyConfigUtils {
         public static ResultVO alipyPreCreate(OrderInfoVO orderInfoVO){
             AlipayClient alipayClient = applipayClient();
             AlipayTradePrecreateRequest request = new AlipayTradePrecreateRequest();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("out_trade_no",orderInfoVO.getOutTradeNo());
             request.setBizContent(getBizContent(orderInfoVO));
             AlipayTradePrecreateResponse response = null;
             try {
@@ -200,6 +202,9 @@ public class ApplyConfigUtils {
             JSONObject bizContentJson=JSONAndEntityConvertUtils.entityToIndexJSONObject(orderInfoVO,true);
             if(bizContentJson.containsKey("status")){
                 bizContentJson.remove("status");
+            }
+            if(bizContentJson.containsKey("id")){
+                bizContentJson.remove("id");
             }
             return JSON.toJSONString(bizContentJson);
         }

@@ -38,4 +38,6 @@ public class SocialSecurityInfoVO extends BaseVO {
     private int status;
     @ApiModelProperty(value = "订单id")
     private int orderInfoId;
+    @ApiModelProperty(value = "参保结束日期")
+    private Date socialSecurityEndDate;
 }
