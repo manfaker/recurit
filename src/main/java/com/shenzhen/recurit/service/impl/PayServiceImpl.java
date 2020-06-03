@@ -3,8 +3,14 @@ package com.shenzhen.recurit.service.impl;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.shenzhen.recurit.constant.InformationConstant;
+import com.shenzhen.recurit.enums.NumberEnum;
+import com.shenzhen.recurit.service.OrderInfoService;
 import com.shenzhen.recurit.service.PayService;
+import com.shenzhen.recurit.utils.AMQPUtils;
+import com.shenzhen.recurit.utils.EncryptBase64Utils;
+import com.shenzhen.recurit.utils.ThreadLocalUtils;
 import com.shenzhen.recurit.utils.VaribaleUtils;
+import com.shenzhen.recurit.vo.OrderInfoVO;
 import com.shenzhen.recurit.vo.ResultVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +29,8 @@ public class PayServiceImpl implements PayService {
 
     @Resource
     private VaribaleUtils varibaleUtils;
+    @Resource
+    private OrderInfoService orderInfoService;
 
     @Override
     public ResultVO alipayCallBackReturn(HttpServletRequest request) {
@@ -55,9 +63,14 @@ public class PayServiceImpl implements PayService {
     }
 
     @Override
-    public ResultVO alipayAsyncReturn() {
-        logger.info("我支付成功了，我是异步接口");
-        return null;
+    public ResultVO alipayAsyncReturn(String userCode) {
+        logger.info("我支付成功了");
+        ThreadLocalUtils.setUserCode(EncryptBase64Utils.encryptBASE64(userCode));
+        AMQPUtils.producer(userCode);
+        OrderInfoVO orderInfoVO = new OrderInfoVO();
+        orderInfoVO.setPayStatus(NumberEnum.TWO.getValue());
+        orderInfoService.updateOrderInfo(orderInfoVO);
+        return ResultVO.success("支付成功");
     }
 
     @Override

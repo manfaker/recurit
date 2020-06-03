@@ -81,7 +81,7 @@
         <select id="getAllOrderInfo" resultMap="baseResultMap">
             select id,status,<include refid="baseResult"/> from tab_order_info
                 where status = 1
-                <if test="payStatus != null and payStatus != ''">
+                <if test="payStatus != null and payStatus != 0">
                     and pay_status =#{payStatus}
                 </if>
         </select>

@@ -90,4 +90,6 @@ public interface SocialSecurityInfoService {
      * @return
      */
     List<SocialSecurityInfoPojo> getAllSecuritInfoByIdCard(String idCard);
+
+    SocialSecurityInfoPojo saveDirectSecuritInfo(SocialSecurityInfoVO socialSecurityInfoVO);
 }

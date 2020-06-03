@@ -242,6 +242,7 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
         if(flag){
             socialSecurityInfoVO.setCreateDate(new Date());
             socialSecurityInfoVO.setCreater(user.getUserName());
+            socialSecurityInfoVO.setUserCode(user.getUserCode());
         }
         socialSecurityInfoVO.setUpdateDate(new Date());
         socialSecurityInfoVO.setUpdater(user.getUserName());
@@ -306,6 +307,10 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
         return socialSecurityInfoMapper.getAllSecuritInfoByIdCard(idCard);
     }
 
+    @Override
+    public SocialSecurityInfoPojo saveDirectSecuritInfo(SocialSecurityInfoVO socialSecurityInfoVO) {
+        return null;
+    }
 
 
 }

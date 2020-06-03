@@ -27,15 +27,15 @@ public class PayController {
     }
 
     @ApiOperation("支付成功后同步回调转支付成功页面")
-    @GetMapping(value = "/alipay/callback/return")
+    @GetMapping(value = "alipay/callback/return")
     public Object alipayCallBackReturn(HttpServletRequest request){
         return payService.alipayCallBackReturn(request);
     }
 
     @ApiOperation("支付成功后异步回调支付信息")
-    @PostMapping(value = "/alipay/async/return")
-    public Object alipayAsyncReturn(){
-        return payService.alipayAsyncReturn();
+    @PostMapping(value = "alipay/async/return")
+    public Object alipayAsyncReturn(String userCode){
+        return payService.alipayAsyncReturn(userCode);
     }
 
     @ApiOperation("查询支付信息情况")

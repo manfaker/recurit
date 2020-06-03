@@ -38,4 +38,17 @@ public class VaribaleUtils {
 
     @Value("${document.url}")
     private String documentUrl;
+
+    //rabbitmq
+
+    @Value("${spring.rabbitmq.host}")
+    private String rabbitmqHost;
+    @Value("${spring.rabbitmq.port}")
+    private int rabbitmqPort;
+    @Value("${spring.rabbitmq.username}")
+    private String rabbitmqUsername;
+    @Value("${spring.rabbitmq.password}")
+    private String rabbitmqPassword;
+    @Value("${spring.rabbitmq.virtual-host}")
+    private String rabbitmqVirtualHost;
 }

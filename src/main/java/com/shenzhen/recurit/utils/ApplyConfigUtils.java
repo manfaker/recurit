@@ -18,10 +18,14 @@ import com.shenzhen.recurit.constant.InformationConstant;
 import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.vo.OrderInfoVO;
 import com.shenzhen.recurit.vo.ResultVO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ApplyConfigUtils {
 
         private static VaribaleUtils varibaleUtils=null;
+
+        private static Logger logger = LoggerFactory.getLogger(ApplyConfigUtils.class);
 
         private static void init(){
             if(EmptyUtils.isEmpty(varibaleUtils)){
@@ -137,6 +141,11 @@ public class ApplyConfigUtils {
             AlipayClient alipayClient = applipayClient();
             AlipayTradePrecreateRequest request = new AlipayTradePrecreateRequest();
             JSONObject jsonObject = new JSONObject();
+            String notifyUrl = varibaleUtils.getNotifyUrl()+"?userCode="+ThreadLocalUtils.getUser().getUserCode();
+            logger.info("notifyUrl:"+notifyUrl);
+            request.setNotifyUrl(notifyUrl);
+            logger.info("returnUrl:"+varibaleUtils.getReturnUrl());
+            request.setReturnUrl(varibaleUtils.getReturnUrl());
             jsonObject.put("out_trade_no",orderInfoVO.getOutTradeNo());
             request.setBizContent(getBizContent(orderInfoVO));
             AlipayTradePrecreateResponse response = null;
@@ -153,12 +162,13 @@ public class ApplyConfigUtils {
         private static ResultVO alipayPay( OrderInfoVO orderInfoVO){
             AlipayClient alipayClient = applipayClient();
             AlipayTradeCreateRequest  payRequest = new AlipayTradeCreateRequest  ();
-            payRequest.setNotifyUrl(varibaleUtils.getNotifyUrl());
+            String notifyUrl = varibaleUtils.getNotifyUrl()+"?userCode="+ThreadLocalUtils.getUser().getUserCode();
+            logger.info("notifyUrl:"+notifyUrl);
+            payRequest.setNotifyUrl(notifyUrl);
+            logger.info("returnUrl:"+varibaleUtils.getReturnUrl());
             payRequest.setReturnUrl(varibaleUtils.getReturnUrl());
             payRequest.setBizContent(getBizContent(orderInfoVO));
-            payRequest.setReturnUrl(varibaleUtils.getReturnUrl());
             //在公共参数中设置回跳和通知地址
-            payRequest.setNotifyUrl(varibaleUtils.getNotifyUrl());
             AlipayTradeCreateResponse response= null;
             try {
                 response= alipayClient.execute(payRequest);
@@ -199,13 +209,18 @@ public class ApplyConfigUtils {
     }
 
         private static String getBizContent(OrderInfoVO orderInfoVO){
-            JSONObject bizContentJson=JSONAndEntityConvertUtils.entityToIndexJSONObject(orderInfoVO,true);
+            JSONObject bizContentJson=JSONAndEntityConvertUtils.entityToIndexJSONObject(orderInfoVO,false);
             if(bizContentJson.containsKey("status")){
                 bizContentJson.remove("status");
             }
             if(bizContentJson.containsKey("id")){
                 bizContentJson.remove("id");
             }
+            if(bizContentJson.containsKey("payStatus")){
+                bizContentJson.remove("payStatus");
+            }
+            double totalAmount = orderInfoVO.getTotalAmount()/100;
+            bizContentJson.put("totalAmount",totalAmount);
             return JSON.toJSONString(bizContentJson);
         }
 

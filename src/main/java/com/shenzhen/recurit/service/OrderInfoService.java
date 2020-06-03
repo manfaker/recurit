@@ -11,7 +11,7 @@ public interface OrderInfoService {
 
     int updateOrderInfo(OrderInfoVO orderInfoVO);
 
-    List<OrderInfoPojo> getAllOrderInfo(String payStatus);
+    List<OrderInfoPojo> getAllOrderInfo(int payStatus);
 
     OrderInfoPojo getOrderInfo(int id);
 

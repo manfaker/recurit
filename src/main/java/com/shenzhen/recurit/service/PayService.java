@@ -8,7 +8,7 @@ public interface PayService {
 
     ResultVO alipayCallBackReturn(HttpServletRequest request);
 
-    ResultVO alipayAsyncReturn();
+    ResultVO alipayAsyncReturn(String userCode);
 
     ResultVO getInfoByOrderNo();
 }

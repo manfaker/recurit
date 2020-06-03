@@ -74,12 +74,20 @@ public class SocialSecurityInfoController {
         return ResultVO.success(result);
     }
 
-    @DeleteMapping(value = "getAllSecuritInfo")
+    @GetMapping(value = "getAllSecuritInfo")
     @PermissionVerification
     @ApiOperation(value = "获取购物车中所有的社保信息")
     public ResultVO getAllSecuritInfo( ){
         List<SocialSecurityInfoPojo> listSocialSecurit = socialSecurityInfoService.getAllSecuritInfo();
         return ResultVO.success(listSocialSecurit);
+    }
+
+    @PostMapping(value = "saveDirectSecuritInfo")
+    @PermissionVerification
+    @ApiOperation(value = "确认并支付")
+    public ResultVO saveDirectSecuritInfo( @RequestBody @ApiParam SocialSecurityInfoVO socialSecurityInfoVO){
+        SocialSecurityInfoPojo socialSecurit = socialSecurityInfoService.saveDirectSecuritInfo(socialSecurityInfoVO);
+        return ResultVO.success(socialSecurit);
     }
 
 }

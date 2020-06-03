@@ -72,7 +72,7 @@ public class SpringBootTestDemo {
             builder.expiration("6000");
             AMQP.BasicProperties  properties = builder.build();
             //5 发送
-            String msg = "Hello World RabbitMQ 4  Direct Exchange Message 3333 ... ";
+            String msg = "{}";
             channel.basicPublish(exchangeName, routingKey , properties , msg.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
