@@ -34,6 +34,7 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
     @Resource
     private SocialSecurityInfoMapper socialSecurityInfoMapper;
 
+    
     @Override
     public Object calculatePrice(String jsonData) {
         JSONObject jsonObject = JSON.parseObject(jsonData);
@@ -294,7 +295,39 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
     @Override
     public List<SocialSecurityInfoPojo> getAllSecuritInfo() {
         UserVO user = ThreadLocalUtils.getUser();
-        return socialSecurityInfoMapper.getAllSecuritInfo(user.getUserCode());
+        List<SocialSecurityInfoPojo> allSecuritInfo = socialSecurityInfoMapper.getAllSecuritInfo(user.getUserCode());
+        List<ActivityPackagePojo> listPackages = activityPackageService.getAllActivityPackage();
+        Map<Integer,ActivityPackagePojo> mapPackages = new HashMap<>();
+        listToMap(listPackages,mapPackages);
+        if(EmptyUtils.isNotEmpty(allSecuritInfo)){
+            for(SocialSecurityInfoPojo securityInfoPojo:allSecuritInfo){
+                int cardinality = securityInfoPojo.getCardinality();
+                String feePackageIds = securityInfoPojo.getFeePackageIds();
+                if(EmptyUtils.isNotEmpty(feePackageIds)){
+                        JSONArray packageArray = JSON.parseArray(feePackageIds);
+                        List<ActivityPackagePojo> currPackages = new ArrayList<>();
+                        List<Integer> listPackageId = new ArrayList<>();
+                        Map<Integer, Integer> mapAmount = new HashMap<>();
+                        addJsonToCollection(feePackageIds,mapAmount,listPackageId);
+                        for(int index=NumberEnum.ZERO.getValue();index<packageArray.size();index++){
+                            JSONObject packageJson = packageArray.getJSONObject(index);
+                            currPackages.add(mapPackages.get(packageJson.getInteger("packageId")));
+                        }
+                        JSONObject jsonObject = new JSONObject();
+                        calculateProjectPrice(securityInfoPojo.getSocialStandardPojo(),cardinality,jsonObject,currPackages,mapAmount);
+                        securityInfoPojo.setAllCountMoney(jsonObject.getInteger("totalCount"));
+                }
+            }
+        }
+        return allSecuritInfo;
+    }
+
+    private void listToMap(List<ActivityPackagePojo> listPackages,Map<Integer,ActivityPackagePojo> mapPackages){
+        for(ActivityPackagePojo packagePojo : listPackages){
+            if(EmptyUtils.isNotEmpty(packagePojo)){
+                mapPackages.put(packagePojo.getId(),packagePojo);
+            }
+        }
     }
 
     @Override

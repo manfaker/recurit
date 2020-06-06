@@ -14,8 +14,10 @@ public class SocialSecurityInfoPojo extends BaseVO {
 
     @ApiModelProperty(value = "主键")
     private int id;
-    @ApiModelProperty(value = "社保所在城市")
+    @ApiModelProperty(value = "社保所在城市id")
     private int cityId;
+    @ApiModelProperty(value = "社保所在城市")
+    private SocialStandardPojo socialStandardPojo;
     @ApiModelProperty(value = "申请人姓名")
     private String applyName;
     @ApiModelProperty(value = "身份证号码")
@@ -44,4 +46,6 @@ public class SocialSecurityInfoPojo extends BaseVO {
     private Date socialSecurityEndDate;
     @ApiModelProperty(value = "套餐")
     private String feePackageIds;
+    @ApiModelProperty(value = "总金额")
+    private int allCountMoney;
 }

@@ -65,19 +65,20 @@ public class PayServiceImpl implements PayService {
 
     @Override
     public ResultVO alipayAsyncReturn(String userCode,String outTradeNo) {
-        logger.info("我进来了：userCode="+userCode+ "&& outTradeNo="+outTradeNo);
         JSONObject jsonObject = new JSONObject();
         ThreadLocalUtils.setUserCode(userCode);
         ResultVO resultVO = ApplyConfigUtils.getTradeQuery(outTradeNo);
-        logger.info(resultVO.toString());
         Object data = resultVO.getData();
         JSONObject jsonTrade = JSON.parseObject(JSON.toJSONString(data));
         if("Success".equals(jsonTrade.getString("msg"))){
-            OrderInfoVO orderInfoVO = new OrderInfoVO();
-            OrderInfoPojo orderInfoPojo = orderInfoService.getOrderInfoByoutTradeNo(outTradeNo);
-            orderInfoVO.setId(orderInfoPojo.getId());
-            orderInfoVO.setPayStatus(NumberEnum.TWO.getValue());
-            orderInfoService.updateOrderInfo(orderInfoVO);
+            String tradeStatus = jsonTrade.getString("tradeStatus");
+            if("TRADE_SUCCESS".equals(tradeStatus)||"TRADE_FINISHED".equals(tradeStatus)){
+                OrderInfoVO orderInfoVO = new OrderInfoVO();
+                OrderInfoPojo orderInfoPojo = orderInfoService.getOrderInfoByoutTradeNo(outTradeNo);
+                orderInfoVO.setId(orderInfoPojo.getId());
+                orderInfoVO.setPayStatus(NumberEnum.TWO.getValue());
+                orderInfoService.updateOrderInfo(orderInfoVO);
+            }
             jsonObject.put("msg",jsonTrade.getString("msg"));
             jsonObject.put("tradeStatus",jsonTrade.getString("tradeStatus"));
             jsonObject.put("code",200);
