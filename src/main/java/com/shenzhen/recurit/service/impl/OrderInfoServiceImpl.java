@@ -72,14 +72,16 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     @Override
     @Transactional
     public int updateOrderInfo(OrderInfoVO orderInfoVO) {
-        setOrderInfo(orderInfoVO,true);
-        List<SocialSecurityInfoPojo> listBindingSocailInfo = socialSecurityInfoService.getAllSecuritInfoByOrderInfoId(orderInfoVO.getId());
-        List<Integer> listSocialInfo = strToList(orderInfoVO.getSocialInfoIds());
-        List<Integer> saveSocial = new ArrayList<>();
-        List<Integer> deleteSocial = new ArrayList<>();
-        getDeleteAndSaveSocialIds(listBindingSocailInfo,listSocialInfo,saveSocial,deleteSocial);
-        socialSecurityInfoService.batchUpdateSocialSecuritInfo(saveSocial,orderInfoVO.getId());
-        socialSecurityInfoService.batchRemoveOrderInfoIds(deleteSocial);
+        setOrderInfo(orderInfoVO,false);
+        if(EmptyUtils.isNotEmpty(orderInfoVO.getSocialInfoIds())){
+            List<SocialSecurityInfoPojo> listBindingSocailInfo = socialSecurityInfoService.getAllSecuritInfoByOrderInfoId(orderInfoVO.getId());
+            List<Integer> listSocialInfo = strToList(orderInfoVO.getSocialInfoIds());
+            List<Integer> saveSocial = new ArrayList<>();
+            List<Integer> deleteSocial = new ArrayList<>();
+            getDeleteAndSaveSocialIds(listBindingSocailInfo,listSocialInfo,saveSocial,deleteSocial);
+            socialSecurityInfoService.batchUpdateSocialSecuritInfo(saveSocial,orderInfoVO.getId());
+            socialSecurityInfoService.batchRemoveOrderInfoIds(deleteSocial);
+        }
         return orderInfoMapper.updateOrderInfo(orderInfoVO);
     }
 
@@ -119,5 +121,10 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     @Override
     public int deleteOrderInfo(int id) {
         return orderInfoMapper.deleteOrderInfo(id);
+    }
+
+    @Override
+    public OrderInfoPojo getOrderInfoByoutTradeNo(String outTradeNo) {
+        return orderInfoMapper.getOrderInfoByoutTradeNo(outTradeNo);
     }
 }

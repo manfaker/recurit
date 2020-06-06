@@ -20,7 +20,7 @@ public class AMQPUtils {
         }
     }
 
-    public static void producer(String userCode){
+    public static void producer(String userCode,String jsonData){
         ConnectionFactory connectionFactory=getConnectFactory();
         //2 创建Connection
         String routingKey = userCode;
@@ -37,8 +37,7 @@ public class AMQPUtils {
             builder.expiration("6000");
             AMQP.BasicProperties  properties = builder.build();
             //5 发送
-            String msg = "{}";
-            channel.basicPublish(AMQPUtils.EXCHANGENAME, routingKey , properties , msg.getBytes());
+            channel.basicPublish(AMQPUtils.EXCHANGENAME, routingKey , properties , jsonData.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (TimeoutException e) {

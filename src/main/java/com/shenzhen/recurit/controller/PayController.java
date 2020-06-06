@@ -1,5 +1,7 @@
 package com.shenzhen.recurit.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.shenzhen.recurit.constant.InformationConstant;
 import com.shenzhen.recurit.service.PayService;
 import com.shenzhen.recurit.utils.ApplyConfigUtils;
@@ -34,15 +36,28 @@ public class PayController {
 
     @ApiOperation("支付成功后异步回调支付信息")
     @PostMapping(value = "alipay/async/return")
-    public Object alipayAsyncReturn(String userCode){
-        return payService.alipayAsyncReturn(userCode);
+    public Object alipayAsyncReturn(String userCode,String outTradeNo){
+        return payService.alipayAsyncReturn(userCode,outTradeNo);
     }
 
     @ApiOperation("查询支付信息情况")
-    @PostMapping(value = "query/getInfoByOrderNo")
-    public Object getInfoByOrderNo(@RequestBody @ApiParam OrderInfoVO orderInfoVO){
+    @PostMapping(value = "query/getInfo")
+    public Object getInfo(@RequestBody @ApiParam OrderInfoVO orderInfoVO){
         return ApplyConfigUtils.alipayQuery(InformationConstant.ALIPAY, orderInfoVO);
     }
+
+    @ApiOperation("根据OrderNo查询支付信息情况")
+    @GetMapping(value = "query/getInfoByOrderNo")
+    @ApiImplicitParam(value = "订单编号",name = "outTradeNo",required = true)
+    public Object getInfoByOrderNo(String outTradeNo){
+        ResultVO resultVO = ApplyConfigUtils.getTradeQuery(outTradeNo);
+        Object data = resultVO.getData();
+        JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(data));
+        jsonObject.getString("msg");
+        return ApplyConfigUtils.getTradeQuery(outTradeNo);
+    }
+
+
 
     @ApiOperation("支付宝生成二维码")
     @PostMapping(value = "create/qRcode")
@@ -61,6 +76,9 @@ public class PayController {
     public Object refund(@RequestBody @ApiParam OrderInfoVO orderInfoVO){
         return ApplyConfigUtils.refund( InformationConstant.ALIPAY,orderInfoVO);
     }
+
+
+
 
 
 

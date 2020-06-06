@@ -16,4 +16,6 @@ public interface OrderInfoService {
     OrderInfoPojo getOrderInfo(int id);
 
     int deleteOrderInfo(int id);
+
+    OrderInfoPojo getOrderInfoByoutTradeNo(String outTradeNo);
 }

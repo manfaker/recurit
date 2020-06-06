@@ -1,17 +1,18 @@
 package com.shenzhen.recurit.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.shenzhen.recurit.constant.InformationConstant;
 import com.shenzhen.recurit.enums.NumberEnum;
+import com.shenzhen.recurit.pojo.OrderInfoPojo;
 import com.shenzhen.recurit.service.OrderInfoService;
 import com.shenzhen.recurit.service.PayService;
-import com.shenzhen.recurit.utils.AMQPUtils;
-import com.shenzhen.recurit.utils.EncryptBase64Utils;
-import com.shenzhen.recurit.utils.ThreadLocalUtils;
-import com.shenzhen.recurit.utils.VaribaleUtils;
+import com.shenzhen.recurit.utils.*;
 import com.shenzhen.recurit.vo.OrderInfoVO;
 import com.shenzhen.recurit.vo.ResultVO;
+import io.netty.handler.codec.json.JsonObjectDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -63,13 +64,31 @@ public class PayServiceImpl implements PayService {
     }
 
     @Override
-    public ResultVO alipayAsyncReturn(String userCode) {
-        logger.info("我支付成功了");
-        ThreadLocalUtils.setUserCode(EncryptBase64Utils.encryptBASE64(userCode));
-        AMQPUtils.producer(userCode);
-        OrderInfoVO orderInfoVO = new OrderInfoVO();
-        orderInfoVO.setPayStatus(NumberEnum.TWO.getValue());
-        orderInfoService.updateOrderInfo(orderInfoVO);
+    public ResultVO alipayAsyncReturn(String userCode,String outTradeNo) {
+        logger.info("我进来了：userCode="+userCode+ "&& outTradeNo="+outTradeNo);
+        JSONObject jsonObject = new JSONObject();
+        ThreadLocalUtils.setUserCode(userCode);
+        ResultVO resultVO = ApplyConfigUtils.getTradeQuery(outTradeNo);
+        logger.info(resultVO.toString());
+        Object data = resultVO.getData();
+        JSONObject jsonTrade = JSON.parseObject(JSON.toJSONString(data));
+        if("Success".equals(jsonTrade.getString("msg"))){
+            OrderInfoVO orderInfoVO = new OrderInfoVO();
+            OrderInfoPojo orderInfoPojo = orderInfoService.getOrderInfoByoutTradeNo(outTradeNo);
+            orderInfoVO.setId(orderInfoPojo.getId());
+            orderInfoVO.setPayStatus(NumberEnum.TWO.getValue());
+            orderInfoService.updateOrderInfo(orderInfoVO);
+            jsonObject.put("msg",jsonTrade.getString("msg"));
+            jsonObject.put("tradeStatus",jsonTrade.getString("tradeStatus"));
+            jsonObject.put("code",200);
+            jsonObject.put("data",null);
+        }else {
+            jsonObject.put("msg",jsonTrade.getString("msg"));
+            jsonObject.put("tradeStatus",jsonTrade.getString("tradeStatus"));
+            jsonObject.put("code",300);
+            jsonObject.put("data",null);
+        }
+        AMQPUtils.producer(ThreadLocalUtils.getUser().getUserCode(),JSON.toJSONString(jsonObject));
         return ResultVO.success("支付成功");
     }
 

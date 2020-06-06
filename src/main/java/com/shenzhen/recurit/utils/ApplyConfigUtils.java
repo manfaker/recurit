@@ -28,6 +28,7 @@ public class ApplyConfigUtils {
         private static Logger logger = LoggerFactory.getLogger(ApplyConfigUtils.class);
 
         private static void init(){
+            logger.info("我进入实例化了！！！！！");
             if(EmptyUtils.isEmpty(varibaleUtils)){
                 varibaleUtils=SpringUtils.getBean(VaribaleUtils.class);
             }
@@ -141,7 +142,7 @@ public class ApplyConfigUtils {
             AlipayClient alipayClient = applipayClient();
             AlipayTradePrecreateRequest request = new AlipayTradePrecreateRequest();
             JSONObject jsonObject = new JSONObject();
-            String notifyUrl = varibaleUtils.getNotifyUrl()+"?userCode="+ThreadLocalUtils.getUser().getUserCode();
+            String notifyUrl = varibaleUtils.getNotifyUrl()+"?userCode="+ThreadLocalUtils.getUserCode()+"&outTradeNo="+orderInfoVO.getOutTradeNo();
             logger.info("notifyUrl:"+notifyUrl);
             request.setNotifyUrl(notifyUrl);
             logger.info("returnUrl:"+varibaleUtils.getReturnUrl());
@@ -207,7 +208,22 @@ public class ApplyConfigUtils {
             return ResultVO.error();
         }
     }
+    public static ResultVO getTradeQuery(String outTradeNo){
+        init();
+        AlipayClient alipayClient = applipayClient();
+        AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("out_trade_no",outTradeNo);
+        request.setBizContent(JSON.toJSONString(jsonObject));
+        AlipayTradeQueryResponse response = null;
+        try {
+            response = alipayClient.execute(request);
+        } catch (AlipayApiException e) {
+            e.printStackTrace();
+        }
 
+        return ResultVO.success(response);
+    }
         private static String getBizContent(OrderInfoVO orderInfoVO){
             JSONObject bizContentJson=JSONAndEntityConvertUtils.entityToIndexJSONObject(orderInfoVO,false);
             if(bizContentJson.containsKey("status")){
@@ -223,6 +239,8 @@ public class ApplyConfigUtils {
             bizContentJson.put("totalAmount",totalAmount);
             return JSON.toJSONString(bizContentJson);
         }
+
+
 
 
 }

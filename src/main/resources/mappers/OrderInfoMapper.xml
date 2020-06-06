@@ -40,42 +40,42 @@
             update tab_order_info
             <set>
                 <if test="outTradeNo != null and outTradeNo != ''">
-                    out_trade_no=#{outTradeNo}
+                    out_trade_no=#{outTradeNo},
                 </if>
                 <if test="tradeNo != null and tradeNo != ''">
-                    trade_no=#{tradeNo}
+                    trade_no=#{tradeNo},
                 </if>
-
                 <if test="price != null and price != 0">
-                    price=#{price}
+                    price=#{price},
                 </if>
                 <if test="payStatus != null and payStatus != 0">
-                    pay_status=#{payStatus}
+                    pay_status=#{payStatus},
                 </if>
                 <if test="totalAmount != null and totalAmount != 0">
-                    total_amount=#{totalAmount}
+                    total_amount=#{totalAmount},
                 </if>
                 <if test="discountablemount != null and discountablemount != 0">
-                    discountablemount=#{discountablemount}
+                    discountablemount=#{discountablemount},
                 </if>
                 <if test="discount != null and discount != 0">
-                    discount=#{discount}
+                    discount=#{discount},
                 </if>
                 <if test="subject != null and subject != ''">
-                    subject=#{subject}
+                    subject=#{subject},
                 </if>
                 <if test="body != null and body != ''">
-                    body=#{body}
+                    body=#{body},
                 </if>
                 <if test="bizType != null and bizType != ''">
-                    biz_type=#{bizType}
+                    biz_type=#{bizType},
                 </if>
                 <if test="refundAmount != null and refundAmount != 0">
-                    refund_amount=#{refundAmount}
+                    refund_amount=#{refundAmount},
                 </if>
+                update_date=#{updateDate},
+                updater=#{updater}
             </set>
-            update_date=#{updateDate},
-            updater=#{updater}
+            where id =#{id}
         </update>
     
         <select id="getAllOrderInfo" resultMap="baseResultMap">
@@ -93,5 +93,10 @@
         <update id="deleteOrderInfo">
             update tab_order_info set status =2 where id = #{id}
         </update>
+
+        <select id="getOrderInfoByoutTradeNo" resultMap="baseResultMap">
+            select id,status,<include refid="baseResult"/> from tab_order_info where out_trade_no=#{outTradeNo} and status = 1
+        </select>
+
 
 </mapper>
