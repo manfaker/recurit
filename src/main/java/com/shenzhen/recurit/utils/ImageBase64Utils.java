@@ -12,7 +12,7 @@ public class ImageBase64Utils {
      * @param filePath
      * @return
      */
-    public String encryptToBase64(String filePath) {
+    public static String encryptToBase64(String filePath) {
         if (filePath == null) {
             return null;
         }

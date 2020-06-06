@@ -128,7 +128,7 @@
         </update>
 
         <select id="getSocialSecuritInfoById" resultMap="baseIncludeChildrenResultMap">
-            select t.city_id,t.apply_name,t.id_card,t.positive_id_card,t.reverse_id_card,t.phone,
+            select t.id,t.status,t.city_id,t.apply_name,t.id_card,t.positive_id_card,t.reverse_id_card,t.phone,
             t.domicile,t.nature_regist,t.cardinality,t.social_security_date,t.fee_package_ids,
             t.create_date,t.update_date,t.creater,t.updater,t.order_info_id,t.social_security_end_date,
             s.city,s.low_cardinality,s.hight_cardinality,
@@ -163,7 +163,7 @@
         </update>
 
         <select id="getAllSecuritInfo"  resultMap="baseIncludeChildrenResultMap">
-            select t.city_id,t.apply_name,t.id_card,t.positive_id_card,t.reverse_id_card,t.phone,
+            select t.id,t.status,t.city_id,t.apply_name,t.id_card,t.positive_id_card,t.reverse_id_card,t.phone,
             t.domicile,t.nature_regist,t.cardinality,t.social_security_date,t.fee_package_ids,
             t.create_date,t.update_date,t.creater,t.updater,t.order_info_id,t.social_security_end_date,
             s.city,s.low_cardinality,s.hight_cardinality,

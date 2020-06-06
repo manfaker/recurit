@@ -7,12 +7,15 @@ import com.shenzhen.recurit.constant.OrdinaryConstant;
 import com.shenzhen.recurit.dao.SocialSecurityInfoMapper;
 import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.pojo.ActivityPackagePojo;
+import com.shenzhen.recurit.pojo.DocumentPojo;
 import com.shenzhen.recurit.pojo.SocialSecurityInfoPojo;
 import com.shenzhen.recurit.pojo.SocialStandardPojo;
 import com.shenzhen.recurit.service.ActivityPackageService;
+import com.shenzhen.recurit.service.DocumentService;
 import com.shenzhen.recurit.service.SocialSecurityInfoService;
 import com.shenzhen.recurit.service.SocialStandardService;
 import com.shenzhen.recurit.utils.EmptyUtils;
+import com.shenzhen.recurit.utils.ImageBase64Utils;
 import com.shenzhen.recurit.utils.ThreadLocalUtils;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.SocialSecurityInfoVO;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.xml.crypto.Data;
+import java.io.File;
 import java.util.*;
 
 @Service
@@ -33,6 +37,8 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
     private ActivityPackageService activityPackageService;
     @Resource
     private SocialSecurityInfoMapper socialSecurityInfoMapper;
+    @Resource
+    private DocumentService documentService;
 
     
     @Override
@@ -258,7 +264,38 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
 
     @Override
     public SocialSecurityInfoPojo getSocialSecuritInfoById(int id) {
-        return socialSecurityInfoMapper.getSocialSecuritInfoById(id);
+        SocialSecurityInfoPojo socialSecurityInfo = socialSecurityInfoMapper.getSocialSecuritInfoById(id);
+        if(EmptyUtils.isNotEmpty(socialSecurityInfo)){
+            imageToBase64(socialSecurityInfo);
+            //获取所有的套餐信息
+            List<ActivityPackagePojo> listPackages = activityPackageService.getAllActivityPackage();
+            Map<Integer,ActivityPackagePojo> mapPackages = new HashMap<>();
+            listToMap(listPackages,mapPackages);
+            JSONObject jsonObject = new JSONObject();
+            calculateSingleSocialInfo(socialSecurityInfo,mapPackages,jsonObject);
+            socialSecurityInfo.setCaculatePrice(jsonObject);
+        }
+        return socialSecurityInfo;
+    }
+
+    /**
+     * 社保图片转base64格式
+     */
+    private void imageToBase64(SocialSecurityInfoPojo socialSecurityInfo){
+        if(socialSecurityInfo.getPositiveIdCard()>NumberEnum.ZERO.getValue()){
+            DocumentPojo positiveIdCard = documentService.getDocument(socialSecurityInfo.getPositiveIdCard(), NumberEnum.ONE.getValue());
+            if(EmptyUtils.isNotEmpty(positiveIdCard)){
+                String positivePath = positiveIdCard.getUrl()+ File.separator+positiveIdCard.getDocumentName()+OrdinaryConstant.SYMBOL_5+positiveIdCard.getSuffix();
+                socialSecurityInfo.setPositiveIdCardInfo(ImageBase64Utils.encryptToBase64(positivePath));
+            }
+        }
+        if(socialSecurityInfo.getReverseIdCard()>NumberEnum.ZERO.getValue()){
+            DocumentPojo  reverseIdCard= documentService.getDocument(socialSecurityInfo.getReverseIdCard(), NumberEnum.ONE.getValue());
+            if(EmptyUtils.isNotEmpty(reverseIdCard)){
+                String reversePath = reverseIdCard.getUrl()+ File.separator+reverseIdCard.getDocumentName()+OrdinaryConstant.SYMBOL_5+reverseIdCard.getSuffix();
+                socialSecurityInfo.setReverseIdCardInfo(ImageBase64Utils.encryptToBase64(reversePath));
+            }
+        }
     }
 
     @Override
@@ -301,25 +338,35 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
         listToMap(listPackages,mapPackages);
         if(EmptyUtils.isNotEmpty(allSecuritInfo)){
             for(SocialSecurityInfoPojo securityInfoPojo:allSecuritInfo){
-                int cardinality = securityInfoPojo.getCardinality();
-                String feePackageIds = securityInfoPojo.getFeePackageIds();
-                if(EmptyUtils.isNotEmpty(feePackageIds)){
-                        JSONArray packageArray = JSON.parseArray(feePackageIds);
-                        List<ActivityPackagePojo> currPackages = new ArrayList<>();
-                        List<Integer> listPackageId = new ArrayList<>();
-                        Map<Integer, Integer> mapAmount = new HashMap<>();
-                        addJsonToCollection(feePackageIds,mapAmount,listPackageId);
-                        for(int index=NumberEnum.ZERO.getValue();index<packageArray.size();index++){
-                            JSONObject packageJson = packageArray.getJSONObject(index);
-                            currPackages.add(mapPackages.get(packageJson.getInteger("packageId")));
-                        }
-                        JSONObject jsonObject = new JSONObject();
-                        calculateProjectPrice(securityInfoPojo.getSocialStandardPojo(),cardinality,jsonObject,currPackages,mapAmount);
-                        securityInfoPojo.setAllCountMoney(jsonObject.getInteger("totalCount"));
-                }
+                JSONObject jsonObject = new JSONObject();
+                calculateSingleSocialInfo(securityInfoPojo,mapPackages,jsonObject);
+                securityInfoPojo.setAllCountMoney(jsonObject.getInteger("totalCount"));
             }
         }
         return allSecuritInfo;
+    }
+
+    /**
+     * 计算单个社保的价格
+     * @param securityInfoPojo 社保详情
+     * @param mapPackages  所有套餐信息
+     * @param jsonObject   存储套餐计算后的信息
+     */
+    private void calculateSingleSocialInfo(SocialSecurityInfoPojo securityInfoPojo,Map<Integer,ActivityPackagePojo> mapPackages,JSONObject jsonObject){
+        int cardinality = securityInfoPojo.getCardinality();
+        String feePackageIds = securityInfoPojo.getFeePackageIds();
+        List<ActivityPackagePojo> currPackages=new ArrayList<>();
+        List<Integer> listPackageId = new ArrayList<>();
+        Map<Integer, Integer> mapAmount = new HashMap<>();
+        addJsonToCollection(feePackageIds,mapAmount,listPackageId);
+        if(EmptyUtils.isNotEmpty(feePackageIds)){
+            JSONArray packageArray = JSON.parseArray(feePackageIds);
+            for(int index=NumberEnum.ZERO.getValue();index<packageArray.size();index++){
+                JSONObject packageJson = packageArray.getJSONObject(index);
+                currPackages.add(mapPackages.get(packageJson.getInteger("packageId")));
+            }
+        }
+        calculateProjectPrice(securityInfoPojo.getSocialStandardPojo(),cardinality,jsonObject,currPackages,mapAmount);
     }
 
     private void listToMap(List<ActivityPackagePojo> listPackages,Map<Integer,ActivityPackagePojo> mapPackages){

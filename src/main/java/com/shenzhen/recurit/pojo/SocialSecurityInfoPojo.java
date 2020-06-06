@@ -1,5 +1,6 @@
 package com.shenzhen.recurit.pojo;
 
+import com.alibaba.fastjson.JSONObject;
 import com.shenzhen.recurit.vo.BaseVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -24,8 +25,12 @@ public class SocialSecurityInfoPojo extends BaseVO {
     private String idCard;
     @ApiModelProperty(value = "身份证正面")
     private int positiveIdCard;
+    @ApiModelProperty(value = "身份证正面Base64")
+    private String positiveIdCardInfo;
     @ApiModelProperty(value = "身份证反面")
     private int reverseIdCard;
+    @ApiModelProperty(value = "身份证反面Base64")
+    private String reverseIdCardInfo;
     @ApiModelProperty(value = "手机号码")
     private String phone;
     @ApiModelProperty(value = "户籍所在地")
@@ -48,4 +53,6 @@ public class SocialSecurityInfoPojo extends BaseVO {
     private String feePackageIds;
     @ApiModelProperty(value = "总金额")
     private int allCountMoney;
+    @ApiModelProperty(value = "计算统计")
+    private JSONObject caculatePrice;
 }
