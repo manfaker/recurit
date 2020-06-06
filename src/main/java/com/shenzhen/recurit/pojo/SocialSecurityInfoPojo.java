@@ -47,6 +47,8 @@ public class SocialSecurityInfoPojo extends BaseVO {
     private int status;
     @ApiModelProperty(value = "订单id")
     private int orderInfoId;
+    @ApiModelProperty(value = "用户CODE")
+    private String userCode;
     @ApiModelProperty(value = "参保结束日期")
     private Date socialSecurityEndDate;
     @ApiModelProperty(value = "套餐")

@@ -23,6 +23,7 @@
             <result column="creater" property="creater"/>
             <result column="updater" property="updater"/>
             <result column="amount" property="amount"/>
+            <result column="user_code" property="userCode"/>
         </resultMap>
 
         <resultMap id="baseIncludeChildrenResultMap" type="com.shenzhen.recurit.pojo.SocialSecurityInfoPojo">
@@ -46,6 +47,7 @@
             <result column="creater" property="creater"/>
             <result column="updater" property="updater"/>
             <result column="amount" property="amount"/>
+            <result column="user_code" property="userCode"/>
             <association javaType="com.shenzhen.recurit.pojo.SocialStandardPojo" property="socialStandardPojo">
                 <result column="city" property="city"/>
                 <result column="low_cardinality" property="lowCardinality"/>
@@ -67,7 +69,7 @@
         <sql id="baseResult">
             city_id,apply_name,id_card,positive_id_card,reverse_id_card,phone,
             domicile,nature_regist,cardinality,social_security_date,fee_package_ids,
-            create_date,update_date,creater,updater,order_info_id,social_security_end_date
+            create_date,update_date,creater,updater,order_info_id,social_security_end_date,user_code
         </sql>
 
         <insert id="saveSocialSecurityInfo" keyColumn="id" useGeneratedKeys="true" keyProperty="id">
@@ -76,7 +78,8 @@
                 #{positiveIdCard},#{reverseIdCard},#{phone},
                 #{domicile},#{natureRegist},#{cardinality},
                 #{socialSecurityDate},#{feePackageIds},
-                #{createDate},#{updateDate},#{creater},#{updater},#{orderInfoId},#{socialSecurityEndDate})
+                #{createDate},#{updateDate},#{creater},#{updater},#{orderInfoId},#{socialSecurityEndDate},
+                #{userCode})
         </insert>
     
         <update id="updateSocialSecuritInfo">
