@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @ApiModel(value = "新闻板块")
-public class NewsVO {
+public class NewsVO extends BaseVO{
 
     @ApiModelProperty(value = "主键")
     private int id;

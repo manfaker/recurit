@@ -6,10 +6,7 @@ import com.shenzhen.recurit.service.NewsService;
 import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.vo.NewsVO;
 import com.shenzhen.recurit.vo.ResultVO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -21,8 +18,6 @@ public class NewsController {
 
     @Resource
     private NewsService newsService;
-    @Resource
-    private DocumentService documentService;
 
     @PostMapping(value = "saveNews")
     @ApiOperation(value = "新增新闻")
@@ -40,9 +35,13 @@ public class NewsController {
     }
 
     @GetMapping(value = "getAllNews")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "每页大小",name="pageSize",required = false),
+            @ApiImplicitParam(value = "起始页",name="pageNo",required = false)
+    })
     @ApiOperation(value = "修改新闻")
-    public ResultVO getAllNews(){
-        return ResultVO.success(newsService.getAllNews());
+    public ResultVO getAllNews(Integer pageSize,Integer pageNo){
+        return ResultVO.success(newsService.getAllNews(pageSize,pageNo));
     }
 
     @DeleteMapping(value = "deleteNewsById")

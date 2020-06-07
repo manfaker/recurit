@@ -1,5 +1,6 @@
 package com.shenzhen.recurit.service;
 
+import com.github.pagehelper.PageInfo;
 import com.shenzhen.recurit.vo.NewsVO;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public interface NewsService {
      * 获取所有的新闻信息
      * @return
      */
-    List<NewsVO> getAllNews();
+    PageInfo<NewsVO> getAllNews(Integer pageSize,Integer pageNo);
 
     /**
      * 根据id删除新闻信息
