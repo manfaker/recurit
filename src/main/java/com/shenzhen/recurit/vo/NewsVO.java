@@ -19,6 +19,8 @@ public class NewsVO {
     private int documentId;
     @ApiModelProperty(value = "新闻路径")
     private String newsPath;
+    @ApiModelProperty(value = "来源")
+    private String source;
 
     private DocumentPojo documentPojo;
 

@@ -8,6 +8,7 @@
             <result column="news_title" property="newsTitle"/>
             <result column="document_id" property="documentId"/>
             <result column="news_path" property="newsPath"/>
+            <result column="source" property="source"/>
             <association javaType="com.shenzhen.recurit.pojo.DocumentPojo" property="documentPojo">
                 <result column="old_name" property="oldName"/>
                 <result column="document_name" property="documentName"/>
@@ -20,11 +21,11 @@
         </resultMap>
 
         <sql id="baseResult">
-            news_image_path,news_title,document_id,news_path
+            news_image_path,news_title,document_id,news_path,source
         </sql>
 
        <insert id="saveNews" keyProperty="id" keyColumn="id" useGeneratedKeys="true">
-           insert into tab_news(<include refid="baseResult"/>) values(#{newsImagePath},#{newsTitle},#{documentId},#{newsPath})
+           insert into tab_news(<include refid="baseResult"/>) values(#{newsImagePath},#{newsTitle},#{documentId},#{newsPath},#{source})
        </insert>
 
        <update id="updateNews">
@@ -36,25 +37,28 @@
                 <if test="newsTitle != null and newsTitle != ''">
                     news_title=#{newsTitle},
                 </if>
-                <if test="documentId != null and documentId != ''">
+                <if test="documentId != null and documentId != 0">
                     document_id=#{documentId},
                 </if>
                 <if test="newsPath != null and newsPath != ''">
                     news_path=#{newsPath},
+                </if>
+                <if test="source != null and source != ''">
+                    source=#{source},
                 </if>
             </set>
             where id = #{id}
        </update>
 
        <select id="getNewsById" resultMap="baseResultMap">
-           select t.news_image_path,t.news_title,t.document_id,t.news_path,
+           select t.news_image_path,t.news_title,t.document_id,t.news_path,t.source,
             d.old_name,d.document_name,d.document_size,d.url,d.suffix,d.category
             from tab_news t left join tab_document d on t.document_id = d.id
                 where t.id= #{id}
        </select>
 
         <select id="getAllNews" resultMap="baseResultMap">
-           select t.news_image_path,t.news_title,t.document_id,t.news_path,
+           select t.news_image_path,t.news_title,t.document_id,t.news_path,t.source,
             d.old_name,d.document_name,d.document_size,d.url,d.suffix,d.category
             from tab_news t left join tab_document d on t.document_id = d.id
       </select>
