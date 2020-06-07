@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzhen.recurit.dao.NewsMapper">
+
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.vo.NewsVO">
+            <id column="id" property="id"/>
+            <result column="news_image_path" property="newsImagePath"/>
+            <result column="news_title" property="newsTitle"/>
+            <result column="document_id" property="documentId"/>
+            <result column="news_path" property="newsPath"/>
+            <association javaType="com.shenzhen.recurit.pojo.DocumentPojo" property="documentPojo">
+                <result column="old_name" property="oldName"/>
+                <result column="document_name" property="documentName"/>
+                <result column="document_size" property="documentSize"/>
+                <result column="url" property="url"/>
+                <result column="suffix" property="suffix"/>
+                <result column="status" property="status"/>
+                <result column="category" property="category"/>
+             </association>
+        </resultMap>
+
+        <sql id="baseResult">
+            news_image_path,news_title,document_id,news_path
+        </sql>
+
+       <insert id="saveNews" keyProperty="id" keyColumn="id" useGeneratedKeys="true">
+           insert into tab_news(<include refid="baseResult"/>) values(#{newsImagePath},#{newsTitle},#{documentId},#{newsPath})
+       </insert>
+
+       <update id="updateNews">
+           update tab_news
+            <set>
+                <if test="newsImagePath != null and newsImagePath != ''">
+                    news_image_path=#{newsImagePath},
+                </if>
+                <if test="newsTitle != null and newsTitle != ''">
+                    news_title=#{newsTitle},
+                </if>
+                <if test="documentId != null and documentId != ''">
+                    document_id=#{documentId},
+                </if>
+                <if test="newsPath != null and newsPath != ''">
+                    news_path=#{newsPath},
+                </if>
+            </set>
+            where id = #{id}
+       </update>
+
+       <select id="getNewsById" resultMap="baseResultMap">
+           select t.news_image_path,t.news_title,t.document_id,t.news_path,
+            d.old_name,d.document_name,d.document_size,d.url,d.suffix,d.category
+            from tab_news t left join tab_document d on t.document_id = d.id
+                where t.id= #{id}
+       </select>
+
+        <select id="getAllNews" resultMap="baseResultMap">
+           select t.news_image_path,t.news_title,t.document_id,t.news_path,
+            d.old_name,d.document_name,d.document_size,d.url,d.suffix,d.category
+            from tab_news t left join tab_document d on t.document_id = d.id
+      </select>
+
+        <delete id="deleteNewsById">
+            delete from tab_news where id = #{id}
+        </delete>
+
+</mapper>
