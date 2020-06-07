@@ -38,22 +38,9 @@ public class SocialSecurityInfoController {
     @PermissionVerification
     @ApiOperation(value = "保存社保信息")
     public ResultVO saveSocialSecuritInfo(@RequestBody @ApiParam SocialSecurityInfoVO socialSecurityInfoVO){
-        String idCard = socialSecurityInfoVO.getIdCard();
-        List<SocialSecurityInfoPojo> listSocialInfo = socialSecurityInfoService.getAllSecuritInfoByIdCard(idCard);
-        if(EmptyUtils.isNotEmpty(listSocialInfo)){
-            int count = socialSecurityInfoService.totalMonth(socialSecurityInfoVO);
-            Date socialSecurityDate=socialSecurityInfoVO.getSocialSecurityDate();
-            Calendar calendar =Calendar.getInstance();
-            calendar.setTime(socialSecurityDate);
-            calendar.add(Calendar.MONTH,count);
-            Date endDate = calendar.getTime();
-            for(SocialSecurityInfoPojo socialInfo: listSocialInfo){
-                if((socialSecurityInfoVO.getSocialSecurityDate().compareTo(socialInfo.getSocialSecurityDate())!=-1&&socialSecurityInfoVO.getSocialSecurityDate().compareTo(socialInfo.getSocialSecurityEndDate())==-1)
-                    ||(endDate.compareTo(socialInfo.getSocialSecurityDate())!=-1&&endDate.compareTo(socialInfo.getSocialSecurityEndDate())==-1)){
-                    SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM");
-                    return ResultVO.error(simple.format(socialSecurityDate) +" 到 " + simple.format(endDate) +"已有添加社保，请重新选择社保代缴开始日期");
-                }
-            }
+        ResultVO resultVO = socialSecurityInfoService.inspectDedupleSocialInfo(socialSecurityInfoVO);
+        if(EmptyUtils.isNotEmpty(resultVO)){
+            return resultVO;
         }
         SocialSecurityInfoPojo socialSecurityInfoPojo = socialSecurityInfoService.saveSocialSecuritInfo(socialSecurityInfoVO);
         return ResultVO.success(socialSecurityInfoPojo);
@@ -97,8 +84,15 @@ public class SocialSecurityInfoController {
     @PermissionVerification
     @ApiOperation(value = "确认并支付")
     public ResultVO saveDirectSecuritInfo( @RequestBody @ApiParam SocialSecurityInfoVO socialSecurityInfoVO){
-        SocialSecurityInfoPojo socialSecurit = socialSecurityInfoService.saveDirectSecuritInfo(socialSecurityInfoVO);
-        return ResultVO.success(socialSecurit);
+        ResultVO resultVO = socialSecurityInfoService.inspectDedupleSocialInfo(socialSecurityInfoVO);
+        if(EmptyUtils.isNotEmpty(resultVO)){
+            return resultVO;
+        }
+        resultVO = socialSecurityInfoService.saveDirectSecuritInfo(socialSecurityInfoVO);
+        return resultVO;
     }
+
+
+
 
 }

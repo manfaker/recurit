@@ -3,20 +3,17 @@ package com.shenzhen.recurit.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.shenzhen.recurit.constant.InformationConstant;
 import com.shenzhen.recurit.constant.OrdinaryConstant;
 import com.shenzhen.recurit.dao.SocialSecurityInfoMapper;
 import com.shenzhen.recurit.enums.NumberEnum;
-import com.shenzhen.recurit.pojo.ActivityPackagePojo;
-import com.shenzhen.recurit.pojo.DocumentPojo;
-import com.shenzhen.recurit.pojo.SocialSecurityInfoPojo;
-import com.shenzhen.recurit.pojo.SocialStandardPojo;
-import com.shenzhen.recurit.service.ActivityPackageService;
-import com.shenzhen.recurit.service.DocumentService;
-import com.shenzhen.recurit.service.SocialSecurityInfoService;
-import com.shenzhen.recurit.service.SocialStandardService;
+import com.shenzhen.recurit.pojo.*;
+import com.shenzhen.recurit.service.*;
+import com.shenzhen.recurit.utils.ApplyConfigUtils;
 import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.utils.ImageBase64Utils;
 import com.shenzhen.recurit.utils.ThreadLocalUtils;
+import com.shenzhen.recurit.vo.OrderInfoVO;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.SocialSecurityInfoVO;
 import com.shenzhen.recurit.vo.UserVO;
@@ -27,6 +24,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.xml.crypto.Data;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -39,6 +37,8 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
     private SocialSecurityInfoMapper socialSecurityInfoMapper;
     @Resource
     private DocumentService documentService;
+    @Resource
+    private OrderInfoService orderInfoService;
 
     
     @Override
@@ -412,7 +412,42 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
     }
 
     @Override
-    public SocialSecurityInfoPojo saveDirectSecuritInfo(SocialSecurityInfoVO socialSecurityInfoVO) {
+    public ResultVO saveDirectSecuritInfo(SocialSecurityInfoVO socialSecurityInfoVO) {
+        setSocialSecurityInfo(socialSecurityInfoVO,true);
+        setSocialSecurityEndDate(socialSecurityInfoVO);
+        socialSecurityInfoMapper.saveSocialSecurityInfo(socialSecurityInfoVO);
+        SocialSecurityInfoPojo socialSecurityInfoPojo = getSocialSecuritInfoById(socialSecurityInfoVO.getId());
+        OrderInfoVO orderInfoVO = new OrderInfoVO();
+        orderInfoVO.setPayStatus(NumberEnum.ONE.getValue());
+        orderInfoVO.setTotalAmount(socialSecurityInfoPojo.getCaculatePrice().getInteger("totalCount"));
+        orderInfoVO.setSubject(socialSecurityInfoVO.getSubject());
+        orderInfoVO.setSocialInfoIds(socialSecurityInfoPojo.getId()+OrdinaryConstant.IS_BLACK);
+        OrderInfoPojo orderInfoPojo = orderInfoService.saveOrderInfo(orderInfoVO);
+        if(EmptyUtils.isNotEmpty(orderInfoPojo)){
+            return ApplyConfigUtils.preCreate( InformationConstant.ALIPAY,orderInfoVO);
+        }
+        return ResultVO.error(orderInfoPojo);
+    }
+
+    @Override
+    public ResultVO inspectDedupleSocialInfo(SocialSecurityInfoVO socialSecurityInfoVO) {
+        String idCard = socialSecurityInfoVO.getIdCard();
+        List<SocialSecurityInfoPojo> listSocialInfo = getAllSecuritInfoByIdCard(idCard);
+        if(EmptyUtils.isNotEmpty(listSocialInfo)){
+            int count = totalMonth(socialSecurityInfoVO);
+            Date socialSecurityDate=socialSecurityInfoVO.getSocialSecurityDate();
+            Calendar calendar =Calendar.getInstance();
+            calendar.setTime(socialSecurityDate);
+            calendar.add(Calendar.MONTH,count);
+            Date endDate = calendar.getTime();
+            for(SocialSecurityInfoPojo socialInfo: listSocialInfo){
+                if((socialSecurityInfoVO.getSocialSecurityDate().compareTo(socialInfo.getSocialSecurityDate())!=-1&&socialSecurityInfoVO.getSocialSecurityDate().compareTo(socialInfo.getSocialSecurityEndDate())==-1)
+                        ||(endDate.compareTo(socialInfo.getSocialSecurityDate())!=-1&&endDate.compareTo(socialInfo.getSocialSecurityEndDate())==-1)){
+                    SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM");
+                    return ResultVO.error(simple.format(socialSecurityDate) +" 到 " + simple.format(endDate) +"已有添加社保，请重新选择社保代缴开始日期");
+                }
+            }
+        }
         return null;
     }
 

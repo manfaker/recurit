@@ -1,6 +1,7 @@
 package com.shenzhen.recurit.service;
 
 import com.shenzhen.recurit.pojo.SocialSecurityInfoPojo;
+import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.SocialSecurityInfoVO;
 
 import java.util.List;
@@ -97,5 +98,7 @@ public interface SocialSecurityInfoService {
      */
     int totalMonth(SocialSecurityInfoVO socialSecurityInfoVO);
 
-    SocialSecurityInfoPojo saveDirectSecuritInfo(SocialSecurityInfoVO socialSecurityInfoVO);
+    ResultVO saveDirectSecuritInfo(SocialSecurityInfoVO socialSecurityInfoVO);
+
+    ResultVO inspectDedupleSocialInfo(SocialSecurityInfoVO socialSecurityInfoVO);
 }
