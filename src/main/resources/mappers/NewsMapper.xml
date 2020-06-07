@@ -58,14 +58,16 @@
        </update>
 
        <select id="getNewsById" resultMap="baseResultMap">
-           select t.news_image_path,t.news_title,t.document_id,t.news_path,t.source,
+           select t.id,t.create_date,t.update_date,t.creater,t.updater,
+           t.news_image_path,t.news_title,t.document_id,t.news_path,t.source,
             d.old_name,d.document_name,d.document_size,d.url,d.suffix,d.category
             from tab_news t left join tab_document d on t.document_id = d.id
                 where t.id= #{id}
        </select>
 
         <select id="getAllNews" resultMap="baseResultMap">
-           select t.news_image_path,t.news_title,t.document_id,t.news_path,t.source,
+           select t.id,t.create_date,t.update_date,t.creater,t.updater,
+           t.news_image_path,t.news_title,t.document_id,t.news_path,t.source,
             d.old_name,d.document_name,d.document_size,d.url,d.suffix,d.category
             from tab_news t left join tab_document d on t.document_id = d.id order by t.update_date desc
       </select>
