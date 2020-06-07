@@ -91,5 +91,11 @@ public interface SocialSecurityInfoService {
      */
     List<SocialSecurityInfoPojo> getAllSecuritInfoByIdCard(String idCard);
 
+    /**
+     * 获取套餐所交社保月数
+     * @return
+     */
+    int totalMonth(SocialSecurityInfoVO socialSecurityInfoVO);
+
     SocialSecurityInfoPojo saveDirectSecuritInfo(SocialSecurityInfoVO socialSecurityInfoVO);
 }

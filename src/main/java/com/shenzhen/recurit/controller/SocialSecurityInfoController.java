@@ -14,6 +14,9 @@ import org.apache.ibatis.annotations.Update;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -38,9 +41,17 @@ public class SocialSecurityInfoController {
         String idCard = socialSecurityInfoVO.getIdCard();
         List<SocialSecurityInfoPojo> listSocialInfo = socialSecurityInfoService.getAllSecuritInfoByIdCard(idCard);
         if(EmptyUtils.isNotEmpty(listSocialInfo)){
+            int count = socialSecurityInfoService.totalMonth(socialSecurityInfoVO);
+            Date socialSecurityDate=socialSecurityInfoVO.getSocialSecurityDate();
+            Calendar calendar =Calendar.getInstance();
+            calendar.setTime(socialSecurityDate);
+            calendar.add(Calendar.MONTH,count);
+            Date endDate = calendar.getTime();
             for(SocialSecurityInfoPojo socialInfo: listSocialInfo){
-                if(socialInfo.getSocialSecurityDate().compareTo(socialSecurityInfoVO.getSocialSecurityDate())!=-1&&socialSecurityInfoVO.getSocialSecurityDate().compareTo(socialInfo.getSocialSecurityEndDate())!=-1){
-                    return ResultVO.error("当前时间段已有添加社保，请重新选择社保代缴开始日期");
+                if((socialSecurityInfoVO.getSocialSecurityDate().compareTo(socialInfo.getSocialSecurityDate())!=-1&&socialSecurityInfoVO.getSocialSecurityDate().compareTo(socialInfo.getSocialSecurityEndDate())==-1)
+                    ||(endDate.compareTo(socialInfo.getSocialSecurityDate())!=-1&&endDate.compareTo(socialInfo.getSocialSecurityEndDate())==-1)){
+                    SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM");
+                    return ResultVO.error(simple.format(socialSecurityDate) +" 到 " + simple.format(endDate) +"已有添加社保，请重新选择社保代缴开始日期");
                 }
             }
         }
@@ -48,7 +59,7 @@ public class SocialSecurityInfoController {
         return ResultVO.success(socialSecurityInfoPojo);
     }
 
-    @PutMapping(value = "saveSocialSecuritInfo")
+    @PutMapping(value = "updateSocialSecuritInfo")
     @PermissionVerification
     @ApiOperation(value = "修改社保信息")
     public ResultVO updateSocialSecuritInfo(@RequestBody @ApiParam SocialSecurityInfoVO socialSecurityInfoVO){

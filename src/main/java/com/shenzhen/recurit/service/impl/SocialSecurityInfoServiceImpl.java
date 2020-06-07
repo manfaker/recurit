@@ -363,7 +363,10 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
             JSONArray packageArray = JSON.parseArray(feePackageIds);
             for(int index=NumberEnum.ZERO.getValue();index<packageArray.size();index++){
                 JSONObject packageJson = packageArray.getJSONObject(index);
-                currPackages.add(mapPackages.get(packageJson.getInteger("packageId")));
+                int packageId = packageJson.getInteger("packageId");
+                int amount = packageJson.getInteger("amount");
+                mapAmount.put(packageId,amount);
+                currPackages.add(mapPackages.get(packageId));
             }
         }
         calculateProjectPrice(securityInfoPojo.getSocialStandardPojo(),cardinality,jsonObject,currPackages,mapAmount);
@@ -385,6 +388,27 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
     @Override
     public List<SocialSecurityInfoPojo> getAllSecuritInfoByIdCard(String idCard) {
         return socialSecurityInfoMapper.getAllSecuritInfoByIdCard(idCard);
+    }
+
+    @Override
+    public int totalMonth(SocialSecurityInfoVO socialSecurityInfoVO) {
+        String feePackageIds=socialSecurityInfoVO.getFeePackageIds();
+        if(EmptyUtils.isNotEmpty(feePackageIds)){
+            JSONArray jsonArray = JSON.parseArray(feePackageIds);
+            List<Integer> listPackageIds = new ArrayList<>();
+            Map<Integer,Integer> packageMap = new HashMap<>();
+            for(int index=NumberEnum.ZERO.getValue();index<jsonArray.size();index++){
+                JSONObject jsonObject = jsonArray.getJSONObject(index);
+                int packageId = jsonObject.getInteger("packageId");
+                int amount = jsonObject.getInteger("amount");
+                packageMap.put(packageId,amount);
+                listPackageIds.add(packageId);
+            }
+            List<ActivityPackagePojo> listPackage = activityPackageService.getAllActivityPackageByIds(listPackageIds);
+            int count =getAllMonth(listPackage,packageMap);
+            return count;
+        }
+        return 0;
     }
 
     @Override
