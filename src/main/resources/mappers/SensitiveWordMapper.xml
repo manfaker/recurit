@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzhen.recurit.dao.SensitiveWordMapper">
+
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.vo.SensitiveWordVO">
+            <id column="id" property="id"/>
+            <result column="sensitive_word" property="sensitiveWord"/>
+            <result column="create_date" property="createDate"/>
+            <result column="update_date" property="updateDate"/>
+            <result column="creater" property="creater"/>
+            <result column="updater" property="updater"/>
+        </resultMap>
+
+        <sql id="baseResult">
+            sensitive_word,create_date,update_date,creater,updater
+        </sql>
+
+        <insert id="saveBatchSensitiveWord">
+            insert into tab_sensitive_words(<include refid="baseResult"/>)
+                values
+                <foreach collection="listSensitiveWord" item="sensitiveWord" separator=",">
+                    (#{sensitiveWord.sensitiveWord},#{sensitiveWord.createDate},#{sensitiveWord.updateDate},
+                    #{sensitiveWord.creater},#{sensitiveWord.updater})
+                </foreach>
+        </insert>
+    
+        <select id="checkSensitiveWord" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_sensitive_words
+                where sensitive_word in
+                    <foreach collection="listStr" open="(" close=")" item="sensitiveWord" separator=",">
+                       #{sensitiveWord}
+                    </foreach>
+
+        </select>
+
+</mapper>

@@ -98,5 +98,16 @@
             select id,status,<include refid="baseResult"/> from tab_order_info where out_trade_no=#{outTradeNo} and status = 1
         </select>
 
+        <select id="getAllOrderInfoByUserCode" resultMap="baseResultMap">
+            select id,status,<include refid="baseResult"/> from tab_order_info
+            where status = 1
+            <if test="payStatus != null and payStatus != 0">
+                and pay_status =#{payStatus}
+            </if>
+            <if test="userCode != null and userCode != '' ">
+                and user_code = #{userCode}
+            </if>
+        </select>
+
 
 </mapper>

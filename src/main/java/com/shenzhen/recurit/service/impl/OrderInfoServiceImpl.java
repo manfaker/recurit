@@ -1,5 +1,7 @@
 package com.shenzhen.recurit.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.shenzhen.recurit.constant.OrdinaryConstant;
 import com.shenzhen.recurit.dao.OrderInfoMapper;
 import com.shenzhen.recurit.pojo.OrderInfoPojo;
@@ -60,6 +62,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             orderInfoVO.setOutTradeNo(getTradeNo("ZFB",user));
             orderInfoVO.setCreateDate(new Date());
             orderInfoVO.setCreater(user.getUserName());
+            orderInfoVO.setUserCode(user.getUserCode());
         }
         orderInfoVO.setUpdateDate(new Date());
         orderInfoVO.setUpdater(user.getUserName());
@@ -109,7 +112,14 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
     @Override
     public List<OrderInfoPojo> getAllOrderInfo(int payStatus) {
-        List<OrderInfoPojo> listOrderInfo = orderInfoMapper.getAllOrderInfo(payStatus);
+        UserVO user = ThreadLocalUtils.getUser();
+        String roleNum = user.getRoleNum();
+        List<OrderInfoPojo> listOrderInfo;
+        if("ROLE0000".equals(roleNum)){
+            listOrderInfo= orderInfoMapper.getAllOrderInfo(payStatus);
+        }else{
+            listOrderInfo= orderInfoMapper.getAllOrderInfoByUserCode(payStatus,user.getUserCode());
+        }
         return listOrderInfo;
     }
 

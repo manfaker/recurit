@@ -19,4 +19,6 @@ public interface OrderInfoMapper {
     int deleteOrderInfo(int id);
 
     OrderInfoPojo getOrderInfoByoutTradeNo(String outTradeNo);
+
+    List<OrderInfoPojo> getAllOrderInfoByUserCode(@Param("payStatus") int payStatus,@Param("userCode") String userCode);
 }

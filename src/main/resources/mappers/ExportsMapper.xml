@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzhen.recurit.dao.ExportsMapper">
+
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.pojo.ExportsPojo">
+            <id column="id" property="id"/>
+            <result column="column_field" property="columnField"/>
+            <result column="column_name" property="columnName"/>
+            <result column="gradation" property="gradation"/>
+            <result column="hight" property="hight"/>
+            <result column="width" property="width"/>
+            <result column="colour" property="colour"/>
+            <result column="instance_name" property="instanceName"/>
+        </resultMap>
+
+        <sql id="baseResult">
+            column_field,column_name,gradation,hight,width,colour,instance_name
+        </sql>
+
+
+
+
+</mapper>
