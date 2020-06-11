@@ -26,9 +26,9 @@
     
         <select id="checkSensitiveWord" resultMap="baseResultMap">
             select id,<include refid="baseResult"/> from tab_sensitive_words
-                where sensitive_word in
-                    <foreach collection="listStr" open="(" close=")" item="sensitiveWord" separator=",">
-                       #{sensitiveWord}
+                where
+                    <foreach collection="listStr" item="sensitiveWord" separator="or">
+                        instr(#{sensitiveWord},sensitive_word)>0
                     </foreach>
 
         </select>
