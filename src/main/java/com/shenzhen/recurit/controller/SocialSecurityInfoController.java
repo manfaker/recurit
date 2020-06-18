@@ -92,6 +92,14 @@ public class SocialSecurityInfoController {
         return resultVO;
     }
 
+    @PostMapping(value = "getAllSecurityByOrderInfoId")
+    @PermissionVerification
+    @ApiOperation(value = "根据订单id获取所有社保信息")
+    public ResultVO getAllSecurityByOrderInfoId(int orderInfoId){
+        List<SocialSecurityInfoPojo> listSocialSecurit= socialSecurityInfoService.getAllSecurityByOrderInfoId(orderInfoId);
+        return ResultVO.success(listSocialSecurit);
+    }
+
 
 
 

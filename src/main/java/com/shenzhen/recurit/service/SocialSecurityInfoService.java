@@ -101,4 +101,11 @@ public interface SocialSecurityInfoService {
     ResultVO saveDirectSecuritInfo(SocialSecurityInfoVO socialSecurityInfoVO);
 
     ResultVO inspectDedupleSocialInfo(SocialSecurityInfoVO socialSecurityInfoVO);
+
+    /**
+     * 根据订单id获取所有的社保信息
+     * @param orderInfoId
+     * @return
+     */
+    List<SocialSecurityInfoPojo> getAllSecurityByOrderInfoId(int orderInfoId);
 }

@@ -451,5 +451,10 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
         return null;
     }
 
+    @Override
+    public List<SocialSecurityInfoPojo> getAllSecurityByOrderInfoId(int orderInfoId) {
+        return null;
+    }
+
 
 }

@@ -132,6 +132,7 @@ public class UserController {
             @ApiImplicitParam(value = "手机" ,name="phone",required = true),
             @ApiImplicitParam(value = "验证码" ,name="code",required = true)
     })
+
     @GetMapping (value = "verificateIphone")
     public Object verificateIphone(String phone,String code){
         return userService.verificateIphone(phone,code);

@@ -122,6 +122,15 @@ public class RedisTempleUtils {
             return false;
         }
     }
+
+    public boolean refresExpire(String key ,long var3, TimeUnit var5){
+        try {
+            boolean flag = stringRedisTemplate.expire(key, var3, var5);
+            return flag;
+        }catch (Exception e){
+            return false;
+        }
+    }
     /**
      * 删除缓存
      * @param key    键

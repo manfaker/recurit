@@ -189,10 +189,43 @@
     
         <select id="getCheckedResumes" resultMap="countBaseResultMap">
             SELECT
-                ( SELECT COUNT( 1 ) FROM tab_position_user_relation WHERE position_id IN ( SELECT id FROM tab_position WHERE user_code = #{userCode} ) ) resume_sum,
-                ( SELECT COUNT( 1 ) FROM tab_position_user_relation WHERE is_checked != 2 AND position_id IN ( SELECT id FROM tab_position WHERE user_code = #{userCode} ) ) no_checked_sum
-            FROM
-            DUAL
+                    (
+                    SELECT
+                        COUNT( 1 )
+                    FROM
+                        tab_position_user_relation
+                    WHERE
+                        position_id IN (
+                        SELECT
+                            p.id
+                        FROM
+                            tab_position_user_relation r
+                            LEFT JOIN tab_position p ON r.position_id = p.id
+                        WHERE
+                            p.STATUS = 1
+                            AND p.user_code = #{userCode}
+                            AND r.apply = 2
+                        ) resume_sum,
+                        (
+                        SELECT
+                            COUNT( 1 )
+                        FROM
+                            tab_position_user_relation
+                        WHERE
+                            is_checked != 2
+                            AND position_id IN (
+                            SELECT
+                                p.id
+                            FROM
+                                tab_position_user_relation r
+                                LEFT JOIN tab_position p ON r.position_id = p.id
+                            WHERE
+                                p.STATUS = 1
+                                AND p.user_code = #{userCode}
+                                AND r.apply = 2
+                            ) no_checked_sum
+                    FROM
+                DUAL
         </select>
 
 </mapper>

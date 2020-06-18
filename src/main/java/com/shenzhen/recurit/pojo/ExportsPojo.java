@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+
 @Data
 @ApiModel(value = "导出")
 public class ExportsPojo {
@@ -24,6 +25,6 @@ public class ExportsPojo {
     private int colour;
     @ApiModelProperty(value = "实列名")
     private String instanceName;
-    //是否导出
-    private boolean isExport;
+
+    private String sheetName;
 }

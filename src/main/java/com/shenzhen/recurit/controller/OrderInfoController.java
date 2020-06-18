@@ -48,7 +48,7 @@ public class OrderInfoController {
     @ApiOperation(value = "根据id查询订单信息")
     public ResultVO getOrderInfo(int id){
         OrderInfoPojo orderInfoPojo= orderInfoService.getOrderInfo(id);
-        return null;
+        return ResultVO.success(orderInfoPojo);
     }
 
     @GetMapping(value = "getAllOrderInfo")

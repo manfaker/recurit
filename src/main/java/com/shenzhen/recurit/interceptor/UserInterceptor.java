@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class UserInterceptor implements HandlerInterceptor {
@@ -33,6 +34,11 @@ public class UserInterceptor implements HandlerInterceptor {
         String authUser= String.valueOf(request.getHeader(InformationConstant.AUTH_USER));
         ThreadLocalUtils.setUserCode(authUser);
         //获取用户的ip地址，从而存入服务器，进行对应
+        UserVO userVO=ThreadLocalUtils.getUser();
+        if(EmptyUtils.isNotEmpty(userVO)){
+            boolean flag = redisTempleUtils.refresExpire(authUser, 60 * 60 * 24 * 15, TimeUnit.SECONDS);
+            logger.info("每次操作都会刷新过期时间:"+flag);
+        }
         String ipAddr = UserInterceptor.getIpAddress(request);
         if(hasPermission(handler,authUser)){
             response.sendRedirect("/recurit/user/reLogin");
@@ -44,18 +50,14 @@ public class UserInterceptor implements HandlerInterceptor {
     //获取用户的IP地址
     public static String getIpAddress(HttpServletRequest request) {
         String ipAddr = request.getHeader(InformationConstant.X_FORWARDED_FOR);
-        logger.info(InformationConstant.X_FORWARDED_FOR+"地址是：" +ipAddr);
         if (EmptyUtils.isEmpty(ipAddr) || InformationConstant.UNKNOWN.equalsIgnoreCase(ipAddr)) {
             ipAddr = request.getHeader(InformationConstant.PROXY_CLIENT_IP);
-            logger.info(InformationConstant.PROXY_CLIENT_IP+"地址是：" +ipAddr);
         }
         if (EmptyUtils.isEmpty(ipAddr) || InformationConstant.UNKNOWN.equalsIgnoreCase(ipAddr)) {
             ipAddr = request.getHeader(InformationConstant.WL_PROXY_CLIENT_IP);
-            logger.info(InformationConstant.WL_PROXY_CLIENT_IP+"地址是：" +ipAddr);
         }
         if (EmptyUtils.isEmpty(ipAddr) || InformationConstant.UNKNOWN.equalsIgnoreCase(ipAddr)) {
             ipAddr = request.getRemoteAddr();
-            logger.info("remoteAddr地址是：" +ipAddr);
         }
         if (ipAddr.contains(SymbolEnum.COMMA.getValue())) {
             return ipAddr.split(SymbolEnum.COMMA.getValue())[NumberEnum.ZERO.getValue()];
