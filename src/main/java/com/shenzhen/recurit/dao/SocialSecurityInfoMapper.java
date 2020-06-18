@@ -29,4 +29,6 @@ public interface SocialSecurityInfoMapper {
     List<SocialSecurityInfoPojo> getAllSecuritInfoByOrderInfoId(int orderInfoId);
 
     List<SocialSecurityInfoPojo> getAllSecuritInfoByIdCard(String idCard);
+
+    List<SocialSecurityInfoPojo> getAllSecurityByOrderInfoId(@Param("userCode") String userCode,@Param("orderInfoId") int orderInfoId);
 }

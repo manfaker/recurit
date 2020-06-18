@@ -125,7 +125,12 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
     @Override
     public OrderInfoPojo getOrderInfo(int id) {
-        return  orderInfoMapper.getOrderInfo(id);
+        OrderInfoPojo orderInfo = orderInfoMapper.getOrderInfo(id);
+        if(EmptyUtils.isNotEmpty(orderInfo)){
+            List<SocialSecurityInfoPojo> listSocialSecurityInfo = socialSecurityInfoService.getAllSecurityByOrderInfoId(id);
+            orderInfo.setListSocialSecurity(listSocialSecurityInfo);
+        }
+        return orderInfo;
     }
 
     @Override

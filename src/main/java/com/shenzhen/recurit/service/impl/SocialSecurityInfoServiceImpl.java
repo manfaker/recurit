@@ -333,6 +333,11 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
     public List<SocialSecurityInfoPojo> getAllSecuritInfo() {
         UserVO user = ThreadLocalUtils.getUser();
         List<SocialSecurityInfoPojo> allSecuritInfo = socialSecurityInfoMapper.getAllSecuritInfo(user.getUserCode());
+        setListSocialSecurity(allSecuritInfo);
+        return allSecuritInfo;
+    }
+
+    private void setListSocialSecurity(List<SocialSecurityInfoPojo> allSecuritInfo){
         List<ActivityPackagePojo> listPackages = activityPackageService.getAllActivityPackage();
         Map<Integer,ActivityPackagePojo> mapPackages = new HashMap<>();
         listToMap(listPackages,mapPackages);
@@ -343,7 +348,6 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
                 securityInfoPojo.setAllCountMoney(jsonObject.getInteger("totalCount"));
             }
         }
-        return allSecuritInfo;
     }
 
     /**
@@ -453,7 +457,10 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
 
     @Override
     public List<SocialSecurityInfoPojo> getAllSecurityByOrderInfoId(int orderInfoId) {
-        return null;
+        UserVO userVO = ThreadLocalUtils.getUser();
+        List<SocialSecurityInfoPojo> listSocialSecurity = socialSecurityInfoMapper.getAllSecurityByOrderInfoId(userVO.getUserCode(),orderInfoId);
+        setListSocialSecurity(listSocialSecurity);
+        return listSocialSecurity;
     }
 
 

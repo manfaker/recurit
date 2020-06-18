@@ -193,5 +193,17 @@
             select id,status,<include refid="baseResult"/> from tab_social_security_info where   id_card = #{idCard} and status =1
         </select>
 
+        <select id="getAllSecurityByOrderInfoId" resultMap="baseIncludeChildrenResultMap">
+            select t.id,t.status,t.city_id,t.apply_name,t.id_card,t.positive_id_card,t.reverse_id_card,t.phone,
+            t.domicile,t.nature_regist,t.cardinality,t.social_security_date,t.fee_package_ids,
+            t.create_date,t.update_date,t.creater,t.updater,t.order_info_id,t.social_security_end_date,
+            s.city,s.low_cardinality,s.hight_cardinality,
+            s.enterprise_pension,s.person_pension,s.enterprise_medical,s.person_medical,
+            s.enterprise_unemployment,s.person_unemployment,s.enterprise_injury,s.person_injury,
+            s.enterprise_childbirth,s.person_childbirth,s.disability_insurance
+                from tab_social_security_info t left join tab_social_standard s on s.id=t.city_id
+                where  t.user_code=#{userCode} and t.status =1 and  t.order_info_id = #{orderInfoId}
+        </select>
+
 
 </mapper>

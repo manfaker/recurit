@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 @ApiModel(value = "订单信息")
 @Data
 public class OrderInfoPojo  extends BaseVO {
@@ -36,6 +38,8 @@ public class OrderInfoPojo  extends BaseVO {
     private String bizType;
     @ApiModelProperty(value = "用户信息")
     private String userCode;
+    @ApiModelProperty(value = "社保信息")
+    private List<SocialSecurityInfoPojo> listSocialSecurity;
 
 
 }
