@@ -223,8 +223,52 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
     public SocialSecurityInfoPojo saveSocialSecuritInfo(SocialSecurityInfoVO socialSecurityInfoVO) {
         setSocialSecurityInfo(socialSecurityInfoVO,true);
         setSocialSecurityEndDate(socialSecurityInfoVO);
+        setSocialSecurityMoney(socialSecurityInfoVO);
         socialSecurityInfoMapper.saveSocialSecurityInfo(socialSecurityInfoVO);
         return getSocialSecuritInfoById(socialSecurityInfoVO.getId());
+    }
+
+    private void setSocialSecurityMoney(SocialSecurityInfoVO socialSecurityInfoVO){
+        int standId = socialSecurityInfoVO.getId();
+        SocialStandardPojo socialStandardPojo = socialStandardService.getSocialStandardById(standId);
+        //社保基数
+        int cardinality=socialSecurityInfoVO.getCardinality();
+        int socialSecurityPrice =cardinality*socialStandardPojo.getEnterprisePension()/10000+
+                                    cardinality*socialStandardPojo.getPersonPension()/10000+
+                                    cardinality*socialStandardPojo.getEnterpriseMedical()/10000+
+                                    cardinality*socialStandardPojo.getPersonMedical()/10000+
+                                    cardinality*socialStandardPojo.getEnterpriseUnemployment()/10000+
+                                    cardinality*socialStandardPojo.getPersonUnemployment()/10000+
+                                    cardinality*socialStandardPojo.getEnterpriseChildbirth()/10000+
+                                    cardinality*socialStandardPojo.getPersonChildbirth()/10000+
+                                    cardinality*socialStandardPojo.getEnterpriseInjury()/10000+
+                                    cardinality*socialStandardPojo.getPersonInjury()/10000+
+                                    cardinality*socialStandardPojo.getDisabilityInsurance()/10000;
+        socialSecurityInfoVO.setSocialSecurityPrice(socialSecurityPrice);
+        String activityJson = socialSecurityInfoVO.getFeePackageIds();
+        if(EmptyUtils.isNotEmpty(activityJson)){
+            JSONArray jsonArray = JSON.parseArray(activityJson);
+            List<ActivityPackagePojo> allActivityPackage = activityPackageService.getAllActivityPackage();
+            Map<Integer,ActivityPackagePojo> mapPackage = new HashMap<>();
+            listToMap(allActivityPackage,mapPackage);
+            int countMount = NumberEnum.ZERO.getValue();
+            int countMoney = NumberEnum.ZERO.getValue();
+            for(int index=0;index<jsonArray.size();index++){
+                JSONObject jsonObject = jsonArray.getJSONObject(index);
+                int packageId = jsonObject.getInteger("packageId");
+                int amount = jsonObject.getInteger("amount");
+                ActivityPackagePojo activityPackagePojo = mapPackage.get(packageId);
+                countMount += amount*activityPackagePojo.getAmount();
+                int price = amount*activityPackagePojo.getAmount()*activityPackagePojo.getPrice();
+                if(activityPackagePojo.getPromotePrice()>NumberEnum.ZERO.getValue()){
+                    price = price*activityPackagePojo.getPromotePrice()/100;
+                }
+                countMoney +=price ;
+            }
+            int allCountMoney = countMoney+countMount*socialSecurityPrice;
+            socialSecurityInfoVO.setCountMoney(allCountMoney);
+        }
+
     }
 
     private void setSocialSecurityEndDate(SocialSecurityInfoVO socialSecurityInfoVO){
@@ -259,6 +303,7 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
     public int updateSocialSecuritInfo(SocialSecurityInfoVO socialSecurityInfoVO) {
         setSocialSecurityInfo(socialSecurityInfoVO,false);
         setSocialSecurityEndDate(socialSecurityInfoVO);
+        setSocialSecurityMoney(socialSecurityInfoVO);
         return socialSecurityInfoMapper.updateSocialSecuritInfo(socialSecurityInfoVO);
     }
 

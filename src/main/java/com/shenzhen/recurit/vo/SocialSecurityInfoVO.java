@@ -43,5 +43,7 @@ public class SocialSecurityInfoVO extends BaseVO {
     private String userCode;
     @ApiModelProperty(value = "主题")
     private String subject;
+    private int countMoney;
+    private int socialSecurityPrice;
 
 }

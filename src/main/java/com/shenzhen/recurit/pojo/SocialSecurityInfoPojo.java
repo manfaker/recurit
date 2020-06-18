@@ -53,8 +53,12 @@ public class SocialSecurityInfoPojo extends BaseVO {
     private Date socialSecurityEndDate;
     @ApiModelProperty(value = "套餐")
     private String feePackageIds;
-    @ApiModelProperty(value = "总金额")
+    @ApiModelProperty(value = "计算所得总金额")
     private int allCountMoney;
     @ApiModelProperty(value = "计算统计")
     private JSONObject caculatePrice;
+    @ApiModelProperty(value = "总金额")
+    private int countMoney;
+    @ApiModelProperty(value = "单月社保金额")
+    private int socialSecurityPrice;
 }
