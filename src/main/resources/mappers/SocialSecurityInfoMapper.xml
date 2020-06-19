@@ -52,6 +52,7 @@
             <result column="user_code" property="userCode"/>
             <result column="count_money" property="countMoney"/>
             <result column="social_security_price" property="socialSecurityPrice"/>
+            <result column="pay_status" property="payStatus"/>
             <association javaType="com.shenzhen.recurit.pojo.SocialStandardPojo" property="socialStandardPojo">
                 <result column="city" property="city"/>
                 <result column="low_cardinality" property="lowCardinality"/>
@@ -217,6 +218,53 @@
             s.enterprise_childbirth,s.person_childbirth,s.disability_insurance
                 from tab_social_security_info t left join tab_social_standard s on s.id=t.city_id
                 where  t.user_code=#{userCode} and t.status =1 and  t.order_info_id = #{orderInfoId}
+        </select>
+
+        <select id="getSecuritInfos" resultMap="baseIncludeChildrenResultMap">
+            SELECT
+                t.id,
+                t.STATUS,
+                t.city_id,
+                t.apply_name,
+                t.id_card,
+                t.positive_id_card,
+                t.reverse_id_card,
+                t.phone,
+                t.domicile,
+                t.nature_regist,
+                t.cardinality,
+                t.social_security_date,
+                t.fee_package_ids,
+                t.create_date,
+                t.update_date,
+                t.creater,
+                t.updater,
+                t.order_info_id,
+                t.social_security_end_date,
+                t.count_money,
+                t.social_security_price,
+                s.city,
+                s.low_cardinality,
+                s.hight_cardinality,
+                s.enterprise_pension,
+                s.person_pension,
+                s.enterprise_medical,
+                s.person_medical,
+                s.enterprise_unemployment,
+                s.person_unemployment,
+                s.enterprise_injury,
+                s.person_injury,
+                s.enterprise_childbirth,
+                s.person_childbirth,
+                s.disability_insurance,
+                o.pay_status
+                from tab_social_security_info t
+                LEFT JOIN tab_social_standard s ON s.id = t.city_id
+                LEFT JOIN tab_order_info o ON o.id = t.order_info_id
+            WHERE
+                t.STATUS = 1
+            ORDER BY
+                t.create_date
         </select>
 
 

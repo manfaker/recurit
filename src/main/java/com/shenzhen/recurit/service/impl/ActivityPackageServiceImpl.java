@@ -54,4 +54,10 @@ public class ActivityPackageServiceImpl implements ActivityPackageService {
         }
         return activityPackageMapper.getAllActivityPackageByIds(ids);
     }
+
+    @Override
+    public int updateActivityPackage(ActivityPackageVO activityPackageVO) {
+        setActivityPackageVO(activityPackageVO,false);
+        return activityPackageMapper.updateActivityPackage(activityPackageVO);
+    }
 }

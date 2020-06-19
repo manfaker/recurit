@@ -14,6 +14,7 @@ import org.apache.ibatis.annotations.Update;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -100,6 +101,20 @@ public class SocialSecurityInfoController {
         return ResultVO.success(listSocialSecurit);
     }
 
+    @GetMapping(value = "exportSecurityInfo")
+    @PermissionVerification
+    @ApiOperation(value = "导出社保信息")
+    public void exportSecurityInfo( HttpServletResponse response){
+        socialSecurityInfoService.exportSecurityInfo(response);
+    }
+
+
+    @PostMapping(value = "getListSocialSecurity")
+    @PermissionVerification
+    @ApiOperation(value = "获取所有社保信息")
+    public ResultVO getListSocialSecurity( ){
+        return ResultVO.success(socialSecurityInfoService.getListSocialSecurity());
+    }
 
 
 

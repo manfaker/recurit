@@ -18,4 +18,6 @@ public interface ActivityPackageService {
      * @return
      */
     List<ActivityPackagePojo> getAllActivityPackageByIds(List<Integer> ids);
+
+    int updateActivityPackage(ActivityPackageVO activityPackageVO);
 }

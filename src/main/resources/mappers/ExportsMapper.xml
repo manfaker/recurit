@@ -17,6 +17,9 @@
             column_field,column_name,gradation,hight,width,colour,instance_name
         </sql>
 
+        <select id="getAllExportsByTableName" resultMap="baseResultMap">
+            select id,<include refid="baseResult"/> from tab_exports
+        </select>
 
 
 

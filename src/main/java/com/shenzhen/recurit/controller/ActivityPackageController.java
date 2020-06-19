@@ -1,6 +1,7 @@
 package com.shenzhen.recurit.controller;
 
 import com.shenzhen.recurit.Interface.PermissionVerification;
+import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.pojo.ActivityPackagePojo;
 import com.shenzhen.recurit.service.ActivityPackageService;
 import com.shenzhen.recurit.vo.ActivityPackageVO;
@@ -35,6 +36,17 @@ public class ActivityPackageController {
     public Object getAllActivityPackage(){
         List<ActivityPackagePojo> listActivityPackage = activityPackageService.getAllActivityPackage();
         return ResultVO.success(listActivityPackage);
+    }
+
+    @PutMapping(value = "updateActivityPackage")
+    @PermissionVerification
+    @ApiOperation(value = "保存活动套餐")
+    public Object updateActivityPackage(@RequestBody @ApiParam ActivityPackageVO activityPackageVO){
+        int result = activityPackageService.updateActivityPackage(activityPackageVO);
+        if(result> NumberEnum.ZERO.getValue()){
+            return ResultVO.success();
+        }
+        return ResultVO.error();
     }
 
 }

@@ -13,6 +13,7 @@ import com.shenzhen.recurit.utils.ApplyConfigUtils;
 import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.utils.ImageBase64Utils;
 import com.shenzhen.recurit.utils.ThreadLocalUtils;
+import com.shenzhen.recurit.utils.excel.ExportUtils;
 import com.shenzhen.recurit.vo.OrderInfoVO;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.SocialSecurityInfoVO;
@@ -22,6 +23,7 @@ import io.swagger.models.auth.In;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.crypto.Data;
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -506,6 +508,56 @@ public class SocialSecurityInfoServiceImpl implements SocialSecurityInfoService 
         List<SocialSecurityInfoPojo> listSocialSecurity = socialSecurityInfoMapper.getAllSecurityByOrderInfoId(userVO.getUserCode(),orderInfoId);
         setListSocialSecurity(listSocialSecurity);
         return listSocialSecurity;
+    }
+
+    @Override
+    public List<SocialSecurityInfoPojo> getSecuritInfos() {
+        return socialSecurityInfoMapper.getSecuritInfos();
+    }
+
+    @Override
+    public void exportSecurityInfo(HttpServletResponse response) {
+        JSONArray jsonArray = new JSONArray();
+        List<SocialSecurityInfoPojo> listSecuritys = getSecuritInfos();
+        setListToJson(listSecuritys,jsonArray);
+        ExportUtils.exportExcel(jsonArray,response,"tab_security_info",System.currentTimeMillis()+".xlsx");
+    }
+
+    @Override
+    public JSONArray getListSocialSecurity() {
+        JSONArray jsonArray = new JSONArray();
+        List<SocialSecurityInfoPojo> listSecuritys = getSecuritInfos();
+        setListToJson(listSecuritys,jsonArray);
+        return jsonArray;
+    }
+
+    private void setListToJson(List<SocialSecurityInfoPojo> listSecuritys,JSONArray jsonArray){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+        SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if(EmptyUtils.isNotEmpty(listSecuritys)){
+            for(SocialSecurityInfoPojo securityInfoPojo :listSecuritys){
+                JSONObject jsonObject = new JSONObject();
+                SocialStandardPojo socialStandardPojo=securityInfoPojo.getSocialStandardPojo();
+                jsonObject.put("applyName",securityInfoPojo.getApplyName());
+                jsonObject.put("phone",securityInfoPojo.getPhone());
+                jsonObject.put("city",socialStandardPojo.getCity());
+                jsonObject.put("cardinality",securityInfoPojo.getCardinality()*0.01);
+                jsonObject.put("feePackage",securityInfoPojo.getFeePackageIds());
+                jsonObject.put("securityDate",simpleDateFormat.format(securityInfoPojo.getSocialSecurityDate()));
+                jsonObject.put("securityPrice",securityInfoPojo.getSocialSecurityPrice()*0.01);
+                jsonObject.put("createDate",simple.format(securityInfoPojo.getCreateDate()));
+                jsonObject.put("countMoney",securityInfoPojo.getCountMoney()*0.01);
+                if(securityInfoPojo.getPayStatus()==NumberEnum.ONE.getValue()){
+                    jsonObject.put("payStatus","未支付");
+                }else if (securityInfoPojo.getPayStatus()==NumberEnum.TWO.getValue()){
+                    jsonObject.put("payStatus","已支付");
+                }else{
+                    jsonObject.put("payStatus",OrdinaryConstant.IS_BLACK);
+                }
+                jsonArray.add(jsonObject);
+            }
+        }
+
     }
 
 

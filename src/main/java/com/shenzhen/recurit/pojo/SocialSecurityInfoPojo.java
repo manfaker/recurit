@@ -61,4 +61,6 @@ public class SocialSecurityInfoPojo extends BaseVO {
     private int countMoney;
     @ApiModelProperty(value = "单月社保金额")
     private int socialSecurityPrice;
+    @ApiModelProperty(value = "支付状态")
+    private int payStatus;
 }

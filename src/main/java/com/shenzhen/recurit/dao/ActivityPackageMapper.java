@@ -15,4 +15,6 @@ public interface ActivityPackageMapper {
     ActivityPackagePojo getActivityPackageById(int id);
 
     List<ActivityPackagePojo> getAllActivityPackageByIds(@Param("ids") List<Integer> ids);
+
+    int updateActivityPackage(ActivityPackageVO activityPackageVO);
 }

@@ -45,4 +45,34 @@
                 </foreach>
         </select>
 
+        <update id="updateActivityPackage">
+            update tab_activity_package
+            <set>
+                <if test="price != null and price > 0 ">
+                    price = #{price},
+                </if>
+                <if test="servicePeriod != null and servicePeriod != '' ">
+                    service_period = #{servicePeriod},
+                </if>
+                <if test="discount != null and discount > 0 ">
+                    discount = #{discount},
+                </if>
+                <if test="groupPrice != null and groupPrice > 0 ">
+                    group_price = #{groupPrice},
+                </if>
+                <if test="enterprisePrice != null and enterprisePrice > 0 ">
+                    enterprise_price = #{enterprisePrice},
+                </if>
+                <if test="promotePrice != null and promotePrice > 0 ">
+                    promote_price = #{promotePrice},
+                </if>
+                <if test="amount != null and amount > 0 ">
+                    amount = #{amount},
+                </if>
+                update_date=#{updateDate},
+                updater=#{updater}
+            </set>
+            where id = #{id}
+
+        </update>
 </mapper>

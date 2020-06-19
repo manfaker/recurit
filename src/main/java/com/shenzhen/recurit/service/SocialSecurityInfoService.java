@@ -1,9 +1,11 @@
 package com.shenzhen.recurit.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.shenzhen.recurit.pojo.SocialSecurityInfoPojo;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.SocialSecurityInfoVO;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public interface SocialSecurityInfoService {
@@ -108,4 +110,15 @@ public interface SocialSecurityInfoService {
      * @return
      */
     List<SocialSecurityInfoPojo> getAllSecurityByOrderInfoId(int orderInfoId);
+
+
+    /**
+     * 获取所有的社保单
+     * @return
+     */
+    List<SocialSecurityInfoPojo> getSecuritInfos();
+
+    void exportSecurityInfo(HttpServletResponse response);
+
+    JSONArray getListSocialSecurity();
 }

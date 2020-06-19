@@ -63,10 +63,10 @@ public class ExportUtils {
             for(int index=NumberEnum.ZERO.getValue();index<jsonArray.size();index++){
                 JSONObject jsonObject = jsonArray.getJSONObject(index);
                 Row row = sheet.createRow(index+NumberEnum.ONE.getValue());
-                for(int num=NumberEnum.ZERO.getValue();num<listExports.size();index++){
+                for(int num=NumberEnum.ZERO.getValue();num<listExports.size();num++){
                     String columnValue = OrdinaryConstant.IS_BLACK;
                     ExportsPojo exportsPojo = listExports.get(num);
-                    String columnName = exportsPojo.getColumnName();
+                    String columnName = exportsPojo.getColumnField();
                     Cell cell =row.createCell(exportsPojo.getGradation());
                     setCellType(cell);
                     if(EmptyUtils.isNotEmpty(columnName)&&jsonObject.containsKey(columnName)){
@@ -84,7 +84,7 @@ public class ExportUtils {
 
     private static  void  buildExcelDocument(String fileName, Workbook wb,HttpServletResponse response){
         try {
-            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             response.setHeader("Content-Disposition", "attachment;filename="+ URLEncoder.encode(fileName, InformationConstant.UTF_8));
             response.flushBuffer();
             OutputStream outputStream = response.getOutputStream();
