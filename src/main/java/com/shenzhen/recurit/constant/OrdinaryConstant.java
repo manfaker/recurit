@@ -9,6 +9,8 @@ public interface OrdinaryConstant {
     String SYMBOL_3 = "_";
     String SYMBOL_4 = ",";
     String SYMBOL_5 = ".";
+    String SYMBOL_6 = "xls";
+    String SYMBOL_7 = "xlsx";
 
     //日期格式
     String YYYYMMDD = "yyyyMMdd";

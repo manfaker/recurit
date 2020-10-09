@@ -11,14 +11,15 @@
             <result column="width" property="width"/>
             <result column="colour" property="colour"/>
             <result column="instance_name" property="instanceName"/>
+            <result column="category" property="category"/>
         </resultMap>
 
         <sql id="baseResult">
-            column_field,column_name,gradation,hight,width,colour,instance_name
+            column_field,column_name,gradation,hight,width,colour,instance_name,category
         </sql>
 
         <select id="getAllExportsByTableName" resultMap="baseResultMap">
-            select id,<include refid="baseResult"/> from tab_exports
+            select id,<include refid="baseResult"/> from tab_exports where instance_name = #{instanceName}
         </select>
 
 

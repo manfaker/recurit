@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping(value = "dictionary")
 @Api(tags = {"数据字典"})
-public class DictionaryController {
+public class    DictionaryController {
 
     @Resource
     private DictionaryService dictionaryService;

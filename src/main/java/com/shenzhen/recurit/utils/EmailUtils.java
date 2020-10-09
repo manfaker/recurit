@@ -88,7 +88,8 @@ public class EmailUtils {
         File resumeFiel = null;
         try {
             String docName = InformationConstant.TEMPLATE+System.currentTimeMillis()+InformationConstant.RESUME_DOCX;
-            String docPath = WordUtil.path+ File.separator+InformationConstant.TEMPLATE +File.separator+docName;
+            //TODO 替换文件路径信息
+            String docPath = WordUtil.getResourcePath()+ File.separator+InformationConstant.TEMPLATE +File.separator+docName;
             WordUtil.createResume(docPath,userPojo);
             resumeFiel = new File(docPath);
             form = new InternetAddress(userName);

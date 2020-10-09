@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ExportsMapper {
 
-    List<ExportsPojo> getAllExportsByTableName(String tableName);
+    List<ExportsPojo> getAllExportsByTableName(String instanceName);
 }

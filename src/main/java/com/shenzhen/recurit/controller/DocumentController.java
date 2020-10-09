@@ -4,7 +4,7 @@ import com.shenzhen.recurit.Interface.PermissionVerification;
 import com.shenzhen.recurit.pojo.DocumentPojo;
 import com.shenzhen.recurit.service.DocumentService;
 import com.shenzhen.recurit.utils.EmptyUtils;
-import com.shenzhen.recurit.utils.FileUtils;
+import com.shenzhen.recurit.utils.FileCommonUtils;
 import com.shenzhen.recurit.vo.ResultVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -32,7 +32,7 @@ public class DocumentController {
             @ApiImplicitParam(value = "文件" ,name = "file",required = true)
     })
     public ResultVO saveIDCard(@ApiParam MultipartFile file,String category){
-        DocumentPojo documentPojo = FileUtils.saveFile(category, file);
+        DocumentPojo documentPojo = FileCommonUtils.saveFile(category, file);
         if(EmptyUtils.isNotEmpty(documentPojo)){
             return ResultVO.success(documentPojo);
         }else{

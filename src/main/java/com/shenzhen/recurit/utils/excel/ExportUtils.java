@@ -21,11 +21,13 @@ import org.springframework.http.MediaType;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.Map;
 
 public class ExportUtils {
 
@@ -82,7 +84,7 @@ public class ExportUtils {
         return ResultVO.success();
     }
 
-    private static  void  buildExcelDocument(String fileName, Workbook wb,HttpServletResponse response){
+    public static  void  buildExcelDocument(String fileName, Workbook wb,HttpServletResponse response){
         try {
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             response.setHeader("Content-Disposition", "attachment;filename="+ URLEncoder.encode(fileName, InformationConstant.UTF_8));
@@ -115,4 +117,6 @@ public class ExportUtils {
         
         return null;
     }
+
+
 }

@@ -1,7 +1,10 @@
 package com.shenzhen.recurit.dao;
 
+import com.shenzhen.recurit.pojo.UserPojo;
 import com.shenzhen.recurit.vo.UserVO;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface UserMapper {
 
@@ -60,4 +63,19 @@ public interface UserMapper {
     UserVO getUserCode(String userCode);
 
     UserVO getUserByNameOrEmailOrPhone(String userName);
+
+    /**
+     * 通过名字，手机或者邮箱查找用户
+     * @param listName
+     * @param listPhone
+     * @param listEmail
+     * @return
+     */
+    List<UserPojo> getUserByNameAndPhoneAndEmail(@Param("listName") List<String> listName,@Param("listPhone") List<String> listPhone,@Param("listEmail") List<String> listEmail);
+
+    /**
+     * 批量保存用户信息
+     * @param listUser
+     */
+    void batchSaveUserInfo(@Param("listUser") List<UserVO> listUser);
 }

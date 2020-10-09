@@ -31,6 +31,7 @@ public interface InformationConstant {
     String NUMBER = "number";
     String CODE = "code";
     String ROLE_NUM = "roleNum";
+    String IMPORT = "import";
 
     //header 请求头
     String AUTH_USER = "auth-user";
@@ -50,6 +51,14 @@ public interface InformationConstant {
     String ADMIN = "admin";           //超级管理员
     String ENTERPRISE = "enterprise"; //企业用户
     String JOBSEEKER = "jobseeker";   //普通用户
+
+    //
+    String MALE = "男";
+    String FEMALE = "女";
+    String ADMIN_EN = "管理员";           //超级管理员
+    String ENTERPRISE_EN = "招聘者"; //企业用户
+    String JOBSEEKER_EN = "求职者";   //普通用户
+
 
     //请求头，获取IP地址
     String X_FORWARDED_FOR ="x-forwarded-for";

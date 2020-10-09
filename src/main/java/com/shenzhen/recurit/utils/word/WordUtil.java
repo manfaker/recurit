@@ -21,7 +21,7 @@ import java.util.Map;
 
 public class WordUtil {
 
-    public static String path=null;
+    private static String path=null;
 
     static{
         if(EmptyUtils.isEmpty(path)){
@@ -31,6 +31,10 @@ public class WordUtil {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static String getResourcePath(){
+        return WordUtil.path;
     }
 
 

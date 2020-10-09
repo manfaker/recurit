@@ -8,21 +8,37 @@ import com.shenzhen.recurit.constant.OrdinaryConstant;
 import com.shenzhen.recurit.dao.UserMapper;
 import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.enums.SymbolEnum;
+import com.shenzhen.recurit.pojo.ExportsPojo;
+import com.shenzhen.recurit.pojo.ImportResultPojo;
+import com.shenzhen.recurit.pojo.UserPojo;
 import com.shenzhen.recurit.service.ResumeService;
 import com.shenzhen.recurit.service.UserService;
 import com.shenzhen.recurit.utils.*;
+import com.shenzhen.recurit.utils.excel.ExportUtils;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.ResumeVO;
 import com.shenzhen.recurit.vo.UserVO;
+import io.netty.buffer.Unpooled;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,6 +52,8 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
     @Resource
     private ResumeService resumeService;
+
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Override
     public Object getVerificationCode(String number) {
@@ -607,6 +625,280 @@ public class UserServiceImpl implements UserService {
             return ResultVO.success("验证码错误",false);
         }
     }
+
+    @Override
+    public void batchUserInfo(ImportResultPojo importInfos, HttpServletResponse response) {
+        Map<Integer,Map<String,List<String>>> checkMap = new HashMap<>();
+        List<UserVO> listUser = importInfos.getListT();
+        if(EmptyUtils.isNotEmpty(listUser)&&listUser.size()>NumberEnum.ZERO.getValue()){
+            Map<Integer,UserVO> mapUser = new HashMap<>();
+            exchangeListToMap(mapUser,listUser);
+            Map<Integer,UserVO> queryData = new HashMap<>();
+            filterProblemData(mapUser,checkMap,queryData);
+            List<UserVO> listVO= new ArrayList<>();
+            for(Map.Entry<Integer,UserVO> entry : queryData.entrySet()){
+                if(listVO.size()>NumberEnum.ONE_HUNDRED.getValue()){
+                    batchSaveUserInfo(listUser);
+                    listUser.clear();
+                }
+                UserVO  userVO= entry.getValue();
+                setBaseUser(userVO);
+                listVO.add(userVO);
+            }
+            if(listUser.size()>NumberEnum.ZERO.getValue()){
+                batchSaveUserInfo(listUser);
+            }
+            //将成功或者失败的重新显示
+            File file = importInfos.getTemplateFile();
+        }
+
+    }
+
+    /**
+     * 导出结果文档
+     */
+    private void addExportInfomation(File file,Map<Integer, Map<String,List<String>>> checkMap){
+        InputStream inputStream = null;
+        Workbook workbook = null;
+        try {
+            inputStream  = new FileInputStream(file);
+            String suffix = file.getName().substring(file.getName().indexOf(OrdinaryConstant.SYMBOL_5)+ NumberEnum.ONE.getValue());
+            if(OrdinaryConstant.SYMBOL_7.equals(suffix)){
+                workbook = new XSSFWorkbook(inputStream);
+            }else{
+                workbook = new HSSFWorkbook(inputStream);
+            }
+            if(EmptyUtils.isNotEmpty(workbook)){
+                Sheet sheet = workbook.getSheetAt(NumberEnum.ZERO.getValue());
+                Row firstRow  = sheet.getRow(NumberEnum.ZERO.getValue());
+                if(EmptyUtils.isEmpty(firstRow)){
+                    logger.error("模板excel 首列标题信息不能为空");
+                    throw new RuntimeException();
+                }
+                int lastCellNum = firstRow.getLastCellNum()+NumberEnum.ONE.getValue();
+                Cell lastRowCell =  firstRow.createCell(lastCellNum);
+                lastRowCell.setCellValue("导入信息");
+                int lastRowNum = sheet.getLastRowNum();
+                for(int index=NumberEnum.ONE.getValue();index<=lastRowNum;index++){
+                    Row row = sheet.getRow(index);
+                    Cell cell = row.createCell(lastCellNum);
+                    if(EmptyUtils.isNotEmpty(cell)){
+                        if(EmptyUtils.isNotEmpty(checkMap)
+                                &&checkMap.containsKey(index)
+                                &&checkMap.get(index).containsKey("error")
+                                &&EmptyUtils.isNotEmpty(checkMap.get(index).get("error"))
+                                &&checkMap.get(index).get("error").size()>NumberEnum.ZERO.getValue()){
+                            cell.setCellValue("导入成功");
+                        }else{
+                            cell.setCellValue(String.join(OrdinaryConstant.SYMBOL_4,checkMap.get(index).get("error")));
+                        }
+                    }
+                }
+                ExportUtils.buildExcelDocument(file.getName(),workbook,CommonUtils.getResponse());
+            }
+        }catch (Exception e){
+            throw  new RuntimeException(e);
+        }finally {
+            if(EmptyUtils.isNotEmpty(inputStream)){
+                try {
+                    inputStream.close();
+                    file.delete();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * 修改并导出结论
+     */
+    private void updateExportResult(ImportResultPojo importInfos,Map<Integer,Map<String,List<String>>> checkMap, HttpServletResponse response){
+            File file = importInfos.getTemplateFile();
+            Map<Integer, ExportsPojo> exportMap = importInfos.getExportMap();
+
+    }
+
+    private Map<String,Integer> getExportColumnInfo(Map<Integer, ExportsPojo> exportMap){
+        Map<String,Integer> map = new HashMap<>();
+        //for(Map.Entry<Integer, ExportsPojo>)
+        return null;
+    }
+
+    @Override
+    public void batchSaveUserInfo(List<UserVO> listUser) {
+        userMapper.batchSaveUserInfo(listUser);
+    }
+
+    public List<UserPojo> getUserByNameAndPhoneAndEmail(List<String> listName,List<String> listPhone,List<String> listEmail){
+        return userMapper.getUserByNameAndPhoneAndEmail(listName,listPhone,listEmail);
+    }
+
+    /**
+     * 过滤异常数据，检查重复数据
+     * @param mapUser
+     * @param checkMap
+     * @param queryData
+     */
+    private void filterProblemData(Map<Integer,UserVO> mapUser,Map<Integer,Map<String,List<String>>> checkMap,Map<Integer,UserVO> queryData){
+        for(Map.Entry<Integer,UserVO> entry:mapUser.entrySet()){
+            int key = entry.getKey();
+            UserVO userVO = entry.getValue();
+            Map<String,List<String>> mapError=null;
+            if(checkMap.containsKey(key)){
+                mapError = checkMap.get(key);
+            }else{
+                mapError=new HashMap<>();
+            }
+            checkAndExchangData(userVO,mapError,queryData,key);
+            checkMap.put(key,mapError);
+        }
+        List<UserPojo> repeatUsers = getUserByNameAndPhoneAndEmail(queryData);
+        List<Integer> filterData = new ArrayList<>();
+        //查找重复数据
+        filterRepeatData(mapUser,repeatUsers,filterData,checkMap);
+        //过滤掉重复数据
+        if(EmptyUtils.isNotEmpty(filterData)&&filterData.size()>NumberEnum.ZERO.getValue()){
+            for(Integer f : filterData){
+                if(queryData.containsKey(f)){
+                    queryData.remove(f);
+                }
+            }
+        }
+
+    }
+
+    private void filterRepeatData(Map<Integer,UserVO> mapUser,List<UserPojo> repeatUsers,List<Integer> filterData,Map<Integer,Map<String,List<String>>> checkMap){
+        if(EmptyUtils.isNotEmpty(repeatUsers)&&repeatUsers.size()>NumberEnum.ZERO.getValue()){
+            for(UserPojo userPojo : repeatUsers){
+                boolean flag = false;
+                for(Map.Entry<Integer,UserVO> entry : mapUser.entrySet()){
+                    if((EmptyUtils.isNotEmpty(userPojo.getUserName())&&userPojo.getUserName().equals(entry.getValue().getUserName()))||
+                            (EmptyUtils.isNotEmpty(userPojo.getPhone())&&userPojo.getPhone().equals(entry.getValue().getPhone()))||
+                            (EmptyUtils.isNotEmpty(userPojo.getPhone())&&userPojo.getPhone().equals(entry.getValue().getPhone()))){
+                        Map<String,List<String>> mapError = checkMap.get(entry.getKey());
+                        List<String> listError = mapError.get("error");
+                        List<String> listField = mapError.get("field");
+                        if(userPojo.getUserName().equals(entry.getValue().getUserName())&&!listField.contains("userName")){
+                            flag=true;
+                            listError.add("用户名已存在！");
+                            listField.add("userName");
+                        }
+                        if(userPojo.getPhone().equals(entry.getValue().getPhone())&&!listField.contains("phone")){
+                            flag=true;
+                            listError.add("电话号码已存在！");
+                            listField.add("phone");
+                        }
+                        if(userPojo.getEmail().equals(entry.getValue().getEmail())&&!listField.contains("phone")){
+                            flag=true;
+                            listError.add("邮箱已存在！");
+                            listField.add("phone");
+                        }
+                        if(flag){
+                            filterData.add(entry.getKey());
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private List<UserPojo> getUserByNameAndPhoneAndEmail(Map<Integer,UserVO> queryData){
+        List<UserPojo> listUser = new ArrayList<>();
+        if(queryData.size()>NumberEnum.ZERO.getValue()){
+            List<String> listName = new ArrayList<>();
+            List<String> listPhone = new ArrayList<>();
+            List<String> listEmail = new ArrayList<>();
+            for(Map.Entry<Integer,UserVO> entry:queryData.entrySet()){
+                if(listName.size()>=NumberEnum.ONE_HUNDRED.getValue()||
+                        listPhone.size()>=NumberEnum.ONE_HUNDRED.getValue()||
+                        listEmail.size()>=NumberEnum.ONE_HUNDRED.getValue()){
+                    List<UserPojo> repeatUser = getUserByNameAndPhoneAndEmail(listName, listPhone, listEmail);
+                    listUser.addAll(repeatUser);
+                    listName.clear();
+                    listPhone.clear();
+                    listEmail.clear();
+                }
+                listName.add(entry.getValue().getUserName());
+                listPhone.add(entry.getValue().getPhone());
+                listEmail.add(entry.getValue().getEmail());
+            }
+            if(listName.size()>=NumberEnum.ZERO.getValue()||
+                    listPhone.size()>=NumberEnum.ZERO.getValue()||
+                    listEmail.size()>=NumberEnum.ZERO.getValue()){
+                List<UserPojo> repeatUser = getUserByNameAndPhoneAndEmail(listName, listPhone, listEmail);
+                listUser.addAll(repeatUser);
+            }
+        }
+        return listUser;
+    }
+
+    /**
+     * 检查并转换数据
+     * @param userVO
+     * @param mapError
+     */
+    private void checkAndExchangData(UserVO userVO,Map<String,List<String>> mapError,Map<Integer,UserVO> queryData,int key){
+        boolean flag = false;
+        if(EmptyUtils.isNotEmpty(userVO)){
+            //转换数据
+            if(InformationConstant.MALE.equals(userVO.getSex())){
+                userVO.setSexNum("01");
+            }else if (InformationConstant.FEMALE.equals(userVO.getSex())){
+                userVO.setSexNum("02");
+            }else{
+                userVO.setSexNum("00");
+            }
+            if(InformationConstant.ADMIN_EN.equals(userVO.getRoleName())){
+                userVO.setRoleNum("ROLE0000");
+            }else if (InformationConstant.JOBSEEKER_EN.equals(userVO.getSex())){
+                userVO.setRoleNum("ROLE0002");
+            }else{
+                userVO.setRoleNum("ROLE0001");
+            }
+            userVO.setPassword(userVO.getPassword());
+            String phone = EmptyUtils.isNotEmpty(userVO.getPhone())?userVO.getPhone():OrdinaryConstant.IS_BLACK;
+            String email = EmptyUtils.isNotEmpty(userVO.getEmail())?userVO.getEmail():OrdinaryConstant.IS_BLACK;
+            List<String> listError = null;
+            List<String> listField = null;
+            if(mapError.containsKey("error")){
+                listError = mapError.get("error");
+            }else{
+                listError=new ArrayList<>();
+            }
+            if(mapError.containsKey("field")){
+                listField = mapError.get("field");
+            }else{
+                listField=new ArrayList<>();
+            }
+            if(!emailVerify(email)){
+                flag = true;
+                listError.add("邮箱格式有误！");
+                if(!listField.contains("email"))
+                listField.add("email");
+            }
+            if(!emailVerify(phone)){
+                flag = true;
+                listError.add("电话格式有误！");
+                if(!listField.contains("phone"))
+                listField.add("phone");
+            }
+            mapError.put("error",listError);
+            mapError.put("field",listField);
+            if(!flag){
+                queryData.put(key,userVO);
+            }
+        }
+    }
+
+    private void exchangeListToMap(Map<Integer,UserVO> mapUser,List<UserVO> listUser){
+        //list 转 map
+        for(int index=NumberEnum.ZERO.getValue();index<listUser.size();index++){
+            mapUser.put(index+NumberEnum.ONE.getValue(),listUser.get(index));
+        }
+    }
+
 
 
 }

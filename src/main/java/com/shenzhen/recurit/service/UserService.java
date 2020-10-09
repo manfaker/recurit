@@ -1,7 +1,11 @@
 package com.shenzhen.recurit.service;
 
+import com.shenzhen.recurit.pojo.ImportResultPojo;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.UserVO;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 public interface UserService {
 
@@ -101,4 +105,12 @@ public interface UserService {
      * @return
      */
     Object verificateIphone(String phone, String code);
+
+    /**
+     * 根据excel批量导入
+     * @param importInfos
+     */
+    void batchUserInfo(ImportResultPojo importInfos, HttpServletResponse response);
+
+    void batchSaveUserInfo(List<UserVO> listUser);
 }

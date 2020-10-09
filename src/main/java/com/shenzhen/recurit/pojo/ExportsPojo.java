@@ -25,6 +25,7 @@ public class ExportsPojo {
     private int colour;
     @ApiModelProperty(value = "实列名")
     private String instanceName;
-
+    @ApiModelProperty(value = "类型 导入导出")
+    private String category;
     private String sheetName;
 }

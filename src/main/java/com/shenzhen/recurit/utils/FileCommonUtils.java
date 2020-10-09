@@ -16,10 +16,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class FileUtils {
+public class FileCommonUtils {
     private static DocumentService documentService;
     private static VaribaleUtils varibaleUtils;
-    private static Logger logger = LoggerFactory.getLogger(FileUtils.class);
+    private static Logger logger = LoggerFactory.getLogger(FileCommonUtils.class);
 
     static{
         if(EmptyUtils.isEmpty(documentService)){

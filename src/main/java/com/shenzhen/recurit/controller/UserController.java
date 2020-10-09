@@ -2,16 +2,22 @@ package com.shenzhen.recurit.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.shenzhen.recurit.enums.ReturnEnum;
+import com.shenzhen.recurit.pojo.ImportResultPojo;
+import com.shenzhen.recurit.pojo.UserPojo;
 import com.shenzhen.recurit.service.UserService;
 import com.shenzhen.recurit.utils.EmailUtils;
 import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.utils.RedisTempleUtils;
+import com.shenzhen.recurit.utils.excel.ExportUtils;
+import com.shenzhen.recurit.utils.excel.ImportUtils;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.UserVO;
 import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping(value = "user")
@@ -132,9 +138,21 @@ public class UserController {
             @ApiImplicitParam(value = "手机" ,name="phone",required = true),
             @ApiImplicitParam(value = "验证码" ,name="code",required = true)
     })
-
     @GetMapping (value = "verificateIphone")
     public Object verificateIphone(String phone,String code){
         return userService.verificateIphone(phone,code);
     }
+
+    @PostMapping(value = "batchUserInfo")
+    @ApiOperation(value = "批量导入用户信息")
+    @ApiImplicitParams({
+       @ApiImplicitParam(value = "导入文件",name="file",required = true),
+       @ApiImplicitParam(value = "实例名",name="file",required = true)
+    })
+    public void batchUserInfo(MultipartFile file, String instanceName,HttpServletResponse response){
+        ImportResultPojo importInfos = ImportUtils.getImportInfos(file, new UserVO(), instanceName);
+        userService.batchUserInfo(importInfos,response);
+    }
+
+
 }

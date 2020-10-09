@@ -130,4 +130,19 @@
         and t.status = 1 limit 1
     </select>
 
+    <select id="getUserByNameAndPhoneAndEmail" resultMap="baseResultMap">
+        select user_name,phone,email from tab_user where
+        user_name  in <foreach collection="listName" item="name" separator="," open="(" close=")"> #{name} </foreach>
+        or phone  in <foreach collection="listPhone" item="phone" separator="," open="(" close=")"> #{phone} </foreach>
+        or email  in <foreach collection="listEmail" item="email" separator="," open="(" close=")"> #{email} </foreach>
+    </select>
+
+    <insert id="batchSaveUserInfo" keyColumn="id" keyProperty="id" useGeneratedKeys="true" >
+        insert into tab_user(<include refid="baseResult"/>) values
+            <foreach collection="listUser" item="user" separator=",">
+                (#{user.userName},#{user.realName},#{user.phone},#{user.fixedPhone},#{user.email},#{user.password},#{user.contactser},
+                #{user.roleNum},#{user.sex},#{user.age},#{user.birth},#{user.createDate},#{user.updateDate},#{user.nickName},#{user.companyCode},#{user.userCode})
+            </foreach>
+    </insert>
+
 </mapper>
