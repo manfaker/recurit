@@ -3,8 +3,11 @@ package com.shenzhen.recurit.vo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @ApiModel(value = "地址表")
 public class AddressVO extends BaseVO{
     @ApiModelProperty(value = "主键")

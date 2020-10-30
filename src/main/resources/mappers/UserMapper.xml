@@ -23,16 +23,23 @@
             <result column="status" property="status"/>
             <result column="company_code" property="companyCode"/>
             <result column="user_code" property="userCode"/>
+            <result column="like_job" property="likeJob"/>
+        </resultMap>
+
+        <resultMap id="baseResultMapPojo" type="com.shenzhen.recurit.pojo.UserPojo">
+            <result column="user_name" property="userName"/>
+            <result column="phone" property="phone"/>
+            <result column="email" property="email"/>
         </resultMap>
 
         <sql id="baseResult">
             user_name,real_name,phone,fixed_phone,email,password,contactser,
-                role_num,sex,age,birth,create_date,update_date,nick_name,company_code,user_code
+                role_num,sex,age,birth,create_date,update_date,nick_name,company_code,user_code,like_job
         </sql>
         <sql id="preBaseResult">
             t.user_name,t.real_name,t.phone,t.fixed_phone,t.email,t.password,t.contactser,
                 t.role_num,t.sex,t.age,t.birth,t.create_date,t.update_date,
-                t.nick_name,t.status,t.company_code,t.user_code
+                t.nick_name,t.status,t.company_code,t.user_code,t.like_job
         </sql>
 
         <select id="getUserByEmail" resultMap="baseResultMap">
@@ -60,7 +67,7 @@
             insert into tab_user(<include refid="baseResult"/>)
                 values(#{userName},#{realName},#{phone},#{fixedPhone},#{email},#{password},#{contactser},
                         #{roleNum},#{sex},#{age},#{birth},#{createDate},#{updateDate}
-                        ,#{nickName},#{companyCode},#{userCode})
+                        ,#{nickName},#{companyCode},#{userCode},#{likeJob})
         </insert>
 
         <select id="getUserByNameAndPass" resultMap="baseResultMap">
@@ -119,6 +126,9 @@
             <if test="companyCode != null and companyCode != ''">
                 company_code = #{companyCode},
             </if>
+            <if test="likeJob != null and likeJob != ''">
+                like_job = #{likeJob},
+            </if>
                 update_date = #{updateDate}
         </set>
             where id = #{id}
@@ -130,18 +140,19 @@
         and t.status = 1 limit 1
     </select>
 
-    <select id="getUserByNameAndPhoneAndEmail" resultMap="baseResultMap">
+    <select id="getUserByNameAndPhoneAndEmail" resultMap="baseResultMapPojo">
         select user_name,phone,email from tab_user where
         user_name  in <foreach collection="listName" item="name" separator="," open="(" close=")"> #{name} </foreach>
         or phone  in <foreach collection="listPhone" item="phone" separator="," open="(" close=")"> #{phone} </foreach>
         or email  in <foreach collection="listEmail" item="email" separator="," open="(" close=")"> #{email} </foreach>
     </select>
 
-    <insert id="batchSaveUserInfo" keyColumn="id" keyProperty="id" useGeneratedKeys="true" >
-        insert into tab_user(<include refid="baseResult"/>) values
+    <insert id="batchSaveUserInfo">
+        insert into tab_user(user_name,real_name,phone,fixed_phone,email,password,contactser,
+        role_num,sex,age,birth,create_date,update_date,nick_name,company_code,user_code,like_job) values
             <foreach collection="listUser" item="user" separator=",">
                 (#{user.userName},#{user.realName},#{user.phone},#{user.fixedPhone},#{user.email},#{user.password},#{user.contactser},
-                #{user.roleNum},#{user.sex},#{user.age},#{user.birth},#{user.createDate},#{user.updateDate},#{user.nickName},#{user.companyCode},#{user.userCode})
+                #{user.roleNum},#{user.sex},#{user.age},#{user.birth},#{user.createDate},#{user.updateDate},#{user.nickName},#{user.companyCode},#{user.userCode},#{user.likeJob})
             </foreach>
     </insert>
 

@@ -110,7 +110,7 @@ public interface UserService {
      * 根据excel批量导入
      * @param importInfos
      */
-    void batchUserInfo(ImportResultPojo importInfos, HttpServletResponse response);
+    ResultVO batchUserInfo(ImportResultPojo importInfos, HttpServletResponse response);
 
     void batchSaveUserInfo(List<UserVO> listUser);
 }

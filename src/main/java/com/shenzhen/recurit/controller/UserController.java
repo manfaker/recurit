@@ -147,11 +147,11 @@ public class UserController {
     @ApiOperation(value = "批量导入用户信息")
     @ApiImplicitParams({
        @ApiImplicitParam(value = "导入文件",name="file",required = true),
-       @ApiImplicitParam(value = "实例名",name="file",required = true)
+       @ApiImplicitParam(value = "实例名",name="instanceName",required = true)
     })
-    public void batchUserInfo(MultipartFile file, String instanceName,HttpServletResponse response){
+    public ResultVO batchUserInfo(MultipartFile file, String instanceName,HttpServletResponse response){
         ImportResultPojo importInfos = ImportUtils.getImportInfos(file, new UserVO(), instanceName);
-        userService.batchUserInfo(importInfos,response);
+        return userService.batchUserInfo(importInfos,response);
     }
 
 

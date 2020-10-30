@@ -31,6 +31,7 @@ public class UserPojo extends BaseVO{
     private List<DesiredPositionPojo> listDesiredPosition;//期望职位
     private List<EducationExperiencesPojo> listEducationExperience;//个人教育
     private String image;//头像信息
+    private String likeJob; //意向职位
 
 
 }
