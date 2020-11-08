@@ -2,6 +2,7 @@ package com.shenzhen.recurit.service;
 
 import com.shenzhen.recurit.vo.PositionUserRelationVO;
 import com.shenzhen.recurit.vo.ResultVO;
+import com.shenzhen.recurit.vo.UserVO;
 
 public interface PositionUserRelationService {
 
@@ -32,5 +33,5 @@ public interface PositionUserRelationService {
      * @param positionUserRelationVO
      * @return
      */
-    ResultVO createOrUpdateRelation(PositionUserRelationVO positionUserRelationVO);
+    ResultVO createOrUpdateRelation(PositionUserRelationVO positionUserRelationVO, UserVO userVO);
 }

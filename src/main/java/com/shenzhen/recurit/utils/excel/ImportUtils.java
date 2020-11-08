@@ -110,7 +110,7 @@ public class ImportUtils {
     private  static<T> List<T> getAllData(List<T> listT,Workbook workbook,String instanceName,T t,ImportResultPojo importPojo){
         if(EmptyUtils.isNotEmpty(workbook)){
             Sheet sheet = workbook.getSheetAt(NumberEnum.ZERO.getValue());
-            List<ExportsPojo> listExports = exportsService.getAllExportsByTableName(instanceName);
+            List<ExportsPojo> listExports = exportsService.getAllExportsByTableName(instanceName, InformationConstant.IMPORT);
             if(EmptyUtils.isEmpty(listExports)){
                 return listT;
             }

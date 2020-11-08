@@ -1,6 +1,7 @@
 package com.shenzhen.recurit.service;
 
 import com.shenzhen.recurit.pojo.ImportResultPojo;
+import com.shenzhen.recurit.pojo.UserPojo;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.UserVO;
 
@@ -110,7 +111,13 @@ public interface UserService {
      * 根据excel批量导入
      * @param importInfos
      */
-    ResultVO batchUserInfo(ImportResultPojo importInfos, HttpServletResponse response);
+    ResultVO batchUserInfo(ImportResultPojo importInfos);
 
     void batchSaveUserInfo(List<UserVO> listUser);
+
+    /**
+     * 查询所有未投递简历的求职人员
+     * @return
+     */
+    List<UserVO> getAllIsNotPosition();
 }

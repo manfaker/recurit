@@ -132,14 +132,21 @@ public class PositionUserRelationServiceImpl implements PositionUserRelationServ
     }
 
     @Override
-    public ResultVO createOrUpdateRelation(PositionUserRelationVO positionUserRelationVO) {
+    public ResultVO createOrUpdateRelation(PositionUserRelationVO positionUserRelationVO,UserVO userVO) {
         if(EmptyUtils.isEmpty(positionUserRelationVO.getPositionId())){
             return ResultVO.error("职位信息不能为空");
         }
-        UserVO user = ThreadLocalUtils.getUser();
-        String userCode = user.getUserCode();
-        if("ROLE0001".equals(user.getRoleNum())){
-            userCode=positionUserRelationVO.getUserCode();
+        UserVO user = null;
+        String userCode;
+        if(EmptyUtils.isNotEmpty(userVO)){
+            user = userVO;
+            userCode = userVO.getUserCode();
+        }else{
+            ThreadLocalUtils.getUser();
+            userCode = user.getUserCode();
+            if("ROLE0001".equals(user.getRoleNum())){
+                userCode=positionUserRelationVO.getUserCode();
+            }
         }
         PositionUserRelationVO relation = positionUserRelationMapper.getRelationByPositionIdAndUserCode(positionUserRelationVO.getPositionId(), userCode);
         if(EmptyUtils.isNotEmpty(relation)){

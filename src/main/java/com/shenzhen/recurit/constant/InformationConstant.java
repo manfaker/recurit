@@ -32,6 +32,9 @@ public interface InformationConstant {
     String CODE = "code";
     String ROLE_NUM = "roleNum";
     String IMPORT = "import";
+    String ROLE = "ROLE";
+    String SEX = "SEX";
+    String EXPORT = "export";
 
     //header 请求头
     String AUTH_USER = "auth-user";

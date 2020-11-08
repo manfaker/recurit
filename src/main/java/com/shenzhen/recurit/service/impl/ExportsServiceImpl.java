@@ -15,7 +15,7 @@ public class ExportsServiceImpl implements ExportsService {
     private ExportsMapper exportsMapper;
 
     @Override
-    public List<ExportsPojo> getAllExportsByTableName(String instanceName) {
-        return exportsMapper.getAllExportsByTableName(instanceName);
+    public List<ExportsPojo> getAllExportsByTableName(String instanceName, String category) {
+        return exportsMapper.getAllExportsByTableName(instanceName, category);
     }
 }

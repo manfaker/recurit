@@ -19,7 +19,7 @@
         </sql>
 
         <select id="getAllExportsByTableName" resultMap="baseResultMap">
-            select id,<include refid="baseResult"/> from tab_exports where instance_name = #{instanceName}
+            select id,<include refid="baseResult"/> from tab_exports where instance_name = #{instanceName} and category = #{category}
         </select>
 
 

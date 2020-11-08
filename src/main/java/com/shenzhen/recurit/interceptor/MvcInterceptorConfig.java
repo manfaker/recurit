@@ -27,7 +27,12 @@ public class MvcInterceptorConfig extends WebMvcConfigurationSupport {
                 .addPathPatterns("/**")
                 .excludePathPatterns("/error")
                 //test 和 user 类不进行拦截
-                .excludePathPatterns("/test/**","/user/**","/pay/alipay/**"
+                .excludePathPatterns("/test/**","/user/reLogin","/user/noPrivilege","/user/getVerificationCode",
+                                        "/user/addByNumber","/user/addUser","/user/updatePassword",
+                                        "/user/loginUser","/user/deleteUser","/user/exitUser","/user/getUserInfo",
+                                        "/user/getUserInfoByNameOrNumber","/user/updateUser","/user/updateOrSaveImage",
+                                        "/user/sendResume","/user/verificateIphone",
+                                        "/pay/alipay/**"
                                         ,"/position/getPopularPositions","/position/getNewAllPositions"
                                         ,"/resume/getCheckedPeoples","social/standard/getAllSocialStandard"
                                         ,"/activity/package/getAllActivityPackage")

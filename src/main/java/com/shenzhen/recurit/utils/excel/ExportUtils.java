@@ -10,6 +10,7 @@ import com.shenzhen.recurit.service.ExportsService;
 import com.shenzhen.recurit.service.impl.ExportsServiceImpl;
 import com.shenzhen.recurit.utils.EmptyUtils;
 import com.shenzhen.recurit.utils.SpringUtils;
+import com.shenzhen.recurit.utils.StringFormatUtils;
 import com.shenzhen.recurit.vo.ResultVO;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -17,6 +18,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.mockito.internal.matchers.Or;
 import org.springframework.http.MediaType;
 
 import javax.servlet.ServletOutputStream;
@@ -31,63 +33,66 @@ import java.util.Map;
 
 public class ExportUtils {
 
-    private static ExportsService exportsService=null;
+    private static ExportsService exportsService = null;
 
-    private static void init(){
-        if(EmptyUtils.isEmpty(exportsService)){
+    private static void init() {
+        if (EmptyUtils.isEmpty(exportsService)) {
             exportsService = SpringUtils.getBean(ExportsServiceImpl.class);
         }
     }
 
-    public static ResultVO exportExcel(JSONArray jsonArray, HttpServletResponse response,String instanceName, String excelName){
+    public static ResultVO exportExcel(JSONArray jsonArray, HttpServletResponse response, String instanceName, String excelName) {
         init();
-        List<ExportsPojo> listExports = exportsService.getAllExportsByTableName(instanceName);
-        if(EmptyUtils.isEmpty(listExports)||listExports.isEmpty()){
+        List<ExportsPojo> listExports = exportsService.getAllExportsByTableName(instanceName, InformationConstant.EXPORT);
+        if (EmptyUtils.isEmpty(listExports) || listExports.isEmpty()) {
             return ResultVO.error("导出失败");
         }
         Workbook workbook = new XSSFWorkbook();
         String sheetName = listExports.get(NumberEnum.ZERO.getValue()).getSheetName();
         Sheet sheet = null;
-        if(EmptyUtils.isNotEmpty(sheetName)){
+        if (EmptyUtils.isNotEmpty(sheetName)) {
             sheet = workbook.createSheet(sheetName);
-        }else{
+        } else {
             sheet = workbook.createSheet();
         }
         //创建标题列
         Row titleRow = sheet.createRow(NumberEnum.ZERO.getValue());
-        for(int index=NumberEnum.ZERO.getValue();index<listExports.size();index++){
+        for (int index = NumberEnum.ZERO.getValue(); index < listExports.size(); index++) {
             ExportsPojo exportsPojo = listExports.get(index);
             Cell cell = titleRow.createCell(exportsPojo.getGradation());
             setCellType(cell);
             cell.setCellValue(exportsPojo.getColumnName());
         }
-        if(EmptyUtils.isNotEmpty(jsonArray)){
-            for(int index=NumberEnum.ZERO.getValue();index<jsonArray.size();index++){
+        if (EmptyUtils.isNotEmpty(jsonArray)) {
+            for (int index = NumberEnum.ZERO.getValue(); index < jsonArray.size(); index++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(index);
-                Row row = sheet.createRow(index+NumberEnum.ONE.getValue());
-                for(int num=NumberEnum.ZERO.getValue();num<listExports.size();num++){
+                Row row = sheet.createRow(index + NumberEnum.ONE.getValue());
+                for (int num = NumberEnum.ZERO.getValue(); num < listExports.size(); num++) {
                     String columnValue = OrdinaryConstant.IS_BLACK;
                     ExportsPojo exportsPojo = listExports.get(num);
                     String columnName = exportsPojo.getColumnField();
-                    Cell cell =row.createCell(exportsPojo.getGradation());
+                    Cell cell = row.createCell(exportsPojo.getGradation());
                     setCellType(cell);
-                    if(EmptyUtils.isNotEmpty(columnName)&&jsonObject.containsKey(columnName)){
+                    if (EmptyUtils.isNotEmpty(columnName) && jsonObject.containsKey(columnName)) {
                         columnValue = jsonObject.getString(columnName);
-                        if(EmptyUtils.isNotEmpty(columnValue)){
+                        if (EmptyUtils.isNotEmpty(columnValue)) {
                             cell.setCellValue(columnValue);
                         }
                     }
                 }
             }
         }
-        buildExcelDocument(excelName,workbook,response);
+        buildExcelDocument(excelName, workbook, response);
         return ResultVO.success();
     }
 
-    public static  void  buildExcelDocument(String fileName, Workbook wb,HttpServletResponse response){
+    public static void buildExcelDocument(String fileName, Workbook wb, HttpServletResponse response) {
         try {
+            if (EmptyUtils.isNotEmpty(fileName) && fileName.lastIndexOf(OrdinaryConstant.SYMBOL_7) == -1) {
+                fileName = StringFormatUtils.format("%s%s%s", fileName, OrdinaryConstant.SYMBOL_5, OrdinaryConstant.SYMBOL_7);
+            }
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            response.setHeader("Content-Disposition", "attachment;filename="+ URLEncoder.encode(fileName, InformationConstant.UTF_8));
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, InformationConstant.UTF_8));
             response.flushBuffer();
             OutputStream outputStream = response.getOutputStream();
             wb.write(outputStream);
@@ -97,26 +102,25 @@ public class ExportUtils {
         }
     }
 
-    private static void close(OutputStream outputStream){
-       try {
-           if(EmptyUtils.isNotEmpty(outputStream)){
+    private static void close(OutputStream outputStream) {
+        try {
+            if (EmptyUtils.isNotEmpty(outputStream)) {
                 outputStream.flush();
                 outputStream.close();
-           }
-       } catch (IOException e) {
-           e.printStackTrace();
-       }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
-    private static void setCellType(Cell cell){
+    private static void setCellType(Cell cell) {
         cell.setCellType(Cell.CELL_TYPE_NUMERIC);
     }
 
-    public static<T> ResultVO exportExcel(List<T> listT, String instanceName){
-        
+    public static <T> ResultVO exportExcel(List<T> listT, String instanceName) {
+
         return null;
     }
-
 
 }

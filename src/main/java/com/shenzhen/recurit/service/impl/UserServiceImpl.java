@@ -3,6 +3,7 @@ package com.shenzhen.recurit.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageInfo;
 import com.shenzhen.recurit.constant.InformationConstant;
 import com.shenzhen.recurit.constant.OrdinaryConstant;
 import com.shenzhen.recurit.dao.UserMapper;
@@ -10,11 +11,15 @@ import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.enums.SymbolEnum;
 import com.shenzhen.recurit.pojo.ExportsPojo;
 import com.shenzhen.recurit.pojo.ImportResultPojo;
+import com.shenzhen.recurit.pojo.PositionPojo;
 import com.shenzhen.recurit.pojo.UserPojo;
+import com.shenzhen.recurit.service.PositionService;
+import com.shenzhen.recurit.service.PositionUserRelationService;
 import com.shenzhen.recurit.service.ResumeService;
 import com.shenzhen.recurit.service.UserService;
 import com.shenzhen.recurit.utils.*;
 import com.shenzhen.recurit.utils.excel.ExportUtils;
+import com.shenzhen.recurit.vo.PositionUserRelationVO;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.ResumeVO;
 import com.shenzhen.recurit.vo.UserVO;
@@ -46,12 +51,18 @@ import java.util.regex.Pattern;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+
     @Resource
     private RedisTempleUtils redisTempleUtils;
     @Resource
     private UserMapper userMapper;
     @Resource
     private ResumeService resumeService;
+    @Resource
+    private PositionService positionService;
+    @Resource
+    private PositionUserRelationService positionUserRelationService;
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -640,7 +651,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResultVO batchUserInfo(ImportResultPojo importInfos, HttpServletResponse response) {
+    public ResultVO batchUserInfo(ImportResultPojo importInfos) {
         Map<Integer, Map<String, List<String>>> checkMap = new HashMap<>();
         List<UserVO> listUser = importInfos.getListT();
         if (EmptyUtils.isNotEmpty(listUser) && listUser.size() > NumberEnum.ZERO.getValue()) {
@@ -659,16 +670,39 @@ public class UserServiceImpl implements UserService {
                     userVO.setAge(getCalculationAge(userVO.getBirth()));
                 }
                 setBaseUser(userVO);
-                try{
+                try {
                     addResume(userVO);
                     listVO.add(userVO);
-                }catch (Exception e){
+                } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
 
             }
             if (listVO.size() > NumberEnum.ZERO.getValue()) {
                 batchSaveUserInfo(listVO);
+                UserVO currUser = ThreadLocalUtils.getUser();
+                for (UserVO userVO : listUser) {
+                    try {
+                        // 默认获取第一个职位发布简历
+                        PageInfo<PositionPojo> pageInfo = positionService.getByCompanyCode(currUser.getCompanyCode(), currUser.getUserCode(), 1, 1);
+                        PositionPojo positionPojo = null;
+                        if (EmptyUtils.isNotEmpty(pageInfo.getList()) && !pageInfo.getList().isEmpty()) {
+                            positionPojo = pageInfo.getList().get(0);
+                            PositionUserRelationVO positionUserRelationVO = new PositionUserRelationVO();
+                            positionUserRelationVO.setApply(2);
+                            positionUserRelationVO.setFollow(1);
+                            positionUserRelationVO.setPositionId(positionPojo.getId());
+                            // 修改投递状态
+                            positionUserRelationService.createOrUpdateRelation(positionUserRelationVO, userVO);
+                            resumeService.sendResumeEmail(userVO.getUserCode());
+                        }
+
+
+                    } catch (Exception e) {
+                        LOGGER.error(userVO.getUserName() + "简历发送失败");
+                        e.printStackTrace();
+                    }
+                }
             }
             //将成功或者失败的重新显示
             //File file = importInfos.getTemplateFile();
@@ -775,7 +809,7 @@ public class UserServiceImpl implements UserService {
             } else {
                 mapError = new HashMap<>();
             }
-            checkAndExchangData(userVO, mapError, queryData, key);
+            checkData(userVO, mapError, queryData, key);
             checkMap.put(key, mapError);
         }
         List<UserPojo> repeatUsers = getUserByNameAndPhoneAndEmail(queryData);
@@ -859,31 +893,71 @@ public class UserServiceImpl implements UserService {
         return listUser;
     }
 
+
     /**
-     * 检查并转换数据
+     * 转换数据
+     *
+     * @param userVO {@link UserVO}
+     */
+    private void exchangData(UserVO userVO) {
+        //转换数据
+        if (EmptyUtils.isNotEmpty(userVO.getSexNum()) || EmptyUtils.isNotEmpty(userVO.getSex())) {
+            if (EmptyUtils.isNotEmpty(userVO.getSexNum())) {
+                if (InformationConstant.MALE.equals(userVO.getSexNum())) {
+                    userVO.setSex("01");
+                } else if (InformationConstant.FEMALE.equals(userVO.getSexNum())) {
+                    userVO.setSex("02");
+                } else {
+                    userVO.setSex("00");
+                }
+            } else {
+                if ("01".equals(userVO.getSex())) {
+                    userVO.setSexNum("男");
+                } else if ("02".equals(userVO.getSexNum())) {
+                    userVO.setSexNum("女");
+                } else {
+                    userVO.setSexNum("未知");
+                }
+            }
+        } else {
+            userVO.setSex("00");
+            userVO.setSexNum("未知");
+        }
+        if (EmptyUtils.isNotEmpty(userVO.getRoleName()) || EmptyUtils.isNotEmpty(userVO.getRoleNum())) {
+            if (EmptyUtils.isNotEmpty(userVO.getRoleName())) {
+                if (InformationConstant.ADMIN_EN.equals(userVO.getRoleName())) {
+                    userVO.setRoleNum("ROLE0000");
+                } else if (InformationConstant.JOBSEEKER_EN.equals(userVO.getRoleName())) {
+                    userVO.setRoleNum("ROLE0002");
+                } else {
+                    userVO.setRoleNum("ROLE0001");
+                }
+            } else {
+                if ("ROLE0000".equals(userVO.getRoleNum())) {
+                    userVO.setRealName(InformationConstant.ADMIN_EN);
+                } else if ("ROLE0002".equals(userVO.getRoleNum())) {
+                    userVO.setRealName(InformationConstant.JOBSEEKER_EN);
+                } else {
+                    userVO.setRealName(InformationConstant.ENTERPRISE_EN);
+                }
+            }
+        } else {
+            userVO.setRealName(InformationConstant.JOBSEEKER_EN);
+            userVO.setRoleNum("ROLE0002");
+        }
+        userVO.setPassword(EncryptBase64Utils.encryptBASE64(userVO.getPassword()));
+    }
+
+    /**
+     * 检查并转换数据数据
      *
      * @param userVO
      * @param mapError
      */
-    private void checkAndExchangData(UserVO userVO, Map<String, List<String>> mapError, Map<Integer, UserVO> queryData, int key) {
+    private void checkData(UserVO userVO, Map<String, List<String>> mapError, Map<Integer, UserVO> queryData, int key) {
         boolean flag = false;
         if (EmptyUtils.isNotEmpty(userVO)) {
-            //转换数据
-            if (InformationConstant.MALE.equals(userVO.getSex())) {
-                userVO.setSexNum("01");
-            } else if (InformationConstant.FEMALE.equals(userVO.getSex())) {
-                userVO.setSexNum("02");
-            } else {
-                userVO.setSexNum("00");
-            }
-            if (InformationConstant.ADMIN_EN.equals(userVO.getRoleName())) {
-                userVO.setRoleNum("ROLE0000");
-            } else if (InformationConstant.JOBSEEKER_EN.equals(userVO.getSex())) {
-                userVO.setRoleNum("ROLE0002");
-            } else {
-                userVO.setRoleNum("ROLE0001");
-            }
-            userVO.setPassword(userVO.getPassword());
+            exchangData(userVO);
             String phone = EmptyUtils.isNotEmpty(userVO.getPhone()) ? userVO.getPhone() : OrdinaryConstant.IS_BLACK;
             String email = EmptyUtils.isNotEmpty(userVO.getEmail()) ? userVO.getEmail() : OrdinaryConstant.IS_BLACK;
             List<String> listError = null;
@@ -923,6 +997,17 @@ public class UserServiceImpl implements UserService {
         for (int index = NumberEnum.ZERO.getValue(); index < listUser.size(); index++) {
             mapUser.put(index + NumberEnum.ONE.getValue(), listUser.get(index));
         }
+    }
+
+    /**
+     * 查询所有未投递简历的求职人员
+     *
+     * @return
+     */
+    public List<UserVO> getAllIsNotPosition() {
+        List<UserVO> userPojoList = userMapper.getAllIsNotPosition();
+        userPojoList.forEach(userVO -> exchangData(userVO));
+        return userPojoList;
     }
 
 

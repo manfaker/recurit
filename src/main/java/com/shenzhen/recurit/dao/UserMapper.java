@@ -78,4 +78,6 @@ public interface UserMapper {
      * @param listUser
      */
     void batchSaveUserInfo(@Param("listUser") List<UserVO> listUser);
+
+    List<UserVO> getAllIsNotPosition();
 }

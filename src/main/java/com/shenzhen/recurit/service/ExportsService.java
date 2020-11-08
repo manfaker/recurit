@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ExportsService {
 
-    List<ExportsPojo> getAllExportsByTableName(String tableName);
+    List<ExportsPojo> getAllExportsByTableName(String tableName, String category);
 }

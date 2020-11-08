@@ -48,4 +48,5 @@ public interface PositionUserRelationMapper {
      * @param positionUserRelationVO
      */
     void saveRelation(PositionUserRelationVO positionUserRelationVO);
+
 }

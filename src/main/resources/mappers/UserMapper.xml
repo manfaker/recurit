@@ -156,4 +156,14 @@
             </foreach>
     </insert>
 
+    <select id="getAllIsNotPosition" resultMap="baseResultMap">
+        SELECT
+	    <include refid="baseResult"/>
+        FROM
+            tab_user
+        WHERE
+            user_code IN ( SELECT DISTINCT user_code FROM tab_position_user_relation WHERE STATUS = 1 )
+            AND role_num = 'ROLE0002'
+    </select>
+
 </mapper>
