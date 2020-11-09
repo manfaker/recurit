@@ -45,6 +45,8 @@ public class PositionPojo extends BaseVO {
     private DictionaryVO financingDict;
     @ApiModelProperty(value = "规模详细信息")
     private DictionaryVO  scaleDict;
+    @ApiModelProperty(value = "当前职位投递人数")
+    private Integer pisitionCount;
 
 }
 

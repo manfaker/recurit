@@ -31,12 +31,12 @@ public class PositionUserRelationServiceImpl implements PositionUserRelationServ
 
     @Override
     public ResultVO saveBatchRelation(PositionUserRelationVO positionUserRelationVO) {
-        if(EmptyUtils.isEmpty(positionUserRelationVO.getPositionIds())){
+        if (EmptyUtils.isEmpty(positionUserRelationVO.getPositionIds())) {
             return ResultVO.error("关联职位信息不能为空");
         }
         List<Integer> listPositionId = new ArrayList<>();
-        for(String str : positionUserRelationVO.getPositionIds().split(OrdinaryConstant.SYMBOL_4)){
-            if(EmptyUtils.isNotEmpty(str)){
+        for (String str : positionUserRelationVO.getPositionIds().split(OrdinaryConstant.SYMBOL_4)) {
+            if (EmptyUtils.isNotEmpty(str)) {
                 listPositionId.add(Integer.valueOf(str));
             }
         }
@@ -44,38 +44,38 @@ public class PositionUserRelationServiceImpl implements PositionUserRelationServ
         List<PositionUserRelationVO> relationByPostionAndUser = positionUserRelationMapper.getRelationByPostionAndUser(listPositionId, user.getUserCode());
         List<PositionUserRelationVO> relations = new ArrayList<>();
 
-        if(EmptyUtils.isNotEmpty(relationByPostionAndUser)&&relationByPostionAndUser.size()> NumberEnum.ZERO.getValue()){
-            if(relationByPostionAndUser.size()==listPositionId.size()){
+        if (EmptyUtils.isNotEmpty(relationByPostionAndUser) && relationByPostionAndUser.size() > NumberEnum.ZERO.getValue()) {
+            if (relationByPostionAndUser.size() == listPositionId.size()) {
                 return ResultVO.error("已添加，请勿重复操作");
             }
-            for(int positionId : listPositionId){
+            for (int positionId : listPositionId) {
                 boolean flag = false;
-                for(PositionUserRelationVO relation :relationByPostionAndUser ){
-                    if(positionId==relation.getPositionId()){
+                for (PositionUserRelationVO relation : relationByPostionAndUser) {
+                    if (positionId == relation.getPositionId()) {
                         flag = true;
                         break;
                     }
                 }
-                if(!flag){
+                if (!flag) {
                     PositionUserRelationVO relation = new PositionUserRelationVO();
                     relation.setPositionId(positionId);
                     relation.setStatus(NumberEnum.ONE.getValue());
                     relation.setFollow(positionUserRelationVO.getFollow());
                     relation.setApply(positionUserRelationVO.getApply());
                     relation.setUserCode(user.getUserCode());
-                    setRelationBaseInfo(relation,true);
+                    setRelationBaseInfo(relation, true);
                     relations.add(relation);
                 }
             }
-        }else{
-            for(int positionId : listPositionId){
+        } else {
+            for (int positionId : listPositionId) {
                 PositionUserRelationVO relation = new PositionUserRelationVO();
                 relation.setPositionId(positionId);
                 relation.setStatus(NumberEnum.ONE.getValue());
                 relation.setFollow(positionUserRelationVO.getFollow());
                 relation.setApply(positionUserRelationVO.getApply());
                 relation.setUserCode(user.getUserCode());
-                setRelationBaseInfo(relation,true);
+                setRelationBaseInfo(relation, true);
                 relations.add(relation);
             }
         }
@@ -84,16 +84,15 @@ public class PositionUserRelationServiceImpl implements PositionUserRelationServ
     }
 
     /**
-     *
      * @param relation
-     * @param flag true
+     * @param flag     true
      */
-    private void setRelationBaseInfo(PositionUserRelationVO relation,boolean flag){
-        if(EmptyUtils.isEmpty(relation)){
+    private void setRelationBaseInfo(PositionUserRelationVO relation, boolean flag) {
+        if (EmptyUtils.isEmpty(relation)) {
             return;
         }
         UserVO user = ThreadLocalUtils.getUser();
-        if(flag){
+        if (flag) {
             relation.setCreater(user.getUserName());
             relation.setCreateDate(new Date());
         }
@@ -103,68 +102,76 @@ public class PositionUserRelationServiceImpl implements PositionUserRelationServ
 
     @Override
     public ResultVO deleteBatchRelation(PositionUserRelationVO positionUserRelationVO) {
-        if(EmptyUtils.isEmpty(positionUserRelationVO.getPositionIds())){
+        if (EmptyUtils.isEmpty(positionUserRelationVO.getPositionIds())) {
             return ResultVO.error("移除对象不能为空");
         }
         List<Integer> listPositionId = new ArrayList<>();
-        for(String str : positionUserRelationVO.getPositionIds().split(OrdinaryConstant.SYMBOL_4)){
-            if(EmptyUtils.isNotEmpty(str)){
+        for (String str : positionUserRelationVO.getPositionIds().split(OrdinaryConstant.SYMBOL_4)) {
+            if (EmptyUtils.isNotEmpty(str)) {
                 listPositionId.add(Integer.valueOf(str));
             }
         }
         UserVO user = ThreadLocalUtils.getUser();
         int result = positionUserRelationMapper.deleteBatchRelation(listPositionId, user.getUserCode());
-        if(result>NumberEnum.ZERO.getValue()){
+        if (result > NumberEnum.ZERO.getValue()) {
             return ResultVO.success("移除成功");
-        }else{
+        } else {
             return ResultVO.success("移除失败");
         }
     }
 
     @Override
     public ResultVO updateRelation(PositionUserRelationVO positionUserRelationVO) {
-        setRelationBaseInfo(positionUserRelationVO,false);
+        setRelationBaseInfo(positionUserRelationVO, false);
         int result = positionUserRelationMapper.updateRelation(positionUserRelationVO);
-        if(result>NumberEnum.ZERO.getValue()){
+        if (result > NumberEnum.ZERO.getValue()) {
             return ResultVO.success("修改成功");
         }
         return ResultVO.success("修改失败");
     }
 
     @Override
-    public ResultVO createOrUpdateRelation(PositionUserRelationVO positionUserRelationVO,UserVO userVO) {
-        if(EmptyUtils.isEmpty(positionUserRelationVO.getPositionId())){
+    public ResultVO createOrUpdateRelation(PositionUserRelationVO positionUserRelationVO, UserVO userVO) {
+        if (EmptyUtils.isEmpty(positionUserRelationVO.getPositionId())) {
             return ResultVO.error("职位信息不能为空");
         }
         UserVO user = null;
         String userCode;
-        if(EmptyUtils.isNotEmpty(userVO)){
+        if (EmptyUtils.isNotEmpty(userVO)) {
             user = userVO;
             userCode = userVO.getUserCode();
-        }else{
-            ThreadLocalUtils.getUser();
+        } else {
+            user = ThreadLocalUtils.getUser();
             userCode = user.getUserCode();
-            if("ROLE0001".equals(user.getRoleNum())){
-                userCode=positionUserRelationVO.getUserCode();
+            if ("ROLE0001".equals(user.getRoleNum())) {
+                userCode = positionUserRelationVO.getUserCode();
             }
         }
         PositionUserRelationVO relation = positionUserRelationMapper.getRelationByPositionIdAndUserCode(positionUserRelationVO.getPositionId(), userCode);
-        if(EmptyUtils.isNotEmpty(relation)){
+        if (EmptyUtils.isNotEmpty(relation)) {
             positionUserRelationVO.setId(relation.getId());
-            setRelationBaseInfo(positionUserRelationVO,false);
+            setRelationBaseInfo(positionUserRelationVO, false);
             int result = positionUserRelationMapper.updateRelation(positionUserRelationVO);
-            if(result>NumberEnum.ZERO.getValue()){
+            if (result > NumberEnum.ZERO.getValue()) {
                 return ResultVO.success("修改成功");
             }
             return ResultVO.success("修改失败");
-        }else{
-            setRelationBaseInfo(positionUserRelationVO,true);
+        } else {
+            setRelationBaseInfo(positionUserRelationVO, true);
             positionUserRelationVO.setUserCode(user.getUserCode());
             positionUserRelationMapper.saveRelation(positionUserRelationVO);
             return ResultVO.success("添加成功");
         }
-
     }
-    
+
+    public List<PositionUserRelationVO> getCountByPosition(List<Integer> positionIds) {
+        List<PositionUserRelationVO> positionUserRelationVOS = new ArrayList<>();
+        if(EmptyUtils.isEmpty(positionIds) && positionIds.isEmpty()){
+            return positionUserRelationVOS;
+        }
+        positionUserRelationVOS = positionUserRelationMapper.getCountByPosition(positionIds);
+        return positionUserRelationVOS;
+    }
+
 
 }

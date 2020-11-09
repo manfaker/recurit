@@ -170,9 +170,9 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public List<ResumePojo> getApplyResume() {
+    public List<ResumePojo> getApplyResume(Integer positionId) {
         UserVO user = ThreadLocalUtils.getUser();
-        List<ResumePojo> listResume = resumeMapper.getApplyResume(user.getUserCode());
+        List<ResumePojo> listResume = resumeMapper.getApplyResume(user.getUserCode(), positionId);
         if(EmptyUtils.isNotEmpty(listResume)){
             listResume.forEach(resumePojo -> {
                 setResume(resumePojo);

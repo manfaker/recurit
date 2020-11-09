@@ -183,6 +183,9 @@
                 WHERE
                 p.status =1 and p.user_code = #{userCode}
                 AND r.apply = 2
+                <if test="positionId != null and positionId != 0">
+                    AND r.position_id = #{positionId}
+                </if>
                 ) r left join tab_resume t on t.user_code = r.user_code
                 left join tab_user u on u.user_code = r.user_code
         </select>
@@ -190,14 +193,8 @@
         <select id="getCheckedResumes" resultMap="countBaseResultMap">
             SELECT
                     (
-                    SELECT
-                        COUNT( 1 )
-                    FROM
-                        tab_position_user_relation
-                    WHERE
-                        position_id IN (
                         SELECT
-                            p.id
+                            COUNT( 1 )
                         FROM
                             tab_position_user_relation r
                             LEFT JOIN tab_position p ON r.position_id = p.id
@@ -205,17 +202,10 @@
                             p.STATUS = 1
                             AND p.user_code = #{userCode}
                             AND r.apply = 2
-                        )) resume_sum,
+                        ) resume_sum,
                         (
-                        SELECT
-                            COUNT( 1 )
-                        FROM
-                            tab_position_user_relation
-                        WHERE
-                            is_checked != 2
-                            AND position_id IN (
                             SELECT
-                                p.id
+                                COUNT( 1 )
                             FROM
                                 tab_position_user_relation r
                                 LEFT JOIN tab_position p ON r.position_id = p.id
@@ -223,7 +213,8 @@
                                 p.STATUS = 1
                                 AND p.user_code = #{userCode}
                                 AND r.apply = 2
-                            )) no_checked_sum
+                                AND is_checked != 2
+                            ) no_checked_sum
                     FROM
                 DUAL
         </select>

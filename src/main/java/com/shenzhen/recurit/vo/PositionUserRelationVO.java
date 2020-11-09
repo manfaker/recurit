@@ -26,4 +26,6 @@ public class PositionUserRelationVO extends BaseVO{
     private String positionIds;
     @ApiModelProperty(value = "是否接受")
     private int isAccept;
+    @ApiModelProperty(value = "职位投递数量")
+    private int positionCount;
 }

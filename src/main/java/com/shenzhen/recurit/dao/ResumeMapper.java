@@ -2,6 +2,7 @@ package com.shenzhen.recurit.dao;
 
 import com.shenzhen.recurit.pojo.ResumePojo;
 import com.shenzhen.recurit.vo.ResumeVO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -50,7 +51,14 @@ public interface ResumeMapper {
 
     int updateRecentTimeByUserCode(ResumeVO resumeVO);
 
-    List<ResumePojo> getApplyResume(String userCode);
+    /**
+     * 获取当前hr下面的所有简历信息
+     *
+     * @param userCode
+     * @param positionId 不为空，当前hr发布职位下的所有投递人员简历信息
+     * @return 所有简历信息
+     */
+    List<ResumePojo> getApplyResume(@Param("userCode") String userCode,@Param("positionId") Integer positionId);
 
     ResumePojo getCheckedResumes(String userCode);
 }

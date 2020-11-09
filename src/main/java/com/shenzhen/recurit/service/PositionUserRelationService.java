@@ -4,6 +4,8 @@ import com.shenzhen.recurit.vo.PositionUserRelationVO;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.UserVO;
 
+import java.util.List;
+
 public interface PositionUserRelationService {
 
     /**
@@ -34,4 +36,12 @@ public interface PositionUserRelationService {
      * @return
      */
     ResultVO createOrUpdateRelation(PositionUserRelationVO positionUserRelationVO, UserVO userVO);
+
+    /**
+     * 根据职位id获取简历投递数量
+     *
+     * @param positionIds
+     * @return
+     */
+    List<PositionUserRelationVO> getCountByPosition(List<Integer> positionIds);
 }

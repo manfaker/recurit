@@ -75,7 +75,13 @@ public interface ResumeService {
      */
     int updateRecentTimeByUserCode(String userCode);
 
-    List<ResumePojo> getApplyResume();
+    /**
+     * 获取当前hr下面的所有简历信息
+     *
+     * @param positionId 不为空，当前hr发布职位下的所有投递人员简历信息
+     * @return 所有简历信息
+     */
+    List<ResumePojo> getApplyResume(Integer positionId);
 
     UserPojo getResumeInfoByUserCode(String userCode);
 

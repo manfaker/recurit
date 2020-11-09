@@ -15,6 +15,7 @@
             <result column="creater" property="creater"/>
             <result column="updater" property="updater"/>
             <result column="is_accept" property="isAccept"/>
+            <result column="position_count" property="positionCount"/>
         </resultMap>
 
         <sql id="baseResult">
@@ -84,5 +85,13 @@
             (#{positionId},#{userCode},1,#{follow},#{apply},1
             ,#{createDate},#{updateDate},#{creater},#{updater},#{isAccept})
     </insert>
+
+    <select id="getCountByPosition" resultMap="baseResultMap">
+        select position_id,count(1) position_count from tab_position_user_relation
+            group by position_id having position_id in
+                <foreach collection="positionIds" item="positionId" open="(" close=")" separator=",">
+                    #{positionId}
+                </foreach>
+    </select>
 
 </mapper>

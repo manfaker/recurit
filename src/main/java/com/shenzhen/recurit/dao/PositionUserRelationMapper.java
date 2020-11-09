@@ -49,4 +49,11 @@ public interface PositionUserRelationMapper {
      */
     void saveRelation(PositionUserRelationVO positionUserRelationVO);
 
+    /**
+     * 根据职位id获取简历投递数量
+     *
+     * @param positionIds
+     * @return
+     */
+    List<PositionUserRelationVO> getCountByPosition(@Param("positionIds") List<Integer> positionIds);
 }
