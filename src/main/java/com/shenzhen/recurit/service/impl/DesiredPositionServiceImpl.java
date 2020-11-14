@@ -48,7 +48,7 @@ public class DesiredPositionServiceImpl implements DesiredPositionService {
         }
     }
 
-    private void setDesiredPosition(DesiredPositionPojo desiredPositionPojo){
+    public void setDesiredPosition(DesiredPositionPojo desiredPositionPojo){
         if(EmptyUtils.isNotEmpty(desiredPositionPojo)){
             if(EmptyUtils.isNotEmpty(desiredPositionPojo.getSalary())){
                 desiredPositionPojo.setSalaryDict(dictionaryService.getSignleByDictNumber(InformationConstant.SALARY,desiredPositionPojo.getSalary()));
@@ -101,4 +101,6 @@ public class DesiredPositionServiceImpl implements DesiredPositionService {
         setDesiredPosition(desiredPositionPojo);
         return desiredPositionPojo;
     }
+
+
 }

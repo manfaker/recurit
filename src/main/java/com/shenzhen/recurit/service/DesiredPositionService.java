@@ -42,4 +42,9 @@ public interface DesiredPositionService {
      * @return
      */
     DesiredPositionPojo getDesiredPosition(int id);
+
+    /**
+     * 设置数据字典
+     */
+    void setDesiredPosition(DesiredPositionPojo desiredPosition);
 }

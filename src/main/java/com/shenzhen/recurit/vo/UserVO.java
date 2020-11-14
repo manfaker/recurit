@@ -35,6 +35,10 @@ public class UserVO extends BaseVO{
     private String image;//头像信息
     @ApiModelProperty(value = "意向职位")
     private String likeJob;
+    @ApiModelProperty(value = "工作经验")
+    private String jobExperience;
+    @ApiModelProperty(value = "现居住地址")
+    private String residenceAddress;
 
 
 

@@ -1,12 +1,15 @@
 package com.shenzhen.recurit.pojo;
 
 import com.shenzhen.recurit.vo.BaseVO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
 
 @Data
+@Api(value = "用户信息")
 public class UserPojo extends BaseVO{
     private int id;
     private String userName; //用户登录名
@@ -32,6 +35,20 @@ public class UserPojo extends BaseVO{
     private List<EducationExperiencesPojo> listEducationExperience;//个人教育
     private String image;//头像信息
     private String likeJob; //意向职位
+    @ApiModelProperty(value = "工作经验code")
+    private String jobExperience;
+    @ApiModelProperty(value = "工作经验")
+    private String jobExperienceName;
+    @ApiModelProperty(value = "现居住地址")
+    private String residenceAddress;
+    @ApiModelProperty(value = "薪资code")
+    private String salary;
+    @ApiModelProperty(value = "薪资")
+    private String salaryName;
+    @ApiModelProperty(value = "学校名称")
+    private String schoolName;
+    @ApiModelProperty(value = "技能")
+    private String profession;
 
 
 }

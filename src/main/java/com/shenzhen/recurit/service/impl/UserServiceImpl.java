@@ -3,26 +3,18 @@ package com.shenzhen.recurit.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.shenzhen.recurit.constant.InformationConstant;
 import com.shenzhen.recurit.constant.OrdinaryConstant;
 import com.shenzhen.recurit.dao.UserMapper;
 import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.enums.SymbolEnum;
-import com.shenzhen.recurit.pojo.ExportsPojo;
-import com.shenzhen.recurit.pojo.ImportResultPojo;
-import com.shenzhen.recurit.pojo.PositionPojo;
-import com.shenzhen.recurit.pojo.UserPojo;
-import com.shenzhen.recurit.service.PositionService;
-import com.shenzhen.recurit.service.PositionUserRelationService;
-import com.shenzhen.recurit.service.ResumeService;
-import com.shenzhen.recurit.service.UserService;
+import com.shenzhen.recurit.pojo.*;
+import com.shenzhen.recurit.service.*;
 import com.shenzhen.recurit.utils.*;
 import com.shenzhen.recurit.utils.excel.ExportUtils;
-import com.shenzhen.recurit.vo.PositionUserRelationVO;
-import com.shenzhen.recurit.vo.ResultVO;
-import com.shenzhen.recurit.vo.ResumeVO;
-import com.shenzhen.recurit.vo.UserVO;
+import com.shenzhen.recurit.vo.*;
 import io.netty.buffer.Unpooled;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -53,6 +45,9 @@ public class UserServiceImpl implements UserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
+    private static final String EXPERIENCE = "EXPERIENCE";
+    private static final String SALARY = "SALARY";
+
     @Resource
     private RedisTempleUtils redisTempleUtils;
     @Resource
@@ -63,6 +58,10 @@ public class UserServiceImpl implements UserService {
     private PositionService positionService;
     @Resource
     private PositionUserRelationService positionUserRelationService;
+    @Resource
+    private DesiredPositionService desiredPositionService;
+    @Resource
+    private DictionaryService dictionaryService;
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -848,10 +847,10 @@ public class UserServiceImpl implements UserService {
                             listError.add("电话号码" + userPojo.getPhone() + "已存在！");
                             listField.add("phone");
                         }
-                        if (userPojo.getEmail().equals(entry.getValue().getEmail()) && !listField.contains("phone")) {
+                        if (userPojo.getEmail().equals(entry.getValue().getEmail()) && !listField.contains("email")) {
                             flag = true;
                             listError.add("邮箱" + userPojo.getEmail() + "已存在！");
-                            listField.add("phone");
+                            listField.add("email");
                         }
                         if (flag) {
                             filterData.add(entry.getKey());
@@ -901,28 +900,73 @@ public class UserServiceImpl implements UserService {
      */
     private void exchangData(UserVO userVO) {
         //转换数据
-        if (EmptyUtils.isNotEmpty(userVO.getSexNum()) || EmptyUtils.isNotEmpty(userVO.getSex())) {
-            if (EmptyUtils.isNotEmpty(userVO.getSexNum())) {
-                if (InformationConstant.MALE.equals(userVO.getSexNum())) {
-                    userVO.setSex("01");
-                } else if (InformationConstant.FEMALE.equals(userVO.getSexNum())) {
-                    userVO.setSex("02");
-                } else {
-                    userVO.setSex("00");
-                }
-            } else {
-                if ("01".equals(userVO.getSex())) {
-                    userVO.setSexNum("男");
-                } else if ("02".equals(userVO.getSexNum())) {
-                    userVO.setSexNum("女");
-                } else {
-                    userVO.setSexNum("未知");
+        exchangeSex(userVO);
+        exchangeRole(userVO);
+        userVO.setPassword(EncryptBase64Utils.encryptBASE64(userVO.getPassword()));
+    }
+
+    /**
+     * 转换数据
+     *
+     * @param userPojo {@link UserPojo}
+     */
+    private void exchangData(UserPojo userPojo) {
+        //转换数据
+        exchangeSex(userPojo);
+        exchangeRole(userPojo);
+        exchangeJobExperience(userPojo);
+        exchangeSalary(userPojo);
+        String password = userPojo.getPassword();
+        if(EmptyUtils.isNotEmpty(password)){
+            userPojo.setPassword(EncryptBase64Utils.encryptBASE64(password));
+        }
+    }
+
+    private void exchangeSalary(UserPojo userPojo){
+        String salary = userPojo.getSalary();
+        if(EmptyUtils.isNotEmpty(salary)){
+            DictionaryVO signleByDictNumber = dictionaryService.getSignleByDictNumber(SALARY, salary);
+            if(EmptyUtils.isNotEmpty(signleByDictNumber)){
+                userPojo.setSalaryName(signleByDictNumber.getDictName());
+            }
+        }else {
+            String salaryName = userPojo.getSalaryName();
+            if(EmptyUtils.isNotEmpty(salaryName)){
+                List<DictionaryVO> allDictByCategory = dictionaryService.getAllDictByCategory(SALARY);
+                for(DictionaryVO dictionaryVO : allDictByCategory){
+                    if(salaryName.equals(dictionaryVO.getDictName())){
+                        userPojo.setJobExperience(dictionaryVO.getDictNum());
+                        break;
+                    }
                 }
             }
-        } else {
-            userVO.setSex("00");
-            userVO.setSexNum("未知");
         }
+    }
+
+    private void exchangeJobExperience(UserPojo userPojo){
+        String jobExperience = userPojo.getJobExperience();
+        if(EmptyUtils.isNotEmpty(jobExperience)){
+            DictionaryVO signleByDictNumber = dictionaryService.getSignleByDictNumber(EXPERIENCE, jobExperience);
+            if(EmptyUtils.isNotEmpty(signleByDictNumber)){
+                userPojo.setJobExperienceName(signleByDictNumber.getDictName());
+            }
+        }else {
+            String jobExperienceName = userPojo.getJobExperienceName();
+            if(EmptyUtils.isNotEmpty(jobExperienceName)){
+                List<DictionaryVO> allDictByCategory = dictionaryService.getAllDictByCategory(EXPERIENCE);
+                for(DictionaryVO dictionaryVO : allDictByCategory){
+                    if(jobExperienceName.equals(dictionaryVO.getDictName())){
+                        userPojo.setJobExperience(dictionaryVO.getDictNum());
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+
+    // 转换角色
+    private void exchangeRole(UserVO userVO){
         if (EmptyUtils.isNotEmpty(userVO.getRoleName()) || EmptyUtils.isNotEmpty(userVO.getRoleNum())) {
             if (EmptyUtils.isNotEmpty(userVO.getRoleName())) {
                 if (InformationConstant.ADMIN_EN.equals(userVO.getRoleName())) {
@@ -945,7 +989,84 @@ public class UserServiceImpl implements UserService {
             userVO.setRealName(InformationConstant.JOBSEEKER_EN);
             userVO.setRoleNum("ROLE0002");
         }
-        userVO.setPassword(EncryptBase64Utils.encryptBASE64(userVO.getPassword()));
+    }
+
+    // 转换角色
+    private void exchangeRole(UserPojo userPojo){
+        if (EmptyUtils.isNotEmpty(userPojo.getRoleName()) || EmptyUtils.isNotEmpty(userPojo.getRoleNum())) {
+            if (EmptyUtils.isNotEmpty(userPojo.getRoleName())) {
+                if (InformationConstant.ADMIN_EN.equals(userPojo.getRoleName())) {
+                    userPojo.setRoleNum("ROLE0000");
+                } else if (InformationConstant.JOBSEEKER_EN.equals(userPojo.getRoleName())) {
+                    userPojo.setRoleNum("ROLE0002");
+                } else {
+                    userPojo.setRoleNum("ROLE0001");
+                }
+            } else {
+                if ("ROLE0000".equals(userPojo.getRoleNum())) {
+                    userPojo.setRealName(InformationConstant.ADMIN_EN);
+                } else if ("ROLE0002".equals(userPojo.getRoleNum())) {
+                    userPojo.setRealName(InformationConstant.JOBSEEKER_EN);
+                } else {
+                    userPojo.setRealName(InformationConstant.ENTERPRISE_EN);
+                }
+            }
+        } else {
+            userPojo.setRealName(InformationConstant.JOBSEEKER_EN);
+            userPojo.setRoleNum("ROLE0002");
+        }
+    }
+
+    // 转换性别
+    private void exchangeSex(UserVO userVO){
+        if (EmptyUtils.isNotEmpty(userVO.getSexNum()) || EmptyUtils.isNotEmpty(userVO.getSex())) {
+            if (EmptyUtils.isNotEmpty(userVO.getSexNum())) {
+                if (InformationConstant.MALE.equals(userVO.getSexNum())) {
+                    userVO.setSex("01");
+                } else if (InformationConstant.FEMALE.equals(userVO.getSexNum())) {
+                    userVO.setSex("02");
+                } else {
+                    userVO.setSex("00");
+                }
+            } else {
+                if ("01".equals(userVO.getSex())) {
+                    userVO.setSexNum("男");
+                } else if ("02".equals(userVO.getSexNum())) {
+                    userVO.setSexNum("女");
+                } else {
+                    userVO.setSexNum("未知");
+                }
+            }
+        } else {
+            userVO.setSex("00");
+            userVO.setSexNum("未知");
+        }
+    }
+
+    // 转换性别
+    private void exchangeSex(UserPojo userPojo){
+        if (EmptyUtils.isNotEmpty(userPojo.getSexNum()) || EmptyUtils.isNotEmpty(userPojo.getSex())) {
+            if (EmptyUtils.isNotEmpty(userPojo.getSexNum())) {
+                if (InformationConstant.MALE.equals(userPojo.getSexNum())) {
+                    userPojo.setSex("01");
+                } else if (InformationConstant.FEMALE.equals(userPojo.getSexNum())) {
+                    userPojo.setSex("02");
+                } else {
+                    userPojo.setSex("00");
+                }
+            } else {
+                if ("01".equals(userPojo.getSex())) {
+                    userPojo.setSexNum("男");
+                } else if ("02".equals(userPojo.getSexNum())) {
+                    userPojo.setSexNum("女");
+                } else {
+                    userPojo.setSexNum("未知");
+                }
+            }
+        } else {
+            userPojo.setSex("00");
+            userPojo.setSexNum("未知");
+        }
     }
 
     /**
@@ -1009,6 +1130,34 @@ public class UserServiceImpl implements UserService {
         userPojoList.forEach(userVO -> exchangData(userVO));
         return userPojoList;
     }
+
+    @Override
+    public PageInfo<UserPojo> queryPersonnel(Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<UserPojo> allJobSeeker = userMapper.getAllJobSeeker();
+        allJobSeeker.stream().forEach(userPojo -> {
+            exchangData(userPojo);
+        });
+        PageInfo<UserPojo> pageInfo = new PageInfo<>(allJobSeeker);
+        return pageInfo;
+    }
+
+    @Override
+    public List<UserPojo> getAllJobSeeker() {
+        List<UserPojo> jobSeekerList = userMapper.getAllJobSeeker();
+        jobSeekerList.stream().forEach(userPojo -> {
+            exchangData(userPojo);
+        });
+        return jobSeekerList;
+    }
+
+    private void setUserInfo(List<UserPojo> userPojoList){
+        if(EmptyUtils.isEmpty(userPojoList) || userPojoList.isEmpty()){
+            return;
+        }
+    }
+
+
 
 
 }

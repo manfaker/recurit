@@ -9,6 +9,7 @@ import com.shenzhen.recurit.constant.OrdinaryConstant;
 import com.shenzhen.recurit.dao.PositionMapper;
 import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.pojo.PositionPojo;
+import com.shenzhen.recurit.pojo.UserPojo;
 import com.shenzhen.recurit.service.DictionaryService;
 import com.shenzhen.recurit.service.LabelService;
 import com.shenzhen.recurit.service.PositionService;
@@ -310,6 +311,5 @@ public class PositionServiceImpl implements PositionService {
     public int statisticsAllPositions() {
         return positionMapper.statisticsAllPositions();
     }
-
 
 }

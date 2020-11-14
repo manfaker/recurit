@@ -2,6 +2,7 @@ package com.shenzhen.recurit.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.enums.ReturnEnum;
 import com.shenzhen.recurit.pojo.ImportResultPojo;
 import com.shenzhen.recurit.pojo.UserPojo;
@@ -174,6 +175,38 @@ public class UserController {
         }
         List<UserVO> allIsNotPosition = userService.getAllIsNotPosition();
         return ExportUtils.exportExcel(JSON.parseArray(JSON.toJSONString(allIsNotPosition)),response,instanceName,fileName);
+    }
+
+    @GetMapping(value = "exportQueryPersonnel", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ApiOperation(value = "人才储备信息导出")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "导入文件", name = "fileName", required = true),
+            @ApiImplicitParam(value = "实例名", name = "instanceName", required = true)
+    })
+    public Object exportQueryPersonnel(String fileName, String instanceName, HttpServletResponse response) {
+        if (EmptyUtils.isEmpty(instanceName)) {
+            return ResultVO.error(StringFormatUtils.format("%s实例名对象不能为空", instanceName));
+        }
+        if (EmptyUtils.isEmpty(fileName)) {
+            return ResultVO.error(StringFormatUtils.format("导出文件名不能为空"));
+        }
+        List<UserVO> allIsNotPosition = userService.getAllIsNotPosition();
+        return ExportUtils.exportExcel(JSON.parseArray(JSON.toJSONString(allIsNotPosition)),response,instanceName,fileName);
+    }
+
+    @GetMapping(value = "queryPersonnel", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ApiOperation(value = "人才储备信息查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "起始页", name = "pageNum", required = false),
+            @ApiImplicitParam(value = "每页大小", name = "pageSize", required = false)
+    })
+    public Object queryPersonnel(Integer pageNum, Integer pageSize) {
+        if(EmptyUtils.isEmpty(pageNum)||EmptyUtils.isEmpty(pageSize)||
+                pageNum== NumberEnum.ZERO.getValue()||pageSize==NumberEnum.ZERO.getValue()){
+            pageNum =NumberEnum.ONE.getValue();
+            pageSize=NumberEnum.TWENTY.getValue();
+        }
+        return ResultVO.success(userService.queryPersonnel(pageNum,pageSize));
     }
 
 }

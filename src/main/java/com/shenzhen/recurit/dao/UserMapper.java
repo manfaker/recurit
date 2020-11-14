@@ -80,4 +80,10 @@ public interface UserMapper {
     void batchSaveUserInfo(@Param("listUser") List<UserVO> listUser);
 
     List<UserVO> getAllIsNotPosition();
+
+    /**
+     * 获取所有求职人员信息
+     * @return
+     */
+    List<UserPojo> getAllJobSeeker();
 }

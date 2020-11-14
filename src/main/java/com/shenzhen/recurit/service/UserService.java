@@ -1,5 +1,6 @@
 package com.shenzhen.recurit.service;
 
+import com.github.pagehelper.PageInfo;
 import com.shenzhen.recurit.pojo.ImportResultPojo;
 import com.shenzhen.recurit.pojo.UserPojo;
 import com.shenzhen.recurit.vo.ResultVO;
@@ -120,4 +121,17 @@ public interface UserService {
      * @return
      */
     List<UserVO> getAllIsNotPosition();
+
+    /**
+     * 获取所有的市场人才
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+     PageInfo<UserPojo> queryPersonnel(Integer pageNum, Integer pageSize);
+
+    /**
+     * 获取所有求职人员
+     */
+    List<UserPojo> getAllJobSeeker();
 }

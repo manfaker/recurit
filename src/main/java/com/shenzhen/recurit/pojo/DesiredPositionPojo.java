@@ -15,7 +15,7 @@ public class DesiredPositionPojo extends BaseVO {
     private String userCode;
     @ApiModelProperty(value = "期望职位")
     private String desiredPosition;
-    @ApiModelProperty(value = "期望薪资")
+    @ApiModelProperty(value = "期望薪资编码")
     private String salary;
     @ApiModelProperty(value = "薪资")
     private DictionaryVO salaryDict;

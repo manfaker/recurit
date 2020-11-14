@@ -2,6 +2,7 @@ package com.shenzhen.recurit.service;
 
 import com.github.pagehelper.PageInfo;
 import com.shenzhen.recurit.pojo.PositionPojo;
+import com.shenzhen.recurit.pojo.UserPojo;
 import com.shenzhen.recurit.vo.PositionVO;
 import com.shenzhen.recurit.vo.ResultVO;
 
@@ -72,6 +73,7 @@ public interface PositionService {
      * @return
      */
     int statisticsAllPositions();
+
     /**
      * 获取求职页面的所有职位信息
      * @return

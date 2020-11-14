@@ -1,6 +1,7 @@
 package com.shenzhen.recurit.dao;
 
 import com.shenzhen.recurit.pojo.PositionPojo;
+import com.shenzhen.recurit.pojo.UserPojo;
 import com.shenzhen.recurit.vo.PositionVO;
 import org.apache.ibatis.annotations.Param;
 
@@ -73,4 +74,5 @@ public interface PositionMapper {
     List<PositionPojo> getBulletinBoardPosition(@Param("pageNo") int pageNo, @Param("pageSize") int pageSize);
 
     List<PositionPojo> getNewAllPositions(PositionVO positionVO);
+
 }

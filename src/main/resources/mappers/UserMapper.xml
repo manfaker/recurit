@@ -32,9 +32,23 @@
             <result column="email" property="email"/>
         </resultMap>
 
+        <resultMap id="baseResultUserInfo" type="com.shenzhen.recurit.pojo.UserPojo">
+            <result column="user_name" property="userName"/>
+            <result column="real_name" property="realName"/>
+            <result column="nick_name" property="nickName"/>
+            <result column="sex" property="sex"/>
+            <result column="age" property="age"/>
+            <result column="residence_address" property="residenceAddress"/>
+            <result column="job_experience" property="jobExperience"/>
+            <result column="school_name" property="schoolName"/>
+            <result column="salary" property="salary"/>
+            <result column="profession" property="profession"/>
+        </resultMap>
+
         <sql id="baseResult">
             user_name,real_name,phone,fixed_phone,email,password,contactser,
-                role_num,sex,age,birth,create_date,update_date,nick_name,company_code,user_code,like_job
+                role_num,sex,age,birth,create_date,update_date,nick_name,company_code,user_code,like_job,
+                residence_address,job_experience
         </sql>
         <sql id="preBaseResult">
             t.user_name,t.real_name,t.phone,t.fixed_phone,t.email,t.password,t.contactser,
@@ -67,7 +81,7 @@
             insert into tab_user(<include refid="baseResult"/>)
                 values(#{userName},#{realName},#{phone},#{fixedPhone},#{email},#{password},#{contactser},
                         #{roleNum},#{sex},#{age},#{birth},#{createDate},#{updateDate}
-                        ,#{nickName},#{companyCode},#{userCode},#{likeJob})
+                        ,#{nickName},#{companyCode},#{userCode},#{likeJob},#{residenceAddress},#{jobExperience})
         </insert>
 
         <select id="getUserByNameAndPass" resultMap="baseResultMap">
@@ -129,6 +143,12 @@
             <if test="likeJob != null and likeJob != ''">
                 like_job = #{likeJob},
             </if>
+            <if test="residenceAddress != null and residenceAddress != ''">
+                residence_address =  #{residenceAddress},
+            </if>
+            <if test="jobExperience != null and jobExperience != ''">
+                job_experience =  #{jobExperience},
+            </if>
                 update_date = #{updateDate}
         </set>
             where id = #{id}
@@ -164,6 +184,26 @@
         WHERE
             user_code IN ( SELECT DISTINCT user_code FROM tab_position_user_relation WHERE STATUS = 1 )
             AND role_num = 'ROLE0002'
+    </select>
+
+    <select id="getAllJobSeeker" resultMap="baseResultUserInfo">
+        SELECT
+            u.user_name,
+            u.real_name,
+            u.nick_name,
+            u.sex,
+            u.age,
+            u.residence_address,
+            e.school_name,
+            u.job_experience,
+            d.profession,
+            d.salary
+        FROM
+            tab_user u
+            JOIN tab_education_experience e ON u.user_code = e.user_code
+            JOIN tab_desired_position d ON d.user_code = u.user_code
+        WHERE
+            u.role_num = 'ROLE0002'
     </select>
 
 </mapper>
