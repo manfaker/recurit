@@ -24,6 +24,8 @@
             <result column="company_code" property="companyCode"/>
             <result column="user_code" property="userCode"/>
             <result column="like_job" property="likeJob"/>
+            <result column="education" property="education"/>
+            <result column="job_experience" property="jobExperience"/>
         </resultMap>
 
         <resultMap id="baseResultMapPojo" type="com.shenzhen.recurit.pojo.UserPojo">
@@ -43,12 +45,13 @@
             <result column="school_name" property="schoolName"/>
             <result column="salary" property="salary"/>
             <result column="profession" property="profession"/>
+            <result column="education" property="education"/>
         </resultMap>
 
         <sql id="baseResult">
             user_name,real_name,phone,fixed_phone,email,password,contactser,
                 role_num,sex,age,birth,create_date,update_date,nick_name,company_code,user_code,like_job,
-                residence_address,job_experience
+                residence_address,job_experience,education
         </sql>
         <sql id="preBaseResult">
             t.user_name,t.real_name,t.phone,t.fixed_phone,t.email,t.password,t.contactser,
@@ -81,7 +84,8 @@
             insert into tab_user(<include refid="baseResult"/>)
                 values(#{userName},#{realName},#{phone},#{fixedPhone},#{email},#{password},#{contactser},
                         #{roleNum},#{sex},#{age},#{birth},#{createDate},#{updateDate}
-                        ,#{nickName},#{companyCode},#{userCode},#{likeJob},#{residenceAddress},#{jobExperience})
+                        ,#{nickName},#{companyCode},#{userCode},#{likeJob},#{residenceAddress},
+                        #{jobExperience},#{education})
         </insert>
 
         <select id="getUserByNameAndPass" resultMap="baseResultMap">
@@ -149,6 +153,9 @@
             <if test="jobExperience != null and jobExperience != ''">
                 job_experience =  #{jobExperience},
             </if>
+            <if test="education != null and education != ''">
+                education = #{education},
+            </if>
                 update_date = #{updateDate}
         </set>
             where id = #{id}
@@ -163,16 +170,23 @@
     <select id="getUserByNameAndPhoneAndEmail" resultMap="baseResultMapPojo">
         select user_name,phone,email from tab_user where
         user_name  in <foreach collection="listName" item="name" separator="," open="(" close=")"> #{name} </foreach>
-        or phone  in <foreach collection="listPhone" item="phone" separator="," open="(" close=")"> #{phone} </foreach>
-        or email  in <foreach collection="listEmail" item="email" separator="," open="(" close=")"> #{email} </foreach>
+        <if test="listPhone != null and listPhone.size > 0">
+            or phone  in <foreach collection="listPhone" item="phone" separator="," open="(" close=")"> #{phone} </foreach>
+        </if>
+        <if test="listPhone != null and listPhone.size > 0">
+            or email  in <foreach collection="listEmail" item="email" separator="," open="(" close=")"> #{email} </foreach>
+        </if>
+
     </select>
 
     <insert id="batchSaveUserInfo">
         insert into tab_user(user_name,real_name,phone,fixed_phone,email,password,contactser,
-        role_num,sex,age,birth,create_date,update_date,nick_name,company_code,user_code,like_job) values
+        role_num,sex,age,birth,create_date,update_date,nick_name,company_code,user_code,
+        like_job,education,job_experience,residence_address) values
             <foreach collection="listUser" item="user" separator=",">
                 (#{user.userName},#{user.realName},#{user.phone},#{user.fixedPhone},#{user.email},#{user.password},#{user.contactser},
-                #{user.roleNum},#{user.sex},#{user.age},#{user.birth},#{user.createDate},#{user.updateDate},#{user.nickName},#{user.companyCode},#{user.userCode},#{user.likeJob})
+                #{user.roleNum},#{user.sex},#{user.age},#{user.birth},#{user.createDate},#{user.updateDate},#{user.nickName},#{user.companyCode},
+                #{user.userCode},#{user.likeJob},#{user.education},#{user.jobExperience},#{user.residenceAddress})
             </foreach>
     </insert>
 

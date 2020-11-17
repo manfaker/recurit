@@ -47,6 +47,7 @@ public class UserServiceImpl implements UserService {
 
     private static final String EXPERIENCE = "EXPERIENCE";
     private static final String SALARY = "SALARY";
+    private static final String EDUCATION = "EDUCATION";
 
     @Resource
     private RedisTempleUtils redisTempleUtils;
@@ -651,7 +652,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResultVO batchUserInfo(ImportResultPojo importInfos) {
-        Map<Integer, Map<String, List<String>>> checkMap = new HashMap<>();
+        Map<String, Map<String, List<String>>> checkMap = new HashMap<>();
         List<UserVO> listUser = importInfos.getListT();
         if (EmptyUtils.isNotEmpty(listUser) && listUser.size() > NumberEnum.ZERO.getValue()) {
             Map<Integer, UserVO> mapUser = new HashMap<>();
@@ -798,7 +799,7 @@ public class UserServiceImpl implements UserService {
      * @param checkMap
      * @param queryData
      */
-    private void filterProblemData(Map<Integer, UserVO> mapUser, Map<Integer, Map<String, List<String>>> checkMap, Map<Integer, UserVO> queryData) {
+    private void filterProblemData(Map<Integer, UserVO> mapUser, Map<String, Map<String, List<String>>> checkMap, Map<Integer, UserVO> queryData) {
         for (Map.Entry<Integer, UserVO> entry : mapUser.entrySet()) {
             int key = entry.getKey();
             UserVO userVO = entry.getValue();
@@ -809,7 +810,7 @@ public class UserServiceImpl implements UserService {
                 mapError = new HashMap<>();
             }
             checkData(userVO, mapError, queryData, key);
-            checkMap.put(key, mapError);
+            checkMap.put(key + OrdinaryConstant.IS_BLACK, mapError);
         }
         List<UserPojo> repeatUsers = getUserByNameAndPhoneAndEmail(queryData);
         List<Integer> filterData = new ArrayList<>();
@@ -826,7 +827,7 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    private void filterRepeatData(Map<Integer, UserVO> mapUser, List<UserPojo> repeatUsers, List<Integer> filterData, Map<Integer, Map<String, List<String>>> checkMap) {
+    private void filterRepeatData(Map<Integer, UserVO> mapUser, List<UserPojo> repeatUsers, List<Integer> filterData, Map<String, Map<String, List<String>>> checkMap) {
         if (EmptyUtils.isNotEmpty(repeatUsers) && repeatUsers.size() > NumberEnum.ZERO.getValue()) {
             for (UserPojo userPojo : repeatUsers) {
                 boolean flag = false;
@@ -834,7 +835,7 @@ public class UserServiceImpl implements UserService {
                     if ((EmptyUtils.isNotEmpty(userPojo.getUserName()) && userPojo.getUserName().equals(entry.getValue().getUserName())) ||
                             (EmptyUtils.isNotEmpty(userPojo.getPhone()) && userPojo.getPhone().equals(entry.getValue().getPhone())) ||
                             (EmptyUtils.isNotEmpty(userPojo.getPhone()) && userPojo.getPhone().equals(entry.getValue().getPhone()))) {
-                        Map<String, List<String>> mapError = checkMap.get(entry.getKey());
+                        Map<String, List<String>> mapError = checkMap.get(entry.getKey() + OrdinaryConstant.IS_BLACK);
                         List<String> listError = mapError.get("error");
                         List<String> listField = mapError.get("field");
                         if (userPojo.getUserName().equals(entry.getValue().getUserName()) && !listField.contains("userName")) {
@@ -842,12 +843,12 @@ public class UserServiceImpl implements UserService {
                             listError.add("用户名" + userPojo.getUserName() + "已存在！");
                             listField.add("userName");
                         }
-                        if (userPojo.getPhone().equals(entry.getValue().getPhone()) && !listField.contains("phone")) {
+                        if (EmptyUtils.isNotEmpty(userPojo.getPhone()) && userPojo.getPhone().equals(entry.getValue().getPhone()) && !listField.contains("phone")) {
                             flag = true;
                             listError.add("电话号码" + userPojo.getPhone() + "已存在！");
                             listField.add("phone");
                         }
-                        if (userPojo.getEmail().equals(entry.getValue().getEmail()) && !listField.contains("email")) {
+                        if (EmptyUtils.isNotEmpty(userPojo.getEmail()) && userPojo.getEmail().equals(entry.getValue().getEmail()) && !listField.contains("email")) {
                             flag = true;
                             listError.add("邮箱" + userPojo.getEmail() + "已存在！");
                             listField.add("email");
@@ -878,9 +879,15 @@ public class UserServiceImpl implements UserService {
                     listPhone.clear();
                     listEmail.clear();
                 }
-                listName.add(entry.getValue().getUserName());
-                listPhone.add(entry.getValue().getPhone());
-                listEmail.add(entry.getValue().getEmail());
+                if(EmptyUtils.isNotEmpty(entry.getValue().getUserName())){
+                    listName.add(entry.getValue().getUserName());
+                }
+                if(EmptyUtils.isNotEmpty(entry.getValue().getPhone())){
+                    listName.add(entry.getValue().getUserName());
+                }
+                if(EmptyUtils.isNotEmpty(entry.getValue().getEmail())){
+                    listName.add(entry.getValue().getUserName());
+                }
             }
             if (listName.size() >= NumberEnum.ZERO.getValue() ||
                     listPhone.size() >= NumberEnum.ZERO.getValue() ||
@@ -891,6 +898,7 @@ public class UserServiceImpl implements UserService {
         }
         return listUser;
     }
+
 
 
     /**
@@ -910,32 +918,38 @@ public class UserServiceImpl implements UserService {
      *
      * @param userPojo {@link UserPojo}
      */
-    private void exchangData(UserPojo userPojo) {
+    public void exchangData(UserPojo userPojo) {
         //转换数据
         exchangeSex(userPojo);
         exchangeRole(userPojo);
         exchangeJobExperience(userPojo);
         exchangeSalary(userPojo);
+        exchangeEducation(userPojo);
         String password = userPojo.getPassword();
-        if(EmptyUtils.isNotEmpty(password)){
+        if (EmptyUtils.isNotEmpty(password)) {
             userPojo.setPassword(EncryptBase64Utils.encryptBASE64(password));
         }
     }
 
-    private void exchangeSalary(UserPojo userPojo){
+    /**
+     * 转换期望薪资
+     *
+     * @param userPojo
+     */
+    private void exchangeSalary(UserPojo userPojo) {
         String salary = userPojo.getSalary();
-        if(EmptyUtils.isNotEmpty(salary)){
+        if (EmptyUtils.isNotEmpty(salary)) {
             DictionaryVO signleByDictNumber = dictionaryService.getSignleByDictNumber(SALARY, salary);
-            if(EmptyUtils.isNotEmpty(signleByDictNumber)){
+            if (EmptyUtils.isNotEmpty(signleByDictNumber)) {
                 userPojo.setSalaryName(signleByDictNumber.getDictName());
             }
-        }else {
+        } else {
             String salaryName = userPojo.getSalaryName();
-            if(EmptyUtils.isNotEmpty(salaryName)){
+            if (EmptyUtils.isNotEmpty(salaryName)) {
                 List<DictionaryVO> allDictByCategory = dictionaryService.getAllDictByCategory(SALARY);
-                for(DictionaryVO dictionaryVO : allDictByCategory){
-                    if(salaryName.equals(dictionaryVO.getDictName())){
-                        userPojo.setJobExperience(dictionaryVO.getDictNum());
+                for (DictionaryVO dictionaryVO : allDictByCategory) {
+                    if (salaryName.equals(dictionaryVO.getDictName())) {
+                        userPojo.setSalary(dictionaryVO.getDictNum());
                         break;
                     }
                 }
@@ -943,19 +957,50 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private void exchangeJobExperience(UserPojo userPojo){
+    /**
+     * 转换学历
+     *
+     * @param userPojo
+     */
+    private void exchangeEducation(UserPojo userPojo) {
+        String education = userPojo.getEducation();
+        if (EmptyUtils.isNotEmpty(education)) {
+            DictionaryVO signleByDictNumber = dictionaryService.getSignleByDictNumber(EDUCATION, education);
+            if (EmptyUtils.isNotEmpty(signleByDictNumber)) {
+                userPojo.setEducationName(signleByDictNumber.getDictName());
+            }
+        } else {
+            String educationName = userPojo.getEducationName();
+            if (EmptyUtils.isNotEmpty(educationName)) {
+                List<DictionaryVO> allDictByCategory = dictionaryService.getAllDictByCategory(EDUCATION);
+                for (DictionaryVO dictionaryVO : allDictByCategory) {
+                    if (educationName.equals(dictionaryVO.getDictName())) {
+                        userPojo.setEducation(dictionaryVO.getDictNum());
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 转换工作经历
+     *
+     * @param userPojo
+     */
+    private void exchangeJobExperience(UserPojo userPojo) {
         String jobExperience = userPojo.getJobExperience();
-        if(EmptyUtils.isNotEmpty(jobExperience)){
+        if (EmptyUtils.isNotEmpty(jobExperience)) {
             DictionaryVO signleByDictNumber = dictionaryService.getSignleByDictNumber(EXPERIENCE, jobExperience);
-            if(EmptyUtils.isNotEmpty(signleByDictNumber)){
+            if (EmptyUtils.isNotEmpty(signleByDictNumber)) {
                 userPojo.setJobExperienceName(signleByDictNumber.getDictName());
             }
-        }else {
+        } else {
             String jobExperienceName = userPojo.getJobExperienceName();
-            if(EmptyUtils.isNotEmpty(jobExperienceName)){
+            if (EmptyUtils.isNotEmpty(jobExperienceName)) {
                 List<DictionaryVO> allDictByCategory = dictionaryService.getAllDictByCategory(EXPERIENCE);
-                for(DictionaryVO dictionaryVO : allDictByCategory){
-                    if(jobExperienceName.equals(dictionaryVO.getDictName())){
+                for (DictionaryVO dictionaryVO : allDictByCategory) {
+                    if (jobExperienceName.equals(dictionaryVO.getDictName())) {
                         userPojo.setJobExperience(dictionaryVO.getDictNum());
                         break;
                     }
@@ -966,7 +1011,7 @@ public class UserServiceImpl implements UserService {
 
 
     // 转换角色
-    private void exchangeRole(UserVO userVO){
+    private void exchangeRole(UserVO userVO) {
         if (EmptyUtils.isNotEmpty(userVO.getRoleName()) || EmptyUtils.isNotEmpty(userVO.getRoleNum())) {
             if (EmptyUtils.isNotEmpty(userVO.getRoleName())) {
                 if (InformationConstant.ADMIN_EN.equals(userVO.getRoleName())) {
@@ -992,7 +1037,7 @@ public class UserServiceImpl implements UserService {
     }
 
     // 转换角色
-    private void exchangeRole(UserPojo userPojo){
+    private void exchangeRole(UserPojo userPojo) {
         if (EmptyUtils.isNotEmpty(userPojo.getRoleName()) || EmptyUtils.isNotEmpty(userPojo.getRoleNum())) {
             if (EmptyUtils.isNotEmpty(userPojo.getRoleName())) {
                 if (InformationConstant.ADMIN_EN.equals(userPojo.getRoleName())) {
@@ -1018,7 +1063,7 @@ public class UserServiceImpl implements UserService {
     }
 
     // 转换性别
-    private void exchangeSex(UserVO userVO){
+    private void exchangeSex(UserVO userVO) {
         if (EmptyUtils.isNotEmpty(userVO.getSexNum()) || EmptyUtils.isNotEmpty(userVO.getSex())) {
             if (EmptyUtils.isNotEmpty(userVO.getSexNum())) {
                 if (InformationConstant.MALE.equals(userVO.getSexNum())) {
@@ -1044,7 +1089,7 @@ public class UserServiceImpl implements UserService {
     }
 
     // 转换性别
-    private void exchangeSex(UserPojo userPojo){
+    private void exchangeSex(UserPojo userPojo) {
         if (EmptyUtils.isNotEmpty(userPojo.getSexNum()) || EmptyUtils.isNotEmpty(userPojo.getSex())) {
             if (EmptyUtils.isNotEmpty(userPojo.getSexNum())) {
                 if (InformationConstant.MALE.equals(userPojo.getSexNum())) {
@@ -1093,13 +1138,13 @@ public class UserServiceImpl implements UserService {
             } else {
                 listField = new ArrayList<>();
             }
-            if (!emailVerify(email)) {
+            if (EmptyUtils.isNotEmpty(email) && !emailVerify(email)) {
                 flag = true;
                 listError.add("邮箱格式有误！");
                 if (!listField.contains("email"))
                     listField.add("email");
             }
-            if (!phoneVerify(phone)) {
+            if (EmptyUtils.isNotEmpty(phone) && !phoneVerify(phone)) {
                 flag = true;
                 listError.add("电话格式有误！");
                 if (!listField.contains("phone"))
@@ -1150,14 +1195,6 @@ public class UserServiceImpl implements UserService {
         });
         return jobSeekerList;
     }
-
-    private void setUserInfo(List<UserPojo> userPojoList){
-        if(EmptyUtils.isEmpty(userPojoList) || userPojoList.isEmpty()){
-            return;
-        }
-    }
-
-
 
 
 }

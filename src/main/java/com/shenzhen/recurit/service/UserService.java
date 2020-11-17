@@ -134,4 +134,11 @@ public interface UserService {
      * 获取所有求职人员
      */
     List<UserPojo> getAllJobSeeker();
+
+    /**
+     * 转换数据
+     *
+     * @param userPojo {@link UserPojo}
+     */
+    public void exchangData(UserPojo userPojo);
 }

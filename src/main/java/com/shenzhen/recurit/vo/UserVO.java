@@ -39,6 +39,8 @@ public class UserVO extends BaseVO{
     private String jobExperience;
     @ApiModelProperty(value = "现居住地址")
     private String residenceAddress;
+    @ApiModelProperty(value = "学历Code")
+    private String education;
 
 
 

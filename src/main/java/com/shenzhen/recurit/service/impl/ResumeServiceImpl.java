@@ -128,7 +128,9 @@ public class ResumeServiceImpl implements ResumeService {
     public UserPojo getByCurrUser() {
         UserVO userVO = ThreadLocalUtils.getUser();
         UserPojo userPojo = new UserPojo();
-        setUserPojo(userVO,userPojo);
+        if(EmptyUtils.isNotEmpty(userVO)){
+            setUserPojo(userVO,userPojo);
+        }
         return userPojo;
     }
 

@@ -2,10 +2,13 @@ package com.shenzhen.recurit.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.shenzhen.recurit.Interface.PermissionVerification;
 import com.shenzhen.recurit.enums.NumberEnum;
 import com.shenzhen.recurit.enums.ReturnEnum;
 import com.shenzhen.recurit.pojo.ImportResultPojo;
 import com.shenzhen.recurit.pojo.UserPojo;
+import com.shenzhen.recurit.service.DesiredPositionService;
+import com.shenzhen.recurit.service.EducationExperinceService;
 import com.shenzhen.recurit.service.UserService;
 import com.shenzhen.recurit.utils.EmailUtils;
 import com.shenzhen.recurit.utils.EmptyUtils;
@@ -13,15 +16,20 @@ import com.shenzhen.recurit.utils.RedisTempleUtils;
 import com.shenzhen.recurit.utils.StringFormatUtils;
 import com.shenzhen.recurit.utils.excel.ExportUtils;
 import com.shenzhen.recurit.utils.excel.ImportUtils;
+import com.shenzhen.recurit.vo.DesiredPositionVO;
+import com.shenzhen.recurit.vo.EducationExperienceVO;
 import com.shenzhen.recurit.vo.ResultVO;
 import com.shenzhen.recurit.vo.UserVO;
 import io.swagger.annotations.*;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -31,6 +39,10 @@ public class UserController {
 
     @Resource
     private UserService userService;
+    @Resource
+    private DesiredPositionService  desiredPositionService;
+    @Resource
+    private EducationExperinceService educationExperinceService;
 
     @RequestMapping(value = "reLogin", method = RequestMethod.GET)
     public Object reLogin() {
@@ -147,6 +159,7 @@ public class UserController {
 
     @PostMapping(value = "batchUserInfo", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "批量导入用户信息")
+    @PermissionVerification
     @ApiImplicitParams({
             @ApiImplicitParam(value = "导入文件", name = "file", required = true),
             @ApiImplicitParam(value = "实例名", name = "instanceName", required = true)
@@ -160,8 +173,9 @@ public class UserController {
         return JSON.toJSONString(resultVO);
     }
 
-    @GetMapping(value = "exportUserInfo", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "exportUserInfo")
     @ApiOperation(value = "导出用户信息")
+    @PermissionVerification
     @ApiImplicitParams({
             @ApiImplicitParam(value = "导入文件", name = "fileName", required = true),
             @ApiImplicitParam(value = "实例名", name = "instanceName", required = true)
@@ -179,6 +193,7 @@ public class UserController {
 
     @GetMapping(value = "exportQueryPersonnel", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "人才储备信息导出")
+    @PermissionVerification
     @ApiImplicitParams({
             @ApiImplicitParam(value = "导入文件", name = "fileName", required = true),
             @ApiImplicitParam(value = "实例名", name = "instanceName", required = true)
@@ -190,12 +205,13 @@ public class UserController {
         if (EmptyUtils.isEmpty(fileName)) {
             return ResultVO.error(StringFormatUtils.format("导出文件名不能为空"));
         }
-        List<UserVO> allIsNotPosition = userService.getAllIsNotPosition();
-        return ExportUtils.exportExcel(JSON.parseArray(JSON.toJSONString(allIsNotPosition)),response,instanceName,fileName);
+        List<UserPojo> allQueryPersonnel = userService.getAllJobSeeker();
+        return ExportUtils.exportExcel(JSON.parseArray(JSON.toJSONString(allQueryPersonnel)),response,instanceName,fileName);
     }
 
     @GetMapping(value = "queryPersonnel", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "人才储备信息查询")
+    @PermissionVerification
     @ApiImplicitParams({
             @ApiImplicitParam(value = "起始页", name = "pageNum", required = false),
             @ApiImplicitParam(value = "每页大小", name = "pageSize", required = false)
@@ -207,6 +223,47 @@ public class UserController {
             pageSize=NumberEnum.TWENTY.getValue();
         }
         return ResultVO.success(userService.queryPersonnel(pageNum,pageSize));
+    }
+
+    @PostMapping(value = "batchImportPersonnel", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ApiOperation(value = "批量导入人才信息")
+    @PermissionVerification
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "导入文件", name = "file", required = true),
+            @ApiImplicitParam(value = "实例名", name = "instanceName", required = true)
+    })
+    public Object batchImportPersonnel(MultipartFile file, String instanceName) {
+        if (EmptyUtils.isEmpty(instanceName)) {
+            return ResultVO.error(instanceName + "实例名对象不能为空");
+        }
+        ImportResultPojo importInfos = ImportUtils.getImportInfos(file, new UserPojo(), instanceName);
+        List<UserPojo> listT = importInfos.getListT();
+        if(EmptyUtils.isEmpty(listT) || listT.isEmpty()){
+            return JSON.toJSONString(ResultVO.error(false));
+        }
+        List<UserVO> listVO = new ArrayList<>();
+        listT.stream().forEach(userPojo -> {
+            userService.exchangData(userPojo);
+            UserVO userVO = new UserVO();
+            try {
+                BeanUtils.copyProperties(userVO, userPojo);
+                listVO.add(userVO);
+                DesiredPositionVO desiredPositionVO = new DesiredPositionVO();
+                desiredPositionVO.setSalary(userPojo.getSalary());
+                desiredPositionVO.setProfession(userPojo.getProfession());
+                desiredPositionService.saveDesiredPosition(desiredPositionVO);
+                EducationExperienceVO educationExperienceVO = new EducationExperienceVO();
+                educationExperienceVO.setSchoolName(userPojo.getSchoolName());
+                educationExperinceService.saveEducationExperince(educationExperienceVO);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        });
+        importInfos.setListT(listVO);
+        ResultVO resultVO = userService.batchUserInfo(importInfos);
+        return JSON.toJSONString(resultVO);
     }
 
 }
