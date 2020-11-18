@@ -10,10 +10,7 @@ import com.shenzhen.recurit.pojo.UserPojo;
 import com.shenzhen.recurit.service.DesiredPositionService;
 import com.shenzhen.recurit.service.EducationExperinceService;
 import com.shenzhen.recurit.service.UserService;
-import com.shenzhen.recurit.utils.EmailUtils;
-import com.shenzhen.recurit.utils.EmptyUtils;
-import com.shenzhen.recurit.utils.RedisTempleUtils;
-import com.shenzhen.recurit.utils.StringFormatUtils;
+import com.shenzhen.recurit.utils.*;
 import com.shenzhen.recurit.utils.excel.ExportUtils;
 import com.shenzhen.recurit.utils.excel.ImportUtils;
 import com.shenzhen.recurit.vo.DesiredPositionVO;
@@ -39,10 +36,6 @@ public class UserController {
 
     @Resource
     private UserService userService;
-    @Resource
-    private DesiredPositionService  desiredPositionService;
-    @Resource
-    private EducationExperinceService educationExperinceService;
 
     @RequestMapping(value = "reLogin", method = RequestMethod.GET)
     public Object reLogin() {
@@ -169,7 +162,7 @@ public class UserController {
             return ResultVO.error(instanceName + "实例名对象不能为空");
         }
         ImportResultPojo importInfos = ImportUtils.getImportInfos(file, new UserVO(), instanceName);
-        ResultVO resultVO = userService.batchUserInfo(importInfos);
+        ResultVO resultVO = userService.batchUserInfo(importInfos, false);
         return JSON.toJSONString(resultVO);
     }
 
@@ -188,7 +181,7 @@ public class UserController {
             return ResultVO.error(StringFormatUtils.format("导出文件名不能为空"));
         }
         List<UserVO> allIsNotPosition = userService.getAllIsNotPosition();
-        return ExportUtils.exportExcel(JSON.parseArray(JSON.toJSONString(allIsNotPosition)),response,instanceName,fileName);
+        return ExportUtils.exportExcel(JSON.parseArray(JSON.toJSONString(allIsNotPosition)), response, instanceName, fileName);
     }
 
     @GetMapping(value = "exportQueryPersonnel", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -206,7 +199,7 @@ public class UserController {
             return ResultVO.error(StringFormatUtils.format("导出文件名不能为空"));
         }
         List<UserPojo> allQueryPersonnel = userService.getAllJobSeeker();
-        return ExportUtils.exportExcel(JSON.parseArray(JSON.toJSONString(allQueryPersonnel)),response,instanceName,fileName);
+        return ExportUtils.exportExcel(JSON.parseArray(JSON.toJSONString(allQueryPersonnel)), response, instanceName, fileName);
     }
 
     @GetMapping(value = "queryPersonnel", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -217,12 +210,12 @@ public class UserController {
             @ApiImplicitParam(value = "每页大小", name = "pageSize", required = false)
     })
     public Object queryPersonnel(Integer pageNum, Integer pageSize) {
-        if(EmptyUtils.isEmpty(pageNum)||EmptyUtils.isEmpty(pageSize)||
-                pageNum== NumberEnum.ZERO.getValue()||pageSize==NumberEnum.ZERO.getValue()){
-            pageNum =NumberEnum.ONE.getValue();
-            pageSize=NumberEnum.TWENTY.getValue();
+        if (EmptyUtils.isEmpty(pageNum) || EmptyUtils.isEmpty(pageSize) ||
+                pageNum == NumberEnum.ZERO.getValue() || pageSize == NumberEnum.ZERO.getValue()) {
+            pageNum = NumberEnum.ONE.getValue();
+            pageSize = NumberEnum.TWENTY.getValue();
         }
-        return ResultVO.success(userService.queryPersonnel(pageNum,pageSize));
+        return ResultVO.success(userService.queryPersonnel(pageNum, pageSize));
     }
 
     @PostMapping(value = "batchImportPersonnel", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -237,32 +230,7 @@ public class UserController {
             return ResultVO.error(instanceName + "实例名对象不能为空");
         }
         ImportResultPojo importInfos = ImportUtils.getImportInfos(file, new UserPojo(), instanceName);
-        List<UserPojo> listT = importInfos.getListT();
-        if(EmptyUtils.isEmpty(listT) || listT.isEmpty()){
-            return JSON.toJSONString(ResultVO.error(false));
-        }
-        List<UserVO> listVO = new ArrayList<>();
-        listT.stream().forEach(userPojo -> {
-            userService.exchangData(userPojo);
-            UserVO userVO = new UserVO();
-            try {
-                BeanUtils.copyProperties(userVO, userPojo);
-                listVO.add(userVO);
-                DesiredPositionVO desiredPositionVO = new DesiredPositionVO();
-                desiredPositionVO.setSalary(userPojo.getSalary());
-                desiredPositionVO.setProfession(userPojo.getProfession());
-                desiredPositionService.saveDesiredPosition(desiredPositionVO);
-                EducationExperienceVO educationExperienceVO = new EducationExperienceVO();
-                educationExperienceVO.setSchoolName(userPojo.getSchoolName());
-                educationExperinceService.saveEducationExperince(educationExperienceVO);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        });
-        importInfos.setListT(listVO);
-        ResultVO resultVO = userService.batchUserInfo(importInfos);
+        ResultVO resultVO = userService.batchImportPersonnel(importInfos);
         return JSON.toJSONString(resultVO);
     }
 

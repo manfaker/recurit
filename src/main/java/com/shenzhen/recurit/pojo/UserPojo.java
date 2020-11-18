@@ -53,6 +53,8 @@ public class UserPojo extends BaseVO{
     private String education;
     @ApiModelProperty(value = "学历")
     private String educationName;
+    @ApiModelProperty(value = "期望职位")
+    private String desiredPosition;
 
 
 }

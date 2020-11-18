@@ -16,6 +16,7 @@ import com.shenzhen.recurit.utils.*;
 import com.shenzhen.recurit.utils.excel.ExportUtils;
 import com.shenzhen.recurit.vo.*;
 import io.netty.buffer.Unpooled;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -34,6 +35,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -63,6 +65,8 @@ public class UserServiceImpl implements UserService {
     private DesiredPositionService desiredPositionService;
     @Resource
     private DictionaryService dictionaryService;
+    @Resource
+    private EducationExperinceService educationExperinceService;
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -651,7 +655,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResultVO batchUserInfo(ImportResultPojo importInfos) {
+    public ResultVO batchUserInfo(ImportResultPojo importInfos, boolean isPersonnel) {
         Map<String, Map<String, List<String>>> checkMap = new HashMap<>();
         List<UserVO> listUser = importInfos.getListT();
         if (EmptyUtils.isNotEmpty(listUser) && listUser.size() > NumberEnum.ZERO.getValue()) {
@@ -660,47 +664,31 @@ public class UserServiceImpl implements UserService {
             Map<Integer, UserVO> queryData = new HashMap<>();
             filterProblemData(mapUser, checkMap, queryData);
             List<UserVO> listVO = new ArrayList<>();
-            for (Map.Entry<Integer, UserVO> entry : queryData.entrySet()) {
-                if (listVO.size() > NumberEnum.ONE_HUNDRED.getValue()) {
-                    batchSaveUserInfo(listVO);
-                    listVO.clear();
-                }
-                UserVO userVO = entry.getValue();
-                if (EmptyUtils.isNotEmpty(userVO.getBirth())) {
-                    userVO.setAge(getCalculationAge(userVO.getBirth()));
-                }
-                setBaseUser(userVO);
-                try {
-                    addResume(userVO);
-                    listVO.add(userVO);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-
-            }
-            if (listVO.size() > NumberEnum.ZERO.getValue()) {
-                batchSaveUserInfo(listVO);
-                UserVO currUser = ThreadLocalUtils.getUser();
-                for (UserVO userVO : listUser) {
-                    try {
-                        // 默认获取第一个职位发布简历
-                        PageInfo<PositionPojo> pageInfo = positionService.getByCompanyCode(currUser.getCompanyCode(), currUser.getUserCode(), 1, 1);
-                        PositionPojo positionPojo = null;
-                        if (EmptyUtils.isNotEmpty(pageInfo.getList()) && !pageInfo.getList().isEmpty()) {
-                            positionPojo = pageInfo.getList().get(0);
-                            PositionUserRelationVO positionUserRelationVO = new PositionUserRelationVO();
-                            positionUserRelationVO.setApply(2);
-                            positionUserRelationVO.setFollow(1);
-                            positionUserRelationVO.setPositionId(positionPojo.getId());
-                            // 修改投递状态
-                            positionUserRelationService.createOrUpdateRelation(positionUserRelationVO, userVO);
-                            resumeService.sendResumeEmail(userVO.getUserCode());
+            // 批量保存用户信息
+            batchSaveUserVo(listVO, queryData, isPersonnel);
+            // 如果非人才导入，则不自动投递简历
+            if(!isPersonnel){
+                if (queryData.size() > NumberEnum.ZERO.getValue()) {
+                    UserVO currUser = ThreadLocalUtils.getUser();
+                    for (UserVO userVO : queryData.values()) {
+                        try {
+                            // 默认获取第一个职位发布简历
+                            PageInfo<PositionPojo> pageInfo = positionService.getByCompanyCode(currUser.getCompanyCode(), currUser.getUserCode(), 1, 1);
+                            PositionPojo positionPojo = null;
+                            if (EmptyUtils.isNotEmpty(pageInfo.getList()) && !pageInfo.getList().isEmpty()) {
+                                positionPojo = pageInfo.getList().get(0);
+                                PositionUserRelationVO positionUserRelationVO = new PositionUserRelationVO();
+                                positionUserRelationVO.setApply(2);
+                                positionUserRelationVO.setFollow(1);
+                                positionUserRelationVO.setPositionId(positionPojo.getId());
+                                // 修改投递状态
+                                positionUserRelationService.createOrUpdateRelation(positionUserRelationVO, userVO);
+                                resumeService.sendResumeEmail(userVO.getUserCode());
+                            }
+                        } catch (Exception e) {
+                            LOGGER.error(userVO.getUserName() + "简历发送失败");
+                            e.printStackTrace();
                         }
-
-
-                    } catch (Exception e) {
-                        LOGGER.error(userVO.getUserName() + "简历发送失败");
-                        e.printStackTrace();
                     }
                 }
             }
@@ -709,7 +697,57 @@ public class UserServiceImpl implements UserService {
             //addExportInfomation(file,checkMap);
         }
         return ResultVO.success(checkMap);
+    }
 
+    /**
+     * 批量保存用户信息
+     *
+     * @param listVO {@link UserVO}
+     * @param queryData
+     */
+    private void batchSaveUserVo(List<UserVO> listVO, Map<Integer, UserVO> queryData, boolean isPersonnel) {
+        for (Map.Entry<Integer, UserVO> entry : queryData.entrySet()) {
+            if (listVO.size() > NumberEnum.ONE_HUNDRED.getValue()) {
+                batchSaveUserInfo(listVO);
+                listVO.clear();
+            }
+            UserVO userVO = entry.getValue();
+            if (EmptyUtils.isNotEmpty(userVO.getBirth())) {
+                userVO.setAge(getCalculationAge(userVO.getBirth()));
+            }
+            setBaseUser(userVO);
+            try {
+                addResume(userVO);
+                listVO.add(userVO);
+                savePersonInfo(userVO, isPersonnel);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+        batchSaveUserInfo(listVO);
+
+    }
+
+    /**
+     *  保存个人期望职位和学校信息
+     * @param userVO
+     * @param isPersonnel
+     */
+    private void savePersonInfo(UserVO userVO, boolean isPersonnel){
+        if(!isPersonnel){
+            return;
+        }
+        DesiredPositionVO desiredPositionVO = new DesiredPositionVO();
+        desiredPositionVO.setSalary(userVO.getSalary());
+        desiredPositionVO.setProfession(userVO.getProfession());
+        desiredPositionVO.setUserCode(userVO.getUserCode());
+        desiredPositionVO.setDesiredPosition(userVO.getDesiredPosition());
+        desiredPositionService.saveDesiredPosition(desiredPositionVO);
+        EducationExperienceVO educationExperienceVO = new EducationExperienceVO();
+        educationExperienceVO.setSchoolName(userVO.getSchoolName());
+        educationExperienceVO.setUserCode(userVO.getUserCode());
+        educationExperinceService.saveEducationExperince(educationExperienceVO);
     }
 
     /**
@@ -785,6 +823,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void batchSaveUserInfo(List<UserVO> listUser) {
+        if (EmptyUtils.isEmpty(listUser) || listUser.size() == NumberEnum.ZERO.getValue()) {
+            return;
+        }
         userMapper.batchSaveUserInfo(listUser);
     }
 
@@ -879,13 +920,13 @@ public class UserServiceImpl implements UserService {
                     listPhone.clear();
                     listEmail.clear();
                 }
-                if(EmptyUtils.isNotEmpty(entry.getValue().getUserName())){
+                if (EmptyUtils.isNotEmpty(entry.getValue().getUserName())) {
                     listName.add(entry.getValue().getUserName());
                 }
-                if(EmptyUtils.isNotEmpty(entry.getValue().getPhone())){
+                if (EmptyUtils.isNotEmpty(entry.getValue().getPhone())) {
                     listName.add(entry.getValue().getUserName());
                 }
-                if(EmptyUtils.isNotEmpty(entry.getValue().getEmail())){
+                if (EmptyUtils.isNotEmpty(entry.getValue().getEmail())) {
                     listName.add(entry.getValue().getUserName());
                 }
             }
@@ -898,7 +939,6 @@ public class UserServiceImpl implements UserService {
         }
         return listUser;
     }
-
 
 
     /**
@@ -929,6 +969,29 @@ public class UserServiceImpl implements UserService {
         if (EmptyUtils.isNotEmpty(password)) {
             userPojo.setPassword(EncryptBase64Utils.encryptBASE64(password));
         }
+    }
+
+    @Override
+    public ResultVO batchImportPersonnel(ImportResultPojo importInfos) {
+        List<UserPojo> listT = importInfos.getListT();
+        if (EmptyUtils.isEmpty(listT) || listT.isEmpty()) {
+            return ResultVO.error(false);
+        }
+        List<UserVO> listVO = new ArrayList<>();
+        listT.stream().forEach(userPojo -> {
+            exchangData(userPojo);
+            UserVO userVO = new UserVO();
+            try {
+                BeanUtils.copyProperties(userVO, userPojo);
+                listVO.add(userVO);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        });
+        importInfos.setListT(listVO);
+        return batchUserInfo(importInfos, true);
     }
 
     /**
@@ -1102,7 +1165,7 @@ public class UserServiceImpl implements UserService {
             } else {
                 if ("01".equals(userPojo.getSex())) {
                     userPojo.setSexNum("男");
-                } else if ("02".equals(userPojo.getSexNum())) {
+                } else if ("02".equals(userPojo.getSex())) {
                     userPojo.setSexNum("女");
                 } else {
                     userPojo.setSexNum("未知");
@@ -1180,8 +1243,10 @@ public class UserServiceImpl implements UserService {
     public PageInfo<UserPojo> queryPersonnel(Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         List<UserPojo> allJobSeeker = userMapper.getAllJobSeeker();
+        UserVO userVO = ThreadLocalUtils.getUser();
         allJobSeeker.stream().forEach(userPojo -> {
             exchangData(userPojo);
+            hidePhone(userVO, userPojo);
         });
         PageInfo<UserPojo> pageInfo = new PageInfo<>(allJobSeeker);
         return pageInfo;
@@ -1189,11 +1254,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserPojo> getAllJobSeeker() {
+        UserVO userVO = ThreadLocalUtils.getUser();
         List<UserPojo> jobSeekerList = userMapper.getAllJobSeeker();
         jobSeekerList.stream().forEach(userPojo -> {
+            hidePhone(userVO, userPojo);
             exchangData(userPojo);
         });
         return jobSeekerList;
+    }
+
+    // 如果非管理员隐藏手机号码
+    private void hidePhone(UserVO userVO, UserPojo userPojo){
+        if(!"ROLE0000".equals(userVO.getRoleNum())){
+            String phone = userPojo.getPhone();
+            // 导出得phone 前三位之后得都用*********代替
+            if (EmptyUtils.isNotEmpty(phone) && phone.length() > 3) {
+                userPojo.setPhone(phone.substring(0, 3) + "********");
+            }
+        }
     }
 
 

@@ -54,7 +54,9 @@ public class EducationExperinceServiceImpl implements EducationExperinceService 
         if(EmptyUtils.isNotEmpty(educationExperienceVO)){
             UserVO user = ThreadLocalUtils.getUser();
             if(flag){
-                educationExperienceVO.setUserCode(user.getUserCode());
+                if(EmptyUtils.isEmpty(educationExperienceVO.getUserCode())){
+                    educationExperienceVO.setUserCode(user.getUserCode());
+                }
                 educationExperienceVO.setCreater(user.getUserName());
                 educationExperienceVO.setCreateDate(new Date());
             }

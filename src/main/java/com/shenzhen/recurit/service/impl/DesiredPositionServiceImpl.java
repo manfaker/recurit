@@ -62,7 +62,9 @@ public class DesiredPositionServiceImpl implements DesiredPositionService {
         }
         UserVO user = ThreadLocalUtils.getUser();
         if(flag){
-            desiredPositionVO.setUserCode(user.getUserCode());
+            if(EmptyUtils.isEmpty(desiredPositionVO.getUserCode())){
+                desiredPositionVO.setUserCode(user.getUserCode());
+            }
             desiredPositionVO.setCreater(user.getUserName());
             desiredPositionVO.setCreateDate(new Date());
         }

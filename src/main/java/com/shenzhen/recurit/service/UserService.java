@@ -111,8 +111,9 @@ public interface UserService {
     /**
      * 根据excel批量导入
      * @param importInfos
+     * @param isPersonnel
      */
-    ResultVO batchUserInfo(ImportResultPojo importInfos);
+    ResultVO batchUserInfo(ImportResultPojo importInfos, boolean isPersonnel);
 
     void batchSaveUserInfo(List<UserVO> listUser);
 
@@ -141,4 +142,11 @@ public interface UserService {
      * @param userPojo {@link UserPojo}
      */
     public void exchangData(UserPojo userPojo);
+
+    /**
+     * 批量导入市场人才
+     *
+     * @param importInfos
+     */
+    ResultVO batchImportPersonnel(ImportResultPojo importInfos);
 }

@@ -46,6 +46,8 @@
             <result column="salary" property="salary"/>
             <result column="profession" property="profession"/>
             <result column="education" property="education"/>
+            <result property="desiredPosition" column="desired_position"/>
+            <result property="phone" column="phone"/>
         </resultMap>
 
         <sql id="baseResult">
@@ -211,13 +213,40 @@
             e.school_name,
             u.job_experience,
             d.profession,
-            d.salary
+            d.salary,
+            u.phone,
+            d.desired_position,
+            u.id
         FROM
             tab_user u
-            JOIN tab_education_experience e ON u.user_code = e.user_code
-            JOIN tab_desired_position d ON d.user_code = u.user_code
+            LEFT JOIN (
+            SELECT
+                t1.school_name,
+                t1.user_code
+            FROM
+                tab_education_experience t1,
+                ( SELECT user_code,max(school_name) max_school FROM tab_education_experience GROUP BY user_code ) t2
+            WHERE
+                t1.user_code = t2.user_code
+                AND t1.school_name = t2.max_school
+            ) e ON u.user_code = e.user_code
+            LEFT JOIN (
+            SELECT
+                t1.profession,
+                t1.salary,
+                t1.desired_position,
+                t1.user_code
+            FROM
+                tab_desired_position t1,
+                ( SELECT user_code, max( salary ) max_salary FROM tab_desired_position GROUP BY user_code ) t2
+            WHERE
+                t1.user_code = t2.user_code
+                AND t1.salary = t2.max_salary
+            ) d ON d.user_code = u.user_code
         WHERE
             u.role_num = 'ROLE0002'
+        ORDER BY
+            u.id DESC
     </select>
 
 </mapper>
