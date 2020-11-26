@@ -15,4 +15,11 @@ public interface EducationExperienceMapper {
     EducationExperiencesPojo getEducationExperinceById(int id);
 
     List<EducationExperiencesPojo> getEducationExperinceUserCode(String userCode);
+
+    /**
+     * 根据用户编码删除用户信息
+     * @param userCode
+     * @return
+     */
+    int deleteByUserCode(String userCode);
 }

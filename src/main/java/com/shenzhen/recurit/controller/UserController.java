@@ -104,24 +104,15 @@ public class UserController {
     @RequestMapping(value = "updateUser", method = RequestMethod.PUT)
     public Object updateUser(@RequestBody String jsonData) {
         UserVO user = JSONObject.parseObject(jsonData, UserVO.class);
-        UserVO currUser = null;
-        if (EmptyUtils.isNotEmpty(user.getUserName())) {
-            currUser = userService.getUserByName(user.getUserName());
-            if (EmptyUtils.isNotEmpty(currUser) && user.getId() != currUser.getId()) {
-                return ResultVO.error("用户名已存在，请重新填写");
+        if(EmptyUtils.isEmpty(user.getUserCode()) && user.getId() > NumberEnum.ZERO.getValue()){
+            UserVO userInfo = userService.getUserById(user.getId());
+            if(EmptyUtils.isNotEmpty(userInfo)){
+                user.setUserCode(userInfo.getUserCode());
             }
         }
-        if (EmptyUtils.isNotEmpty(user.getPhone())) {
-            currUser = userService.getUserByPhone(user.getPhone());
-            if (EmptyUtils.isNotEmpty(currUser) && user.getId() != currUser.getId()) {
-                return ResultVO.error("手机号已存在，请重新填写");
-            }
-        }
-        if (EmptyUtils.isNotEmpty(user.getEmail())) {
-            currUser = userService.getUserByEmail(user.getEmail());
-            if (EmptyUtils.isNotEmpty(currUser) && user.getId() != currUser.getId()) {
-                return ResultVO.error("邮箱已存在，请重新填写");
-            }
+        ResultVO resultVO = userService.validateUserInfoIsExist(user);
+        if(EmptyUtils.isNotEmpty(resultVO)){
+            return resultVO;
         }
         UserVO userVO = userService.updateUser(user);
         return ResultVO.success(userVO);
@@ -184,21 +175,23 @@ public class UserController {
         return ExportUtils.exportExcel(JSON.parseArray(JSON.toJSONString(allIsNotPosition)), response, instanceName, fileName);
     }
 
-    @GetMapping(value = "exportQueryPersonnel", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = "exportQueryPersonnel", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "人才储备信息导出")
     @PermissionVerification
     @ApiImplicitParams({
             @ApiImplicitParam(value = "导入文件", name = "fileName", required = true),
-            @ApiImplicitParam(value = "实例名", name = "instanceName", required = true)
+            @ApiImplicitParam(value = "实例名", name = "instanceName", required = true),
+            @ApiImplicitParam(value = "用户编码", name = "userCodeList", required = true),
     })
-    public Object exportQueryPersonnel(String fileName, String instanceName, HttpServletResponse response) {
+    public Object exportQueryPersonnel(String fileName, String instanceName, HttpServletResponse response,
+                                        @RequestBody @ApiParam List<String> userCodeList) {
         if (EmptyUtils.isEmpty(instanceName)) {
             return ResultVO.error(StringFormatUtils.format("%s实例名对象不能为空", instanceName));
         }
         if (EmptyUtils.isEmpty(fileName)) {
             return ResultVO.error(StringFormatUtils.format("导出文件名不能为空"));
         }
-        List<UserPojo> allQueryPersonnel = userService.getAllJobSeeker();
+        List<UserPojo> allQueryPersonnel = userService.getAllJobSeeker(userCodeList);
         return ExportUtils.exportExcel(JSON.parseArray(JSON.toJSONString(allQueryPersonnel)), response, instanceName, fileName);
     }
 
@@ -233,5 +226,43 @@ public class UserController {
         ResultVO resultVO = userService.batchImportPersonnel(importInfos);
         return JSON.toJSONString(resultVO);
     }
+
+    @DeleteMapping(value = "batchDeleteByCode")
+    @ApiOperation(value = "批量删除用户")
+    @PermissionVerification
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "用户编码", name = "userCodeList", required = true),
+    })
+    public Object batchDeleteByCode(@RequestBody @ApiParam List<String> userCodeList) {
+        if(EmptyUtils.isEmpty(userCodeList) || userCodeList.isEmpty()){
+            return ResultVO.error("用户编码不能为空");
+        }
+        ResultVO resultVO = userService.batchDeleteByCode(userCodeList);
+        return resultVO;
+    }
+
+    @PutMapping(value = "updatePersonnelByUserCode")
+    @ApiOperation(value = "根据用户编码修改用户信息")
+    @PermissionVerification
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "用户对象", name = "userPojo", required = true),
+    })
+    public Object updatePersonnelByUserCode(@RequestBody @ApiParam UserPojo userPojo) {
+        ResultVO resultVO = userService.updatePersonnelByUserCode(userPojo);
+        return resultVO;
+    }
+
+    @PostMapping(value = "addPersonnelByUserCode")
+    @ApiOperation(value = "新增人才信息")
+    @PermissionVerification
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "用户对象", name = "userPojo", required = true),
+    })
+    public Object addPersonnelByUserCode(@RequestBody @ApiParam UserPojo userPojo) {
+        ResultVO resultVO = userService.addPersonnelByUserCode(userPojo);
+        return resultVO;
+    }
+
+
 
 }

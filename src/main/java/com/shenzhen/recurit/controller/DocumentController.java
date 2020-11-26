@@ -32,7 +32,7 @@ public class DocumentController {
             @ApiImplicitParam(value = "文件" ,name = "file",required = true)
     })
     public ResultVO saveIDCard(@ApiParam MultipartFile file,String category){
-        DocumentPojo documentPojo = FileCommonUtils.saveFile(category, file);
+        DocumentPojo documentPojo = FileCommonUtils.saveFile(category, file, false);
         if(EmptyUtils.isNotEmpty(documentPojo)){
             return ResultVO.success(documentPojo);
         }else{

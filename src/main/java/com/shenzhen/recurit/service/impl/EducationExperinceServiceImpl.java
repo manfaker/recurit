@@ -106,4 +106,9 @@ public class EducationExperinceServiceImpl implements EducationExperinceService 
         }
         return listEducation;
     }
+
+    @Override
+    public int deleteByUserCode(String userCode) {
+        return educationExperinceMapper.deleteByUserCode(userCode);
+    }
 }

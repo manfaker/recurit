@@ -15,4 +15,10 @@ public interface DesiredPositionMapper {
     int updateDesiredPosition(DesiredPositionVO desiredPositionVO);
 
     List<DesiredPositionPojo> getDesiredPositionuserCode(String userCode);
+
+    /**
+     * 根据用户编码删除
+     * @param userCode
+     */
+    int deleteByUserCode(String userCode);
 }

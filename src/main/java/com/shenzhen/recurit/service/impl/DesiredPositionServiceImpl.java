@@ -104,5 +104,10 @@ public class DesiredPositionServiceImpl implements DesiredPositionService {
         return desiredPositionPojo;
     }
 
+    @Override
+    public int deleteByUserCode(String userCode) {
+        return desiredPositionMapper.deleteByUserCode(userCode);
+    }
+
 
 }

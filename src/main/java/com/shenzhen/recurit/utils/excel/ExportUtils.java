@@ -87,6 +87,7 @@ public class ExportUtils {
     }
 
     public static void buildExcelDocument(String fileName, Workbook wb, HttpServletResponse response) {
+        OutputStream outputStream = null;
         try {
             if (EmptyUtils.isNotEmpty(fileName) && fileName.lastIndexOf(OrdinaryConstant.SYMBOL_7) == -1) {
                 fileName = StringFormatUtils.format("%s%s%s", fileName, OrdinaryConstant.SYMBOL_5, OrdinaryConstant.SYMBOL_7);
@@ -94,11 +95,14 @@ public class ExportUtils {
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, InformationConstant.UTF_8));
             response.flushBuffer();
-            OutputStream outputStream = response.getOutputStream();
+            outputStream = response.getOutputStream();
             wb.write(outputStream);
-            close(outputStream);
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {
+            if(EmptyUtils.isNotEmpty(outputStream)){
+                close(outputStream);
+            }
         }
     }
 

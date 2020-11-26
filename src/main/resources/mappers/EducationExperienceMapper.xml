@@ -75,5 +75,9 @@
             select id,<include refid="baseResult"/> from tab_education_experience  where user_code = #{userCode}
         </select>
 
+        <delete id="deleteByUserCode">
+            delete from  tab_education_experience where user_code = #{userCode}
+        </delete>
+
 
 </mapper>

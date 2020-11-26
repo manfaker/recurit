@@ -37,8 +37,10 @@
         <resultMap id="baseResultUserInfo" type="com.shenzhen.recurit.pojo.UserPojo">
             <result column="user_name" property="userName"/>
             <result column="real_name" property="realName"/>
+            <result column="user_code" property="userCode"/>
             <result column="nick_name" property="nickName"/>
             <result column="sex" property="sex"/>
+            <result column="status" property="status"/>
             <result column="age" property="age"/>
             <result column="residence_address" property="residenceAddress"/>
             <result column="job_experience" property="jobExperience"/>
@@ -93,7 +95,7 @@
         <select id="getUserByNameAndPass" resultMap="baseResultMap">
             select d.dict_name role_name,d.content role_content,t.id,<include refid="preBaseResult"/> from tab_user t
             left join tab_dictionary d on t.role_num=d.dict_num where t.status = 1  and t.password = #{password}
-             and (t.user_name = #{userName} or t.phone=#{userName} or t.email=#{userName})limit 1
+             and (t.user_name = #{userName} or t.phone=#{userName} or t.email=#{userName}) limit 1
         </select>
 
         <select id="getUserById"  resultMap="baseResultMap">
@@ -161,6 +163,9 @@
                 update_date = #{updateDate}
         </set>
             where id = #{id}
+            <if test="userCode != null and userCode != ''">
+                or user_code = #{userCode}
+            </if>
     </update>
 
     <select id="getUserCode" resultMap="baseResultMap">
@@ -178,6 +183,7 @@
         <if test="listPhone != null and listPhone.size > 0">
             or email  in <foreach collection="listEmail" item="email" separator="," open="(" close=")"> #{email} </foreach>
         </if>
+        and status = 1
 
     </select>
 
@@ -207,9 +213,11 @@
             u.user_name,
             u.real_name,
             u.nick_name,
+            u.user_code,
             u.sex,
             u.age,
             u.residence_address,
+            u.status,
             e.school_name,
             u.job_experience,
             d.profession,
@@ -244,9 +252,25 @@
                 AND t1.salary = t2.max_salary
             ) d ON d.user_code = u.user_code
         WHERE
-            u.role_num = 'ROLE0002'
+            u.role_num = 'ROLE0002' and u.status != 2
+            <if test="userCodeList != null and userCodeList.size > 0">
+                and u.user_code in
+                <foreach collection="userCodeList" item="userCode" separator="," open="(" close=")">
+                    #{userCode}
+                </foreach>
+            </if>
         ORDER BY
             u.id DESC
     </select>
+    
+    <update id="batchDeleteUser">
+        update tab_user set status = 2 
+            <where>
+                user_code in 
+                <foreach collection="userCodeList" item="userCode" open="(" close=")" separator=",">
+                    #{userCode}
+                </foreach>
+            </where>
+    </update>
 
 </mapper>

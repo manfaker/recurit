@@ -30,7 +30,7 @@ public class UserVO extends BaseVO{
     private String entryCode;//动态识别码
     private int status;//动态识别码
     private String companyCode;//公司编码
-    private String userCode;//公司编码
+    private String userCode;//用户编码
     @ApiModelProperty(value = "用户信息")
     private String image;//头像信息
     @ApiModelProperty(value = "意向职位")
@@ -45,9 +45,9 @@ public class UserVO extends BaseVO{
     private String schoolName;
     @ApiModelProperty(value = "薪资code")
     private String salary;
-    @ApiModelProperty(value = "岗位")
+    @ApiModelProperty(value = "职位")
     private String profession;
-    @ApiModelProperty(value = "期望职位")
+    @ApiModelProperty(value = "职位/简介")
     private String desiredPosition;
 
 

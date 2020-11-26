@@ -17,6 +17,7 @@ import com.shenzhen.recurit.utils.excel.ExportUtils;
 import com.shenzhen.recurit.vo.*;
 import io.netty.buffer.Unpooled;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -227,7 +228,7 @@ public class UserServiceImpl implements UserService {
         String phone = userVO.getPhone();
         if (EmptyUtils.isNotEmpty(phone)) {
             if (!isMobileNO(phone)) {
-                return ResultVO.error("手机号码不存在，请重新输入！");
+                return ResultVO.error("手机号码格式有误，请重新输入！");
             }
             UserVO user = getUserByPhone(phone);
             if (EmptyUtils.isNotEmpty(user)) {
@@ -444,16 +445,13 @@ public class UserServiceImpl implements UserService {
         userVO.setId(userId);
         userVO.setStatus(NumberEnum.TWO.getValue());
         userVO.setUpdateDate(new Date());
-        UserVO user = updateUser(userVO);
+        userMapper.updateUser(userVO);
         return ResultVO.success("删除成功");
     }
 
     @Override
     public UserVO updateUser(UserVO user) {
-        if (EmptyUtils.isNotEmpty(user.getBirth())) {
-            user.setAge(getCalculationAge(user.getBirth()));
-        }
-        user.setUpdateDate(new Date());
+        setUserInfo(user, false);
         int result = userMapper.updateUser(user);
         UserVO userVO;
         if (result > NumberEnum.ZERO.getValue()) {
@@ -463,6 +461,16 @@ public class UserServiceImpl implements UserService {
             userVO = user;
         }
         return userVO;
+    }
+
+    private void setUserInfo(UserVO userVO, boolean isUpdate) {
+        if (isUpdate) {
+            userVO.setCreateDate(new Date());
+        }
+        if (EmptyUtils.isNotEmpty(userVO.getBirth())) {
+            userVO.setAge(getCalculationAge(userVO.getBirth()));
+        }
+        userVO.setUpdateDate(new Date());
     }
 
     @Override
@@ -667,7 +675,7 @@ public class UserServiceImpl implements UserService {
             // 批量保存用户信息
             batchSaveUserVo(listVO, queryData, isPersonnel);
             // 如果非人才导入，则不自动投递简历
-            if(!isPersonnel){
+            if (!isPersonnel) {
                 if (queryData.size() > NumberEnum.ZERO.getValue()) {
                     UserVO currUser = ThreadLocalUtils.getUser();
                     for (UserVO userVO : queryData.values()) {
@@ -702,7 +710,7 @@ public class UserServiceImpl implements UserService {
     /**
      * 批量保存用户信息
      *
-     * @param listVO {@link UserVO}
+     * @param listVO    {@link UserVO}
      * @param queryData
      */
     private void batchSaveUserVo(List<UserVO> listVO, Map<Integer, UserVO> queryData, boolean isPersonnel) {
@@ -730,12 +738,13 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     *  保存个人期望职位和学校信息
+     * 保存个人期望职位和学校信息
+     *
      * @param userVO
      * @param isPersonnel
      */
-    private void savePersonInfo(UserVO userVO, boolean isPersonnel){
-        if(!isPersonnel){
+    private void savePersonInfo(UserVO userVO, boolean isPersonnel) {
+        if (!isPersonnel) {
             return;
         }
         DesiredPositionVO desiredPositionVO = new DesiredPositionVO();
@@ -1242,7 +1251,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public PageInfo<UserPojo> queryPersonnel(Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<UserPojo> allJobSeeker = userMapper.getAllJobSeeker();
+        List<UserPojo> allJobSeeker = userMapper.getAllJobSeeker(null);
         UserVO userVO = ThreadLocalUtils.getUser();
         allJobSeeker.stream().forEach(userPojo -> {
             exchangData(userPojo);
@@ -1253,9 +1262,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserPojo> getAllJobSeeker() {
+    public List<UserPojo> getAllJobSeeker(List<String> userCodeList) {
         UserVO userVO = ThreadLocalUtils.getUser();
-        List<UserPojo> jobSeekerList = userMapper.getAllJobSeeker();
+        List<UserPojo> jobSeekerList = userMapper.getAllJobSeeker(userCodeList);
         jobSeekerList.stream().forEach(userPojo -> {
             hidePhone(userVO, userPojo);
             exchangData(userPojo);
@@ -1264,8 +1273,8 @@ public class UserServiceImpl implements UserService {
     }
 
     // 如果非管理员隐藏手机号码
-    private void hidePhone(UserVO userVO, UserPojo userPojo){
-        if(!"ROLE0000".equals(userVO.getRoleNum())){
+    private void hidePhone(UserVO userVO, UserPojo userPojo) {
+        if (!isAdmin()) {
             String phone = userPojo.getPhone();
             // 导出得phone 前三位之后得都用*********代替
             if (EmptyUtils.isNotEmpty(phone) && phone.length() > 3) {
@@ -1274,5 +1283,126 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public ResultVO batchDeleteByCode(List<String> userCodeList) {
+        if (!isAdmin()) {
+            return ResultVO.error("非管理员无法操作");
+        }
+        batchDeleteUser(userCodeList);
+        return ResultVO.success("删除成功");
+    }
+
+    private boolean isAdmin() {
+        UserVO userVO = ThreadLocalUtils.getUser();
+        if (EmptyUtils.isEmpty(userVO)) {
+            return false;
+        }
+        if (!"ROLE0000".equals(userVO.getRoleNum())) {
+            return false;
+        }
+        return true;
+    }
+
+    public int batchDeleteUser(List<String> userCodeList) {
+        return userMapper.batchDeleteUser(userCodeList);
+    }
+
+    @Override
+    @Transactional
+    public ResultVO updatePersonnelByUserCode(UserPojo userPojo) {
+        if (!isAdmin()) {
+            return ResultVO.error("非管理员无法操作");
+        }
+        String userCode = userPojo.getUserCode();
+        if (EmptyUtils.isEmpty(userPojo.getUserCode())) {
+            return ResultVO.error("用户编码不能为空");
+        }
+        desiredPositionService.deleteByUserCode(userCode);
+        educationExperinceService.deleteByUserCode(userCode);
+        exchangData(userPojo);
+        UserVO userVO = new UserVO();
+        try {
+            PropertyUtils.copyProperties(userVO, userPojo);
+            ResultVO resultVO = validateUserInfoIsExist(userVO);
+            if (EmptyUtils.isNotEmpty(resultVO)) {
+                return resultVO;
+            }
+            resultVO = validateUserInfo(userVO);
+            if (EmptyUtils.isNotEmpty(resultVO)) {
+                return resultVO;
+            }
+            setUserInfo(userVO, false);
+            userMapper.updateUser(userVO);
+            savePersonInfo(userVO, true);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return ResultVO.success(userPojo);
+    }
+
+    /**
+     * 验证用户手机，邮箱，姓名是否正确
+     *
+     * @param userVO
+     * @return
+     */
+    public ResultVO validateUserInfo(UserVO userVO) {
+        String phone = userVO.getPhone();
+        if (EmptyUtils.isNotEmpty(phone) && !isMobileNO(phone)) {
+            return ResultVO.error("手机号码格式有误，请重新输入！");
+        }
+        String email = userVO.getEmail();
+        if (EmptyUtils.isNotEmpty(email) && !isEmailNO(email)) {
+            return ResultVO.error("邮箱格式有误，请重新输入");
+        }
+        return null;
+    }
+
+    @Override
+    public ResultVO validateUserInfoIsExist(UserVO userVO) {
+        UserVO currUser = null;
+        if (EmptyUtils.isNotEmpty(userVO.getUserName())) {
+            currUser = getUserByName(userVO.getUserName());
+            if (EmptyUtils.isNotEmpty(currUser) && !userVO.getUserCode().equals(currUser.getUserCode())) {
+                return ResultVO.error("用户名已存在，请重新填写");
+            }
+        }
+        if (EmptyUtils.isNotEmpty(userVO.getPhone())) {
+            currUser = getUserByPhone(userVO.getPhone());
+            if (EmptyUtils.isNotEmpty(currUser) && !userVO.getUserCode().equals(currUser.getUserCode())) {
+                return ResultVO.error("手机号已存在，请重新填写");
+            }
+        }
+        if (EmptyUtils.isNotEmpty(userVO.getEmail())) {
+            currUser = getUserByEmail(userVO.getEmail());
+            if (EmptyUtils.isNotEmpty(currUser) && !userVO.getUserCode().equals(currUser.getUserCode())) {
+                return ResultVO.error("邮箱已存在，请重新填写");
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public UserVO getUserById(int id) {
+        return userMapper.getUserById(id);
+    }
+
+    @Override
+    public ResultVO addPersonnelByUserCode(UserPojo userPojo) {
+        exchangData(userPojo);
+        UserVO userVO = new UserVO();
+        try {
+            PropertyUtils.copyProperties(userVO, userPojo);
+            setUserInfo(userVO, false);
+            ResultVO resultVO = addUser(userVO);
+            if (EmptyUtils.isNotEmpty(resultVO) && 200 != resultVO.getCode()) {
+                return resultVO;
+            }
+            savePersonInfo(userVO, true);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return ResultVO.success("新增成功");
+    }
 
 }

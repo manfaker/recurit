@@ -134,7 +134,7 @@ public interface UserService {
     /**
      * 获取所有求职人员
      */
-    List<UserPojo> getAllJobSeeker();
+    List<UserPojo> getAllJobSeeker(List<String> userCodeList);
 
     /**
      * 转换数据
@@ -149,4 +149,54 @@ public interface UserService {
      * @param importInfos
      */
     ResultVO batchImportPersonnel(ImportResultPojo importInfos);
+
+    /**
+     * 根据userCode删除用户信息
+     * @param userCodeList
+     * @return ResultVO
+     */
+    ResultVO batchDeleteByCode(List<String> userCodeList);
+
+    /**
+     * 根据userCode删除用户信息
+     * @param userCodeList
+     * @return
+     */
+    int batchDeleteUser(List<String> userCodeList);
+
+    /**
+     * 修改用户信息,学校和期望职位
+     * @param userPojo
+     * @return
+     */
+    ResultVO updatePersonnelByUserCode(UserPojo userPojo);
+
+    /**
+     * 验证用户手机，邮箱，姓名是否存在
+     * @param userVO
+     * @return
+     */
+    ResultVO validateUserInfoIsExist(UserVO userVO);
+    /**
+     * 验证用户手机，邮箱，姓名是否正确
+     * @param userVO
+     * @return
+     */
+    ResultVO validateUserInfo(UserVO userVO);
+
+    /**
+     * 通过用户ID获取用户信息
+     *
+     * @param id
+     * @return
+     */
+    UserVO getUserById(int id);
+
+    /**
+     * 新增人才信息
+     *
+     * @param userPojo
+     * @return
+     */
+    ResultVO addPersonnelByUserCode(UserPojo userPojo);
 }

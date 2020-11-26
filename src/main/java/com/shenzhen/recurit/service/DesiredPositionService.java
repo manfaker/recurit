@@ -47,4 +47,10 @@ public interface DesiredPositionService {
      * 设置数据字典
      */
     void setDesiredPosition(DesiredPositionPojo desiredPosition);
+
+    /**
+     * 根据用户编码删除
+     * @param userCode
+     */
+    int deleteByUserCode(String userCode);
 }

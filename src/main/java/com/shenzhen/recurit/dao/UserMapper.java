@@ -85,5 +85,12 @@ public interface UserMapper {
      * 获取所有求职人员信息
      * @return
      */
-    List<UserPojo> getAllJobSeeker();
+    List<UserPojo> getAllJobSeeker(@Param("userCodeList") List<String> userCodeList);
+
+    /**
+     * 根据用户信息批量删除用户
+     * @param userCodeList
+     * @return
+     */
+    int batchDeleteUser(@Param("userCodeList") List<String> userCodeList);
 }

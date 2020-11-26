@@ -62,5 +62,9 @@
             select id,<include refid="baseResult"/> from tab_desired_position  where user_code = #{userCode}
         </select>
 
+        <delete id="deleteByUserCode">
+            delete from  tab_desired_position where user_code = #{userCode}
+        </delete>
+
 
 </mapper>
