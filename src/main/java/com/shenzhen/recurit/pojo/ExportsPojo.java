@@ -28,4 +28,6 @@ public class ExportsPojo {
     @ApiModelProperty(value = "类型 导入导出")
     private String category;
     private String sheetName;
+    @ApiModelProperty(value = "长度限制")
+    private String fieldLong;
 }

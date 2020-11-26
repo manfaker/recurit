@@ -24,4 +24,6 @@ public class ExportsVO {
     private int colour;
     @ApiModelProperty(value = "实列名")
     private String instanceName;
+    @ApiModelProperty(value = "长度限制")
+    private String fieldLong;
 }

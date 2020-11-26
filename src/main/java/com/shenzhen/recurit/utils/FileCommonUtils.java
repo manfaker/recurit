@@ -47,7 +47,7 @@ public class FileCommonUtils {
         String relativepPath;
         try {
             relativepPath = ResourceUtils.getURL("classpath:").getPath();
-            if (relativepPath.lastIndexOf(File.separator) != -1) {
+            if (relativepPath.lastIndexOf(File.separator) != -1 || relativepPath.lastIndexOf("/") != -1) {
                 relativepPath = relativepPath + IMAGE;
             } else {
                 relativepPath = relativepPath + File.separator + IMAGE;
@@ -63,7 +63,7 @@ public class FileCommonUtils {
         if (EmptyUtils.isEmpty(path)) {
             return OrdinaryConstant.IS_BLACK;
         }
-        if (path.lastIndexOf(File.separator) != -1) {
+        if (path.lastIndexOf(File.separator) != -1 || path.lastIndexOf("/") != -1) {
             path = path + getCurrDateStr();
         } else {
             path = path + File.separator + relativePath;
@@ -106,7 +106,7 @@ public class FileCommonUtils {
         if (!isImage) {
             documentVO.setUrl(filePath.getPath());
         } else {
-            documentVO.setUrl(relativePath);
+            documentVO.setUrl(IMAGE + File.separator + relativePath);
         }
         String currPath = filePath + File.separator + timeName + OrdinaryConstant.SYMBOL_5 + suffix;
         File currFile = new File(currPath);
@@ -119,6 +119,19 @@ public class FileCommonUtils {
             return null;
         }
 
+    }
+
+    public static void deleteFile(String filePath, boolean isImage) {
+        if (EmptyUtils.isEmpty(filePath)) {
+            return;
+        }
+        if (isImage) {
+            filePath = addCurrTime(getRelativePath(), filePath.substring(filePath.indexOf(File.separator)));
+        }
+        File file = new File(filePath);
+        if (file.exists()) {
+            file.delete();
+        }
     }
 
 }

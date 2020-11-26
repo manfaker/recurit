@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzhen.recurit.dao.AdvertisementMapper">
+
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.pojo.AdvertisementPojo">
+            <id column="id" property="id"/>
+            <result column="advertisement_name" property="advertisementName"/>
+            <result column="status" property="status"/>
+            <result column="creater" property="creater"/>
+            <result column="updater" property="updater"/>
+            <result column="create_date" property="createDate"/>
+            <result column="update_date" property="updateDate"/>
+            <association property="advertisementImage" javaType="com.shenzhen.recurit.pojo.DocumentPojo">
+                <id column="document_id" property="id"/>
+                <result column="old_name" property="oldName"/>
+                <result column="document_name" property="documentName"/>
+                <result column="document_size" property="documentSize"/>
+                <result column="url" property="url"/>
+                <result column="suffix" property="suffix"/>
+                <result column="category" property="category"/>
+            </association>
+        </resultMap>
+
+        <sql id="baseResult">
+            advertisement_name,document_id,status,creater,updater,create_date,update_date
+        </sql>
+
+        <insert id="addAdvertisement" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+            INSERT INTO tab_advertisement(<include refid="baseResult"/>)
+                VALUES(#{advertisementName},#{documentId},#{status},#{creater},
+                            #{updater},#{createDate},#{updateDate})
+        </insert>
+
+        <update id="batchDeleteAdvertisement">
+            UPDATE tab_advertisement SET status = 2 WHERE id IN
+                <foreach collection="idList" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+        </update>
+
+        <update id="updateAdvertisement">
+            UPDATE tab_advertisement
+            <set>
+                <if test="advertisementName != null and advertisementName != ''">
+                    advertisement_name = #{advertisementName},
+                </if>
+                <if test="documentId != null and documentId != 0">
+                    document_id = #{documentId},
+                </if>
+                <if test="status != null and status != 0">
+                    status = #{status},
+                </if>
+                updater = #{updater},
+                update_date = #{updateDate}
+            </set>
+             WHERE id = #{id}
+        </update>
+
+        <select id="getAllAdvertisements" resultMap="baseResultMap">
+            SELECT
+                a.id,
+                a.advertisement_name,
+                a.STATUS,
+                a.creater,
+                a.updater,
+                a.create_date,
+                a.create_date,
+                d.id document_id,
+                d.old_name,
+                d.document_name,
+                d.document_size,
+                d.category,
+                d.url,
+                d.suffix
+            FROM
+                tab_advertisement a
+                LEFT JOIN (
+                SELECT
+                id,
+                old_name,
+                document_name,
+                document_size,
+                category,
+                url,
+                suffix
+                FROM
+                tab_document WHERE status != 2 ) d ON a.document_id = d.id
+            WHERE
+                a.STATUS != 2
+        </select>
+
+        <select id="getAdvertisementByIds" resultMap="baseResultMap">
+            SELECT
+                a.id,
+                a.advertisement_name,
+                a.STATUS,
+                a.creater,
+                a.updater,
+                a.create_date,
+                a.create_date,
+                d.id document_id,
+                d.old_name,
+                d.document_name,
+                d.document_size,
+                d.category,
+                d.url,
+                d.suffix
+            FROM
+                tab_advertisement a
+                LEFT JOIN (
+                SELECT
+                id,
+                old_name,
+                document_name,
+                document_size,
+                category,
+                url,
+                suffix
+                FROM
+                tab_document WHERE status != 2 ) d ON a.document_id = d.id
+            WHERE
+                a.STATUS != 2 AND a.id IN
+                <foreach collection="idList" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+        </select>
+
+        <select id="getAdvertisementById" resultMap="baseResultMap">
+            SELECT
+                a.id,
+                a.advertisement_name,
+                a.STATUS,
+                a.creater,
+                a.updater,
+                a.create_date,
+                a.create_date,
+                d.id document_id,
+                d.old_name,
+                d.document_name,
+                d.document_size,
+                d.category,
+                d.url,
+                d.suffix
+            FROM
+                tab_advertisement a
+                LEFT JOIN (
+                SELECT
+                id,
+                old_name,
+                document_name,
+                document_size,
+                category,
+                url,
+                suffix
+                FROM
+                tab_document WHERE status != 2 ) d ON a.document_id = d.id
+            WHERE
+                a.STATUS != 2
+                AND a.id = #{id}
+        </select>
+
+
+</mapper>

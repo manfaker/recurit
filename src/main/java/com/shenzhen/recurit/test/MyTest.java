@@ -11,7 +11,8 @@ import java.util.List;
 public class MyTest {
 
     public static void main(String[] args) {
-        String str = "sdfadsf.xlsx";
-        System.out.println(str.indexOf(StringFormatUtils.format("%s%s",".","xlsxs"))+"");
+        String str = "中国";
+        String field_long = "aa";
+        System.out.println(str.getBytes().length);
     }
 }

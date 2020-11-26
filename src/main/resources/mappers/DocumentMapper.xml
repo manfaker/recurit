@@ -55,14 +55,27 @@
                 where id = #{id}
         </update>
 
-        <delete id="deleteDocument">
+        <update id="deleteDocument">
             update  tab_document set status = 2 where id = #{id}
-        </delete>
+        </update>
 
         <select id="getDocument" resultMap="baseResultMap">
             select <include refid="baseResult"/>,id,status from tab_document where id=#{id} and status = #{status}
         </select>
 
+        <update id="batchDeleteDocument">
+            update  tab_document set status = 2 where id IN
+                <foreach collection="idList" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+        </update>
+
+        <select id="getDocumentsByIds" resultMap="baseResultMap">
+            select <include refid="baseResult"/>,id,status from tab_document where id IN
+                    <foreach collection="idList" item="id" open="(" close=")" separator=",">
+                        #{id}
+                    </foreach>
+        </select>
 
 
 

@@ -12,10 +12,11 @@
             <result column="colour" property="colour"/>
             <result column="instance_name" property="instanceName"/>
             <result column="category" property="category"/>
+            <result column="field_long" property="fieldLong"/>
         </resultMap>
 
         <sql id="baseResult">
-            column_field,column_name,gradation,hight,width,colour,instance_name,category
+            column_field,column_name,gradation,hight,width,colour,instance_name,category,field_long
         </sql>
 
         <select id="getAllExportsByTableName" resultMap="baseResultMap">

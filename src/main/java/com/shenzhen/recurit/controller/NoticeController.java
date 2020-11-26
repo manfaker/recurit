@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "notice")
-@Api(tags = {"用户信息"})
+@Api(tags = {"公告信息"})
 public class NoticeController {
 
     @Resource
@@ -24,6 +24,7 @@ public class NoticeController {
 
     @PostMapping(value = "addNotice")
     @ApiOperation(value = "新增公告信息")
+    @ApiImplicitParam(value = "公告对象", name = "noticeVO",required = true)
     @PermissionVerification
     public ResultVO addNotice(@RequestBody @ApiParam NoticeVO noticeVO) {
         NoticePojo noticePojo = noticeService.addNotice(noticeVO);
@@ -32,6 +33,7 @@ public class NoticeController {
 
     @PutMapping(value = "updateNotice")
     @ApiOperation(value = "修改公告信息")
+    @ApiImplicitParam(value = "公告对象", name = "noticeVO",required = true)
     @PermissionVerification
     public ResultVO updateNotice(@RequestBody @ApiParam NoticeVO noticeVO) {
         NoticePojo noticePojo = noticeService.updateNotice(noticeVO);
@@ -40,11 +42,11 @@ public class NoticeController {
 
     @DeleteMapping(value = "deleteNotice")
     @ApiOperation(value = "批量删除公告信息")
-    @ApiImplicitParam(value = "idList", name = "主键集合")
+    @ApiImplicitParam(value = "主键集合", name = "idList")
     @PermissionVerification
     public ResultVO batchDeleteNotice(@RequestBody @ApiParam List<Integer> idList) {
-        if (EmptyUtils.isEmpty(idList) && !idList.isEmpty()) {
-            return ResultVO.success("请先选择要删除得内容！");
+        if (EmptyUtils.isEmpty(idList) || idList.isEmpty()) {
+            return ResultVO.error("请先选择要删除得内容！");
         }
         int result = noticeService.batchDeleteNotice(idList);
         if (result > NumberEnum.ZERO.getValue()) {
@@ -52,12 +54,11 @@ public class NoticeController {
         } else {
             return ResultVO.success("当前公告不存在！");
         }
-
     }
 
     @PutMapping(value = "topNotice")
     @ApiOperation(value = "置顶公告信息")
-    @ApiImplicitParam(value = "id", name = "主键", required = true)
+    @ApiImplicitParam(value = "主键", name = "id", required = true)
     @PermissionVerification
     public ResultVO topNotice(int id) {
         int result = noticeService.topNotice(id);
@@ -71,8 +72,8 @@ public class NoticeController {
     @GetMapping(value = "getNotices")
     @ApiOperation(value = "公告查询")
     @ApiImplicitParams({
-            @ApiImplicitParam(value = "pageSize", name = "每页个数", required = true),
-            @ApiImplicitParam(value = "pageNum", name = "当前页面", required = true)
+            @ApiImplicitParam(value = "每页个数", name = "pageSize", required = true),
+            @ApiImplicitParam(value = "当前页面", name = "pageNum", required = true)
     })
     @PermissionVerification
     public ResultVO getNotices(int pageSize, int pageNum) {
