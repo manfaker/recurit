@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzhen.recurit.dao.NoticeMapper">
+
+        <resultMap id="baseResultMap" type="com.shenzhen.recurit.pojo.NoticePojo">
+            <id column="id" property="id"/>
+            <result column="notice_content" property="noticeContent"/>
+            <result column="notice_order" property="noticeOrder"/>
+            <result column="status" property="status"/>
+            <result column="creater" property="creater"/>
+            <result column="updater" property="updater"/>
+            <result column="create_date" property="createDate"/>
+            <result column="update_date" property="updateDate"/>
+
+        </resultMap>
+
+        <sql id="baseResult">
+            notice_content,notice_order,status,creater,updater,create_date,update_date
+        </sql>
+
+        <insert id="addNotice" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+            INSERT INTO tab_notice(<include refid="baseResult"/>)
+                VALUES(#{noticeContent},#{noticeOrder},#{status},#{creater},
+                            #{updater},#{createDate},#{updateDate})
+        </insert>
+
+        <update id="batchDeleteNotice">
+            UPDATE tab_notice SET status = 2 WHERE id IN
+                <foreach collection="idList" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+        </update>
+
+        <update id="updateNotice">
+            UPDATE tab_notice
+            <set>
+                <if test="noticeContent != null and noticeContent != ''">
+                    notice_content = #{noticeContent},
+                </if>
+                <if test="noticeOrder != null and noticeOrder != 0">
+                    notice_order = #{noticeOrder},
+                </if>
+                <if test="status != null and status != 0">
+                    status = #{status},
+                </if>
+                updater = #{updater},
+                update_date = #{updateDate}
+            </set>
+             WHERE id = #{id}
+        </update>
+
+        <select id="getAllNotice" resultMap="baseResultMap">
+            SELECT id,<include refid="baseResult"/> FROM  tab_notice WHERE status = 1 ORDER BY notice_order DESC
+        </select>
+
+        <select id="getNotice" resultMap="baseResultMap">
+            SELECT id,<include refid="baseResult"/> FROM  tab_notice WHERE id = #{id} and status = 1
+        </select>
+
+        <select id="getMaxOrder" resultType="java.lang.Integer">
+            SELECT max(notice_order) FROM tab_notice WHERE status = 1
+        </select>
+
+</mapper>

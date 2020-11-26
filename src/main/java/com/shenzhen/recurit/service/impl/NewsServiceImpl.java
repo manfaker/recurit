@@ -54,7 +54,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public PageInfo<NewsVO> getAllNews(Integer pageSize,Integer pageNo) {
         if(EmptyUtils.isEmpty(pageSize)||EmptyUtils.isEmpty(pageNo)||
-                pageNo== NumberEnum.ZERO.getValue()||pageSize== NumberEnum.ZERO.getValue()){
+            pageNo== NumberEnum.ZERO.getValue()||pageSize== NumberEnum.ZERO.getValue()){
             pageNo=NumberEnum.ONE.getValue();
             pageSize=NumberEnum.TEN.getValue();
         }

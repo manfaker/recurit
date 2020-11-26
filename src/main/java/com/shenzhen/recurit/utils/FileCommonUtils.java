@@ -99,13 +99,13 @@ public class FileCommonUtils {
         } else {
             url = getRelativePath();
         }
-        File filePath = new File(addCurrTime(url,relativePath));
+        File filePath = new File(addCurrTime(url, relativePath));
         if (!filePath.exists()) {
             filePath.mkdirs();
         }
-        if (!isImage){
+        if (!isImage) {
             documentVO.setUrl(filePath.getPath());
-        }else{
+        } else {
             documentVO.setUrl(relativePath);
         }
         String currPath = filePath + File.separator + timeName + OrdinaryConstant.SYMBOL_5 + suffix;
